@@ -1,4 +1,4 @@
-package com.gestionproyectoscolaborativos.backend.services.dto;
+package com.gestionproyectoscolaborativos.backend.services.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RolDto {
+public class StateDto {
     private String name;
 }

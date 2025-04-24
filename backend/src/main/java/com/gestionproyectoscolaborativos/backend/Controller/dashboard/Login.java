@@ -1,7 +1,7 @@
-package com.gestionproyectoscolaborativos.backend.Controller.dashboardauth;
+package com.gestionproyectoscolaborativos.backend.Controller.dashboard;
 
 import com.gestionproyectoscolaborativos.backend.services.UserServices;
-import com.gestionproyectoscolaborativos.backend.services.dto.UserDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

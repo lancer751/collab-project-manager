@@ -7,11 +7,10 @@ import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
 import com.gestionproyectoscolaborativos.backend.repository.RolRepository;
 import com.gestionproyectoscolaborativos.backend.repository.UserProjectRolRepository;
 import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
-import com.gestionproyectoscolaborativos.backend.services.dto.RolDto;
-import com.gestionproyectoscolaborativos.backend.services.dto.UserDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +82,11 @@ public class UserServices {
         userProjectRolList.forEach(userProjectRolRepository::save);
         return ResponseEntity.ok().body(new UserDto(userDto.getName(), userDto.getLastname(), userDto.getEmail(), password, rolDtoList));
     }
+
     public boolean existsByUsername(String username) {
         return userRepository.existsByEmail(username);
+    }
+    public Users userByEmail (String email) {
+        return  userRepository.findByEmail(email).orElseThrow();
     }
 }

@@ -37,7 +37,12 @@ public class SecurityConfig {
     SecurityFilterChain filterChain (HttpSecurity http) throws Exception{
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.POST, "/dashboard/registeruser").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
-                .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST, "/project/add").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
+                        .requestMatchers(HttpMethod.PUT, "/project/edit/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
+                        .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
+                        .requestMatchers(HttpMethod.GET, "/dashboardadmin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/project/").authenticated()
+                        .anyRequest().authenticated())
                 .addFilter(new JwtAuthenticacionFilter(authenticationConfiguration.getAuthenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .csrf(config -> config.disable())

@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gestionproyectoscolaborativos.backend.entitys.Users;
 import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
+import com.gestionproyectoscolaborativos.backend.services.UserServices;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -32,6 +36,8 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
 
 
     private AuthenticationManager authenticationManager;
+
+
 
     public JwtAuthenticacionFilter(AuthenticationManager authenticationManager){
         this.authenticationManager = authenticationManager;
@@ -62,6 +68,7 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
+
         String email = user.getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
         Claims claims = Jwts.claims()
@@ -69,6 +76,9 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
                         .add("username", email)
                                 .build();
 
+        System.out.println(user.getUsername()); // trae el username
+
+        //token access
         String token = Jwts.builder()
                 .subject(email)
                 .claims(claims)
@@ -77,9 +87,19 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(SECRET_KEY)
                 .compact(); // token generado
 
-       // Users users = userRepository.findByEmail(email).orElseThrow();
+        //refreshToken
+        String refreshToken = generateRefreshToken(user);
+        System.out.println("Refresh token = " + refreshToken);
 
-        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
+        Cookie cookie = new Cookie("refresh-token", refreshToken);
+        cookie.setHttpOnly(true); // impide q JS acceda a la cookie
+        cookie.setSecure(true);
+        cookie.setPath("/"); // para todo el backend
+        cookie.setMaxAge(86400); // 1 hora
+
+        response.addCookie(cookie);
+
+        //response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
         Map<String, String> body = new HashMap<>();
         body.put("token", token);
         body.put("username", email);
@@ -98,5 +118,15 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(401);
         response.setContentType(CONTENT_TYPE);
+    }
+
+    //refresh token
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder().subject(userDetails.getUsername())
+                .claim("type", "refresh")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000 ))
+                .signWith(SECRET_KEY)
+                .compact();
     }
 }

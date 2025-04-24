@@ -7,6 +7,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,20 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader(HEADER_AUTHORIZATION);
+
+
+        // 👉 Nueva forma: obtener token desde cookie si no viene en el header
+        if (header == null || !header.startsWith(PREFIX_TOKEN)) {
+            // Buscar la cookie con nombre "jwt-token"
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if ("refresh-token".equals(cookie.getName())) {
+                        header = PREFIX_TOKEN + cookie.getValue(); // construimos el header
+                        break;
+                    }
+                }
+            }
+        }
 
         if(header == null || !header.startsWith(PREFIX_TOKEN)){
             chain.doFilter(request,response);

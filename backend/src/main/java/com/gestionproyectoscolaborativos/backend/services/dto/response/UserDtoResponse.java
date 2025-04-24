@@ -1,6 +1,6 @@
-package com.gestionproyectoscolaborativos.backend.services.dto;
+package com.gestionproyectoscolaborativos.backend.services.dto.response;
 
-
+import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class UserDtoResponse {
 
     private String name;
 
@@ -21,9 +21,6 @@ public class UserDto {
 
 
     private String email;
-
-
-    private String password;
 
     private List<RolDto> rolDtoList;
 }
