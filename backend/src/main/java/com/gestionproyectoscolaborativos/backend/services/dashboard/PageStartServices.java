@@ -6,6 +6,8 @@ import com.gestionproyectoscolaborativos.backend.entitys.Users;
 import com.gestionproyectoscolaborativos.backend.repository.ActivityRepository;
 import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
 import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.dashboard.KpisClave;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.dashboard.UserAuthenticateDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.dashboard.UserCountActivityDto;
@@ -21,6 +23,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 @Service
@@ -37,12 +40,25 @@ public class PageStartServices {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Users users = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            UserAuthenticateDto userAuthenticateDto = new UserAuthenticateDto();
-            userAuthenticateDto.setUsername(users.getName());
-            userAuthenticateDto.setLastName(users.getLastname());
-            HashMap<String, String> response = new HashMap<>();
-            response.put("user", userAuthenticateDto.getUsername() + " " + userAuthenticateDto.getLastName());
-            return ResponseEntity.ok().body(response);
+            UserDtoResponse userDtoResponse = new UserDtoResponse();
+            userDtoResponse.setName(users.getName());
+            userDtoResponse.setLastname(users.getLastname());
+            userDtoResponse.setEmail(users.getEmail());
+            userDtoResponse.setNumberPhone(users.getNumberPhone());
+            userDtoResponse.setDescription(users.getDescription());
+            Set<String> roleUnique = new HashSet<>();
+            userDtoResponse.setRolDtoList(
+                    users.getUsuarioProyectoRols().stream()
+                            .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                            .filter(roleUnique::add) // solo agrega si es nuevo
+                            .map(nombre -> {
+                                RolDto rolDto = new RolDto();
+                                rolDto.setName(nombre);
+                                return rolDto;
+                            })
+                            .collect(Collectors.toList())
+            );
+            return ResponseEntity.ok().body(userDtoResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("el error fue: " + e.getMessage());
         }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -36,6 +37,15 @@ public class Users {
     @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", flags = Pattern.Flag.CASE_INSENSITIVE,
             message = "emil incorrect")
     private String email;
+
+    @Column(name = "description",  length = 255)
+    private String description;
+
+    @Column(name = "phone", length = 60)
+    private String numberPhone;
+
+    @Column(name="entrydate")
+    private Date entryDate;
 
     @Column(name = "enabled", columnDefinition = "BOOLEAN DEFAULT true", nullable = false)
     private boolean enable;

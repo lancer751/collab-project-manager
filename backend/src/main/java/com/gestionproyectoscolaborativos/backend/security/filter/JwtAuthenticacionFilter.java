@@ -33,14 +33,12 @@ import static com.gestionproyectoscolaborativos.backend.security.TokenJwtConfig.
 
 public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilter {
 
-
-
     private AuthenticationManager authenticationManager;
-
-
-
-    public JwtAuthenticacionFilter(AuthenticationManager authenticationManager){
+    private UserServices userServices;
+    public JwtAuthenticacionFilter(AuthenticationManager authenticationManager, UserServices userServices){
         this.authenticationManager = authenticationManager;
+        this.userServices = userServices;
+
     }
 
     //logeo
@@ -70,6 +68,7 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
 
         String email = user.getUsername();
+
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
         Claims claims = Jwts.claims()
                 .add("authorities", new ObjectMapper().writeValueAsString(roles))
@@ -89,20 +88,27 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
 
         //refreshToken
         String refreshToken = generateRefreshToken(user);
+
+        // cookie token
+        Cookie firtsToken = new Cookie("token-jwt", token);
+        firtsToken.setHttpOnly(true);
+        firtsToken.setSecure(true);
+        firtsToken.setPath("/");
+        firtsToken.setMaxAge(83400); // 1 hora
+        response.addCookie(firtsToken);
+
         System.out.println("Refresh token = " + refreshToken);
+        Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
+        cookieRefresh.setHttpOnly(true); // impide q JS acceda a la cookie
+        cookieRefresh.setSecure(true);
+        cookieRefresh.setPath("/"); // para todo el backend
+        cookieRefresh.setMaxAge(86400); // 1 hora
 
-        Cookie cookie = new Cookie("refresh-token", refreshToken);
-        cookie.setHttpOnly(true); // impide q JS acceda a la cookie
-        cookie.setSecure(true);
-        cookie.setPath("/"); // para todo el backend
-        cookie.setMaxAge(86400); // 1 hora
-
-        response.addCookie(cookie);
+        response.addCookie(cookieRefresh);
 
         //response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
-        Map<String, String> body = new HashMap<>();
-        body.put("token", token);
-        body.put("username", email);
+        Map<String, Object> body = new HashMap<>();
+        body.put("user", userServices.userByEmail(email));
         body.put("message", String.format("Hola %s has iniciado sesion con exito! ", email));
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setContentType(CONTENT_TYPE);

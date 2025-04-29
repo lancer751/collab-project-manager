@@ -9,15 +9,18 @@ import com.gestionproyectoscolaborativos.backend.repository.UserProjectRolReposi
 import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServices {
@@ -33,6 +36,7 @@ public class UserServices {
     @Autowired
     private UserProjectRolRepository userProjectRolRepository;
 
+    @Lazy // lo inyecta solo caundo se va usar
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -44,7 +48,8 @@ public class UserServices {
         user.setName(userDto.getName());
         user.setLastname(userDto.getLastname());
         user.setPassword(password);
-
+        user.setDescription(userDto.getDescription());
+        user.setNumberPhone(userDto.getNumberPhone());
         List<RolDto> rolDtoList = new ArrayList<>();
         List<UserProjectRol> userProjectRolList = new ArrayList<>();
 
@@ -80,13 +85,88 @@ public class UserServices {
         user.setActivities(null);
         userRepository.save(user);
         userProjectRolList.forEach(userProjectRolRepository::save);
-        return ResponseEntity.ok().body(new UserDto(userDto.getName(), userDto.getLastname(), userDto.getEmail(), password, rolDtoList));
+        return ResponseEntity.ok().body("user created");
+    }
+
+    @Transactional(readOnly = true)
+    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir) {
+
+        Page<Users> usersPage = userRepository.findAll(pageable);
+        List<UserDtoResponse> userDtoResponses = usersPage.getContent().stream().map(users -> {
+            UserDtoResponse userDtoResponse = new UserDtoResponse();
+            userDtoResponse.setId(users.getId());
+            userDtoResponse.setName(users.getName());
+            userDtoResponse.setLastname(users.getLastname());
+            userDtoResponse.setEmail(users.getEmail());
+            userDtoResponse.setNumberPhone(users.getNumberPhone());
+            userDtoResponse.setDescription(users.getDescription());
+            userDtoResponse.setActive(users.isEnable());
+            userDtoResponse.setEntryDate(users.getEntryDate());
+            Set<String> roleUnique = new HashSet<>();
+
+            List<RolDto> rolDtoList = users.getUsuarioProyectoRols().stream()
+                            .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                            .filter(roleUnique::add) // solo agrega si es nuevo
+                            .map(nombre -> {
+                                RolDto rolDto = new RolDto();
+                                rolDto.setName(nombre);
+                                return rolDto;
+                            }).collect(Collectors.toList());
+            userDtoResponse.setRolDtoList(rolDtoList);
+
+            return  userDtoResponse;
+        }).collect(Collectors.toList());
+
+        // 👇 Aquí haces la ordenación por rol si corresponde
+        if ("rol".equalsIgnoreCase(sortBy)) {
+            Comparator<UserDtoResponse> comparator = Comparator.comparing(user ->
+                    user.getRolDtoList().isEmpty() ? "" : user.getRolDtoList().get(0).getName()
+            );
+
+            if ("desc".equalsIgnoreCase(sortDir)) {
+                comparator = comparator.reversed();
+            }
+
+            userDtoResponses.sort(comparator);
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", userDtoResponses);
+        response.put("currentPage", usersPage.getNumber());
+        response.put("totalItems", usersPage.getTotalElements());
+        response.put("totalPages", usersPage.getTotalPages());
+        return ResponseEntity.ok().body(response);
     }
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByEmail(username);
     }
-    public Users userByEmail (String email) {
-        return  userRepository.findByEmail(email).orElseThrow();
+
+    public UserDtoResponse userByEmail (String email) {
+        Users users = userRepository.findByEmail(email).orElseThrow();
+
+        UserDtoResponse userDtoResponse = new UserDtoResponse();
+        userDtoResponse.setId(users.getId());
+        userDtoResponse.setName(users.getName());
+        userDtoResponse.setLastname(users.getLastname());
+        userDtoResponse.setEmail(users.getEmail());
+        userDtoResponse.setDescription(users.getDescription());
+        userDtoResponse.setEntryDate(users.getEntryDate());
+        userDtoResponse.setNumberPhone(users.getNumberPhone());
+        userDtoResponse.setActive(users.isEnable());
+        Set<String> roleUnique = new HashSet<>();
+        userDtoResponse.setRolDtoList(
+                users.getUsuarioProyectoRols().stream()
+                        .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                        .filter(roleUnique::add) // solo agrega si es nuevo
+                        .map(nombre -> {
+                            RolDto rolDto = new RolDto();
+                            rolDto.setName(nombre);
+                            return rolDto;
+                        })
+                        .collect(Collectors.toList())
+        );
+        return  userDtoResponse;
     }
+    // endpoint con el token
+    // user -> todo menos su contraseña
 }

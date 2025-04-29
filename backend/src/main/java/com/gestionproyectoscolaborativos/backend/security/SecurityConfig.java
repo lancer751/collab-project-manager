@@ -2,6 +2,7 @@ package com.gestionproyectoscolaborativos.backend.security;
 
 import com.gestionproyectoscolaborativos.backend.security.filter.JwtAuthenticacionFilter;
 import com.gestionproyectoscolaborativos.backend.security.filter.JwtValidationFilter;
+import com.gestionproyectoscolaborativos.backend.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,9 @@ public class SecurityConfig {
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
 
+    @Autowired
+    private  UserServices userServices;
+
 
     @Bean
     AuthenticationManager authenticationManager () throws Exception {
@@ -51,9 +55,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/dashboardadmin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/project/").authenticated()
                         .anyRequest().authenticated())
-                .addFilter(new JwtAuthenticacionFilter(authenticationConfiguration.getAuthenticationManager()))
+                .addFilter(new JwtAuthenticacionFilter(authenticationConfiguration.getAuthenticationManager(), userServices))
                 .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .csrf(config -> config.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(managment -> managment.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }

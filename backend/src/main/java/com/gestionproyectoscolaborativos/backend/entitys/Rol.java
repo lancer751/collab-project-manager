@@ -3,13 +3,11 @@ package com.gestionproyectoscolaborativos.backend.entitys;
 import com.gestionproyectoscolaborativos.backend.entitys.fields.AuditFields;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor

@@ -8,6 +8,7 @@ com\gestionproyectoscolaborativos\backend\entitys\Users.class
 com\gestionproyectoscolaborativos\backend\security\TokenJwtConfig.class
 com\gestionproyectoscolaborativos\backend\security\SecurityConfig.class
 com\gestionproyectoscolaborativos\backend\BackendApplication.class
+com\gestionproyectoscolaborativos\backend\Controller\dashboard\users\PageUser.class
 com\gestionproyectoscolaborativos\backend\security\validation\ExistsByUsername.class
 com\gestionproyectoscolaborativos\backend\repository\ActivityRepository.class
 com\gestionproyectoscolaborativos\backend\services\JpaUserDetailsServices.class
@@ -19,6 +20,7 @@ com\gestionproyectoscolaborativos\backend\security\filter\JwtAuthenticacionFilte
 com\gestionproyectoscolaborativos\backend\services\UserServices.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\StateDto.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\ProjectDtoResponse.class
+com\gestionproyectoscolaborativos\backend\auth\Login.class
 com\gestionproyectoscolaborativos\backend\entitys\tablesintermedate\UserProjectRol.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\UserCountActivityDto.class
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.class
@@ -27,7 +29,6 @@ com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectDto.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\KpisClave.class
 com\gestionproyectoscolaborativos\backend\entitys\Report.class
 com\gestionproyectoscolaborativos\backend\security\filter\JwtValidationFilter.class
-com\gestionproyectoscolaborativos\backend\Controller\dashboard\Login.class
 com\gestionproyectoscolaborativos\backend\entitys\Rol.class
 com\gestionproyectoscolaborativos\backend\services\ProjectServices.class
 com\gestionproyectoscolaborativos\backend\repository\RolRepository.class

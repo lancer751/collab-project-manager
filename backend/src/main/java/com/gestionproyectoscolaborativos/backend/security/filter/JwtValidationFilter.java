@@ -42,8 +42,16 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             // Buscar la cookie con nombre "jwt-token"
             if (request.getCookies() != null) {
                 for (Cookie cookie : request.getCookies()) {
+                    if("token-jwt".equals(cookie.getName())) { // token de logeo
+                        header = PREFIX_TOKEN + cookie.getValue();
+                        break;
+                    }
+                }
+            }
+            if (header == null) { // Si no se encontró token-jwt
+                for (Cookie cookie : request.getCookies()) {
                     if ("refresh-token".equals(cookie.getName())) {
-                        header = PREFIX_TOKEN + cookie.getValue(); // construimos el header
+                        header = PREFIX_TOKEN + cookie.getValue();
                         break;
                     }
                 }

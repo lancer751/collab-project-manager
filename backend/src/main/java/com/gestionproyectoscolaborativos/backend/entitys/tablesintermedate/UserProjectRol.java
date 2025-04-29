@@ -4,12 +4,9 @@ import com.gestionproyectoscolaborativos.backend.entitys.Project;
 import com.gestionproyectoscolaborativos.backend.entitys.Rol;
 import com.gestionproyectoscolaborativos.backend.entitys.Users;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
