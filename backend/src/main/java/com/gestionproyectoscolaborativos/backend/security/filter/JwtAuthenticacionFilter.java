@@ -98,9 +98,9 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         // 1 hora
         response.addCookie(firtsToken);*/
         // Agrega SameSite manualmente:
-        response.addHeader("Set-Cookie",
-                String.format("token-jwt=%s; Max-Age=3600; Path=/; HttpOnly; SameSite=Strict", token)
-        );
+        response.setHeader("Set-Cookie",
+                "token-jwt=" + token + "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=86400");
+
 
         System.out.println("Refresh token = " + refreshToken);
        /* Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
@@ -112,7 +112,7 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         response.addCookie(cookieRefresh);*/
         // Cookie del refresh token
         response.addHeader("Set-Cookie",
-                String.format("refresh-token=%s; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Strict", refreshToken)
+                String.format("refresh-token=%s; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=None", refreshToken)
         );
 
 
