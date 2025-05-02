@@ -14,8 +14,14 @@ public class Login {
 
     @GetMapping("/validation")
     private ResponseEntity<?> validation () {
-        HashMap<String, String> json = new HashMap<>();
-        json.put("message", "correct access");
-        return ResponseEntity.ok().body(json);
+        try {
+            HashMap<String, String> json = new HashMap<>();
+            json.put("message", "correct access");
+            return ResponseEntity.ok().body(json);
+        }catch (Exception e) {
+            HashMap<String, String> json = new HashMap<>();
+            json.put("message", "no estas autenticado");
+            return ResponseEntity.badRequest().body(json);
+        }
     }
 }

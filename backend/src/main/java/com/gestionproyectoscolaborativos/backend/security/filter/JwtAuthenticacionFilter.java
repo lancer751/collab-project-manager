@@ -92,7 +92,7 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         // cookie token
         Cookie firtsToken = new Cookie("token-jwt", token);
         firtsToken.setHttpOnly(false);
-        firtsToken.setSecure(true); // impide q js
+        firtsToken.setSecure(false); // impide q js
         firtsToken.setPath("/");
         firtsToken.setMaxAge(83400); // 1 hora
         response.addCookie(firtsToken);
