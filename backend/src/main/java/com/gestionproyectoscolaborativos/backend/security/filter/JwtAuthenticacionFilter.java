@@ -100,7 +100,7 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("Refresh token = " + refreshToken);
         Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
         cookieRefresh.setHttpOnly(false); // impide q JS acceda a la cookie
-        cookieRefresh.setSecure(true);
+        cookieRefresh.setSecure(false);
         cookieRefresh.setPath("/"); // para todo el backend
         cookieRefresh.setMaxAge(86400); // 1 hora
 
