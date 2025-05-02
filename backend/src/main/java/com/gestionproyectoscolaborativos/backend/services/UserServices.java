@@ -10,6 +10,9 @@ import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
+import com.gestionproyectoscolaborativos.backend.services.mail.impl.IEmailServices;
+import com.gestionproyectoscolaborativos.backend.services.mail.model.EmailDto;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -34,64 +37,80 @@ public class UserServices {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private UserProjectRolRepository userProjectRolRepository;
+    private IEmailServices emailServices;
 
-    @Lazy // lo inyecta solo caundo se va usar
+    @Autowired
+    private UserProjectRolRepository userProjectRolRepository;
+    // lo inyecta solo caundo se va usar
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
     public ResponseEntity<?> save (UserDto userDto) {
-        String password = passwordEncoder.encode(userDto.getPassword());
+        try {
 
-        Users user = new Users();
-        user.setName(userDto.getName());
-        user.setLastname(userDto.getLastname());
-        user.setPassword(password);
-        user.setDescription(userDto.getDescription());
-        user.setNumberPhone(userDto.getNumberPhone());
-        List<RolDto> rolDtoList = new ArrayList<>();
-        List<UserProjectRol> userProjectRolList = new ArrayList<>();
+            String password = passwordEncoder.encode(userDto.getPassword());
 
-        UserProjectRol userProjectRol = new UserProjectRol();
-        userDto.getRolDtoList().forEach(e -> rolDtoList.add(e));
+            Users user = new Users();
+            user.setName(userDto.getName());
+            user.setLastname(userDto.getLastname());
+            user.setPassword(password);
+            user.setDescription(userDto.getDescription());
+            user.setNumberPhone(userDto.getNumberPhone());
+            List<RolDto> rolDtoList = new ArrayList<>();
+            List<UserProjectRol> userProjectRolList = new ArrayList<>();
 
-        for (RolDto r : rolDtoList) {
-            Optional<Rol> rol = rolRepository.findByName(r.getName());
-            if (!rol.isPresent()) {
-                UserProjectRol userProjectRolNew = new UserProjectRol();
-                Rol rol1 = new Rol();
-                rol1.setName(r.getName());
-                rolRepository.save(rol1);
+            UserProjectRol userProjectRol = new UserProjectRol();
+            userDto.getRolDtoList().forEach(e -> rolDtoList.add(e));
 
-                userProjectRolNew.setRol(rol1);
-                userProjectRolNew.setUsers(user);
-                userProjectRolNew.setProject(null);
-                userProjectRolList.add(userProjectRolNew);
+            for (RolDto r : rolDtoList) {
+                Optional<Rol> rol = rolRepository.findByName(r.getName());
+                if (!rol.isPresent()) {
+                    UserProjectRol userProjectRolNew = new UserProjectRol();
+                    Rol rol1 = new Rol();
+                    rol1.setName(r.getName());
+                    rolRepository.save(rol1);
 
-            }else{
-                UserProjectRol userProjectRolNew = new UserProjectRol();
-                userProjectRolNew.setRol(rol.get());
-                userProjectRolNew.setUsers(user);
-                userProjectRolNew.setProject(null);
+                    userProjectRolNew.setRol(rol1);
+                    userProjectRolNew.setUsers(user);
+                    userProjectRolNew.setProject(null);
+                    userProjectRolList.add(userProjectRolNew);
 
-                userProjectRolList.add(userProjectRolNew);
+                }else{
+                    UserProjectRol userProjectRolNew = new UserProjectRol();
+                    userProjectRolNew.setRol(rol.get());
+                    userProjectRolNew.setUsers(user);
+                    userProjectRolNew.setProject(null);
+
+                    userProjectRolList.add(userProjectRolNew);
+                }
             }
+            user.setEmail(userDto.getEmail());
+            user.setUsuarioProyectoRols(userProjectRolList);
+            user.setEnable(true);
+            user.setActivities(null);
+            userRepository.save(user);
+            userProjectRolList.forEach(userProjectRolRepository::save);
+
+            emailSender(userDto);
+            return ResponseEntity.ok().body("user created");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("hubo un error " + e.getMessage());
         }
 
-        user.setEmail(userDto.getEmail());
-        user.setUsuarioProyectoRols(userProjectRolList);
-        user.setEnable(true);
-        user.setActivities(null);
-        userRepository.save(user);
-        userProjectRolList.forEach(userProjectRolRepository::save);
-        return ResponseEntity.ok().body("user created");
     }
 
     @Transactional(readOnly = true)
-    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir) {
+    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable) {
 
         Page<Users> usersPage = userRepository.findAll(pageable);
+        if (enable.equals("true")) {
+            usersPage = userRepository.findByEnable(true, pageable);
+        } else if (enable.equals("false")) {
+            usersPage = userRepository.findByEnable(false, pageable);
+        }
+
         List<UserDtoResponse> userDtoResponses = usersPage.getContent().stream().map(users -> {
             UserDtoResponse userDtoResponse = new UserDtoResponse();
             userDtoResponse.setId(users.getId());
@@ -116,6 +135,7 @@ public class UserServices {
 
             return  userDtoResponse;
         }).collect(Collectors.toList());
+
 
         // 👇 Aquí haces la ordenación por rol si corresponde
         if ("rol".equalsIgnoreCase(sortBy)) {
@@ -169,4 +189,16 @@ public class UserServices {
     }
     // endpoint con el token
     // user -> todo menos su contraseña
+    private void emailSender (UserDto userDto) throws MessagingException {
+        Map<String, String> message = new HashMap<>();
+        message.put("name", userDto.getName() + " " + userDto.getLastname());
+        message.put("username", userDto.getEmail());
+        message.put("password", userDto.getPassword());
+        EmailDto emailDto = new EmailDto();
+        emailDto.setTo(userDto.getEmail());
+        emailDto.setSubject("Bienvenido a mescob ");
+        emailDto.setMessage(message);
+
+        emailServices.sendMail(emailDto);
+    }
 }

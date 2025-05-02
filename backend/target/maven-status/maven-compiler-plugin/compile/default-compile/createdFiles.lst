@@ -1,3 +1,4 @@
+com\gestionproyectoscolaborativos\backend\config\EmailConfig.class
 com\gestionproyectoscolaborativos\backend\repository\StateRepository.class
 com\gestionproyectoscolaborativos\backend\services\dashboard\PageStartServices.class
 com\gestionproyectoscolaborativos\backend\entitys\Project.class
@@ -16,6 +17,7 @@ com\gestionproyectoscolaborativos\backend\repository\ProjectRepository.class
 com\gestionproyectoscolaborativos\backend\repository\UserRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\RolDto.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\UserDto.class
+com\gestionproyectoscolaborativos\backend\services\mail\model\EmailDto.class
 com\gestionproyectoscolaborativos\backend\security\filter\JwtAuthenticacionFilter.class
 com\gestionproyectoscolaborativos\backend\services\UserServices.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\StateDto.class
@@ -29,8 +31,10 @@ com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectDto.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\KpisClave.class
 com\gestionproyectoscolaborativos\backend\entitys\Report.class
 com\gestionproyectoscolaborativos\backend\security\filter\JwtValidationFilter.class
+com\gestionproyectoscolaborativos\backend\services\mail\impl\IEmailServices.class
 com\gestionproyectoscolaborativos\backend\entitys\Rol.class
 com\gestionproyectoscolaborativos\backend\services\ProjectServices.class
+com\gestionproyectoscolaborativos\backend\services\mail\impl\EmailServicesImpl.class
 com\gestionproyectoscolaborativos\backend\repository\RolRepository.class
 com\gestionproyectoscolaborativos\backend\entitys\Coment.class
 com\gestionproyectoscolaborativos\backend\entitys\Activity.class

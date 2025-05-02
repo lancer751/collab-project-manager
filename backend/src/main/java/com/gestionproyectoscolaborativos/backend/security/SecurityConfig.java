@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +29,7 @@ public class SecurityConfig {
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
-
+    @Lazy
     @Autowired
     private  UserServices userServices;
 
@@ -48,7 +49,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain (HttpSecurity http) throws Exception{
         return http.authorizeHttpRequests((authz) -> authz
-                .requestMatchers(HttpMethod.POST, "/dashboard/registeruser").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
+                .requestMatchers(HttpMethod.POST, "/dashboardadmin/registeruser").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.POST, "/project/add").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.PUT, "/project/edit/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
