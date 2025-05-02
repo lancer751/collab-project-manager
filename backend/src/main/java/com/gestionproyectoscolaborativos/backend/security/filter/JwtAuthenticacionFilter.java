@@ -90,21 +90,31 @@ public class JwtAuthenticacionFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = generateRefreshToken(user);
 
         // cookie token
-        Cookie firtsToken = new Cookie("token-jwt", token);
-        firtsToken.setHttpOnly(false);
-        firtsToken.setSecure(false); // impide q js
+       /* Cookie firtsToken = new Cookie("token-jwt", token);
+        firtsToken.setHttpOnly(true);
+        firtsToken.setSecure(true); // impide q js
         firtsToken.setPath("/");
-        firtsToken.setMaxAge(83400); // 1 hora
-        response.addCookie(firtsToken);
+        firtsToken.setMaxAge(60 * 60);
+        // 1 hora
+        response.addCookie(firtsToken);*/
+        // Agrega SameSite manualmente:
+        response.addHeader("Set-Cookie",
+                String.format("token-jwt=%s; Max-Age=3600; Path=/; HttpOnly; SameSite=Strict", token)
+        );
 
         System.out.println("Refresh token = " + refreshToken);
-        Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
+       /* Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
         cookieRefresh.setHttpOnly(false); // impide q JS acceda a la cookie
         cookieRefresh.setSecure(false);
         cookieRefresh.setPath("/"); // para todo el backend
         cookieRefresh.setMaxAge(86400); // 1 hora
 
-        response.addCookie(cookieRefresh);
+        response.addCookie(cookieRefresh);*/
+        // Cookie del refresh token
+        response.addHeader("Set-Cookie",
+                String.format("refresh-token=%s; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Strict", refreshToken)
+        );
+
 
         //response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
         Map<String, Object> body = new HashMap<>();
