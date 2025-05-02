@@ -55,7 +55,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.GET, "/dashboardadmin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/project/").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/dashboard/validation").permitAll()
                         .anyRequest().authenticated())
+
                 .addFilter(new JwtAuthenticacionFilter(authenticationConfiguration.getAuthenticationManager(), userServices))
                 .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .csrf(config -> config.disable())
