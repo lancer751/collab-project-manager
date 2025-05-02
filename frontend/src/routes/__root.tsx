@@ -19,6 +19,7 @@ export const Route = createRootRouteWithContext<MyRouterContex>()({
       </div>
     );
   },
+  pendingMs: 200
 });
 
 function RootComponent() {

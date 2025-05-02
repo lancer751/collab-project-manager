@@ -4,14 +4,21 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth")({
-  beforeLoad: ({context, location}) => {
-    if(!context.auth.authUser){
+  beforeLoad: async ({context, location}) => {
+    const currentUser = await context.auth.isAuthenticated()
+    if(!currentUser){
       throw redirect({
         to: "/",
         search: {
           redirect: location.href
         }
       })
+    }
+    return {
+      auth: {
+        ...context.auth,
+        user: currentUser
+      }
     }
   },
   component: RouteComponent,
@@ -28,7 +35,7 @@ function RouteComponent() {
             <Separator orientation="vertical" className="mr-2 h-4" />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="p-4">
           <Outlet/>
         </div>
       </SidebarInset>

@@ -6,14 +6,15 @@ import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./components/theme-provider";
 import { AuthProvider } from "./contexts/Auth";
 import { useAuth } from "./hooks/useAuth";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   scrollRestoration: true,
   context: {
-    auth: undefined!
-  }
+    auth: undefined!,
+  },
 });
 
 declare module "@tanstack/react-router" {
@@ -22,19 +23,22 @@ declare module "@tanstack/react-router" {
   }
 }
 
-function InnerApp(){
-  const auth = useAuth()
+function InnerApp() {
+  const auth = useAuth();
   return (
-    <RouterProvider router={router} context={{auth}}/>
-  )
+    <>
+      <RouterProvider router={router} context={{ auth }} />
+      <TanStackRouterDevtools router={router} position="bottom-right"/>
+    </>
+  );
 }
 
-function App () {
+function App() {
   return (
     <AuthProvider>
-      <InnerApp/>
+      <InnerApp />
     </AuthProvider>
-  )
+  );
 }
 
 const rootElement = document.getElementById("app")!;
@@ -44,7 +48,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <App/>
+        <App />
       </ThemeProvider>
     </StrictMode>
   );

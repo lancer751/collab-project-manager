@@ -1,11 +1,30 @@
 import LoginForm from "@/components/auth/LoginForm";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+} from "@tanstack/react-router";
+import { z } from "zod";
+
+export const fallback = "/dashboard" as const;
 
 export const Route = createFileRoute("/")({
-  component: RouteComponent,
+  validateSearch: z.object({
+    redirect: z.string().optional().catch(""),
+  }),
+  beforeLoad: async ({ context, search }) => {
+    const {auth} = context
+    const authenticated = await auth.isAuthenticated()
+    console.log(authenticated)
+    if (authenticated) {
+      throw redirect({ to: search.redirect || fallback });
+    }
+  },
+  component: LoginPage,
 });
 
-function RouteComponent() {
+function LoginPage() {
+  
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:py-10">

@@ -71,6 +71,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --completed: oklch(0.72 0.2294 155.65);
+  --canceled: oklch(0.72 0.1677 34.94);
+  --task-status-revision: oklch(0.51 0.2565 296.47);
+  --task-status-inprogress: oklch(0.86 0.1532 92.12);
+  --task-status-completed: oklch(0.72 0.2294 155.65);
+  --task-status-archived: oklch(0.85 0.0937 84.71 );
+  --task-status-unstarted:  oklch(0.87 0.0271 237.18);
 }
 
 .dark {

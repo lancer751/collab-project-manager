@@ -1,16 +1,16 @@
-import { isAuthenticated, login, logout } from "@/services/auth";
+import { isAuthenticated as authCheck, login, logout } from "@/services/auth";
+import { UserLoginData } from "@/types/auth.types";
 import { User } from "@/types/user.types";
 import {
   createContext,
   ReactNode,
   useCallback,
-  useEffect,
   useState,
 } from "react";
 
 export interface AuthContext {
-  authUser: boolean;
-  loginUser: (userData: { email: string; password: string }) => Promise<void>;
+  isAuthenticated: () => Promise<User | null>;
+  loginUser: (userData: UserLoginData) => Promise<void>;
   logoutSession: () => Promise<void>;
   user: User | null;
 }
@@ -19,21 +19,17 @@ export const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const authUser = !!user
+  console.log(user);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await isAuthenticated();
-      setUser(user);
-    };
-
-    fetchUser();
-  }, []);
+  const isAuthenticated = useCallback(async () => {
+    const user = await authCheck()
+    setUser(user)
+    return user
+  }, [])
 
   const loginUser = useCallback(
-    async (userData: { email: string; password: string }) => {
-      const user = await login(userData);
-      setUser(user);
+    async (userData:UserLoginData) => {
+      await login(userData);
     },
     []
   );
@@ -45,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ authUser, user, loginUser, logoutSession }}
+      value={{ isAuthenticated, user, loginUser, logoutSession }}
     >
       {children}
     </AuthContext.Provider>

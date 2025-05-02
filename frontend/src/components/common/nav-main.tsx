@@ -1,4 +1,4 @@
-"use client";
+
 import {
   SidebarGroup,
   SidebarMenu,
@@ -24,7 +24,7 @@ export function NavMain({ items }: NavMainProps) {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem>
+          <SidebarMenuItem key={item.url}>
             <SidebarMenuButton tooltip={item.title} asChild>
               <Link to={item.url}>
                 {item.icon && <item.icon />}

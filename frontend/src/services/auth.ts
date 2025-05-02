@@ -1,25 +1,12 @@
+import { UserLoginData } from "@/types/auth.types";
 import { User } from "@/types/user.types";
+import { mainApiInstance } from "./instaces";
 
-export async function login(userData: {
-  email: string;
-  password: string;
-}): Promise<User> {
+export async function login(userData: UserLoginData): Promise<User> {
   try {
-    const response = await fetch("/api/auth/login", {
-      method: "post",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+    const response = await mainApiInstance.post<User>("/login", userData);
 
-    const data: User = await response.json();
-
-    if (!response.ok) {
-      return data;
-    }
-
-    return data;
+    return response.data;
   } catch (error) {
     console.log("Error in login", error);
     throw error;
@@ -28,7 +15,7 @@ export async function login(userData: {
 
 export async function logout() {
   try {
-    const response = await fetch("/api/logout", {
+    const response = await fetch("/logout", {
       method: "post",
     });
 
@@ -42,14 +29,12 @@ export async function logout() {
 
 export async function isAuthenticated(): Promise<User | null> {
   try {
-    const res = await fetch("/api/getMe");
-    if (!res.ok) {
-      return null;
-    }
-    const data: User = await res.json();
-    return data;
+    const response = await mainApiInstance.get<User>("/dashboard/validation", {
+      withCredentials: true,
+    });
+    return response.data;
   } catch (error) {
-    console.log(error);
-    throw new Error("Error in isAuthenticated service");
+    console.log("error", error);
+    return null;
   }
 }
