@@ -4,6 +4,8 @@ import com.gestionproyectoscolaborativos.backend.entitys.Project;
 import com.gestionproyectoscolaborativos.backend.entitys.Rol;
 import com.gestionproyectoscolaborativos.backend.entitys.Users;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +21,10 @@ public interface UserProjectRolRepository extends JpaRepository<UserProjectRol, 
     @Query("SELECT upr.rol FROM UserProjectRol upr WHERE upr.users = :user")
     List<Rol> findRolesByUser(@Param("user") Users user);
 
-    @Query("SELECT upr FROM UserProjectRol upr WHERE upr.users = :user AND upr.rol = :rol")
-    List<UserProjectRol> findRolesByUserRole(@Param("user") Users users, @Param("rol") Rol rol);
+
+    Page<Users> findUsersByRol(Rol rol, Pageable pageable);
+
+
 
     @Query("SELECT upr FROM UserProjectRol upr WHERE upr.users = :user")
     List<UserProjectRol> findByUsers(@Param("user") Users users);

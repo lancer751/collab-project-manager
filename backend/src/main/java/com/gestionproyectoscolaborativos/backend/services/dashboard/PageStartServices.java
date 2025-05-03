@@ -48,7 +48,7 @@ public class PageStartServices {
             userDtoResponse.setDescription(users.getDescription());
             Set<String> roleUnique = new HashSet<>();
             userDtoResponse.setRolDtoList(
-                    users.getUsuarioProyectoRols().stream()
+                    users.getUserProjectRols().stream()
                             .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
                             .filter(roleUnique::add) // solo agrega si es nuevo
                             .map(nombre -> {

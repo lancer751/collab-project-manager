@@ -13,8 +13,15 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<Users, Integer> {
     boolean existsByEmail (String email);
-    @EntityGraph(attributePaths = {"usuarioProyectoRols", "usuarioProyectoRols.rol"}) // para que se cargue cuando realmente se tiene que usar
+
+    @EntityGraph(attributePaths = {"userProjectRols", "userProjectRols.rol"}) // para que se cargue cuando realmente se tiene que usar
     Optional<Users> findByEmail (String email);
 
     Page<Users> findByEnable (boolean enable, Pageable page);
+
+    // Filtra usuarios por Rol.name (ignorando mayúsculas) y devuelve Page<Users>
+    Page<Users> findDistinctByUserProjectRols_Rol_NameIgnoreCase(
+            String roleName,
+            Pageable pageable
+    );
 }

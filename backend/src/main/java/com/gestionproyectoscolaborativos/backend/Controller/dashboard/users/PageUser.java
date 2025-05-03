@@ -18,6 +18,7 @@ public class PageUser {
     // Pagination users
     @GetMapping("/user")
     public ResponseEntity<?> read(
+            @RequestParam(defaultValue = "") String role,
             @RequestParam(defaultValue = "") String enable,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size,
@@ -33,7 +34,7 @@ public class PageUser {
             pageable = PageRequest.of(page, size, sort);
         }
 
-        return userServices.read(pageable, sortBy, sortDir, enable);
+        return userServices.read(pageable, sortBy, sortDir, enable, role);
     }
 
     @PostMapping("/registeruser")

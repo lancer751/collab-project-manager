@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.GET, "/dashboardadmin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/project/").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/dashboard/logout").authenticated()
                         .requestMatchers(HttpMethod.GET, "/dashboard/validation").permitAll()
                         .anyRequest().authenticated())
 

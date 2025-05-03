@@ -108,7 +108,7 @@ public class ProjectServices {
         if (projectDto.getUserDtos() != null) {
             for (UserDtoResponse userDto : projectDto.getUserDtos()) {
                 userRepository.findByEmail(userDto.getEmail()).ifPresent(extraUser -> {
-                    Rol extraRol = extraUser.getUsuarioProyectoRols().stream().map(UserProjectRol::getRol)
+                    Rol extraRol = extraUser.getUserProjectRols().stream().map(UserProjectRol::getRol)
                             .filter(r -> !"ROLE_ADMIN".equals(r.getName()))
                             .findFirst()
                             .orElse(null);
@@ -170,7 +170,7 @@ public class ProjectServices {
         // add users
         for (String email : emailsForAdd) {
             Users users = userRepository.findByEmail(email).orElseThrow();
-            Optional<Rol> rolOptional= users.getUsuarioProyectoRols().stream()
+            Optional<Rol> rolOptional= users.getUserProjectRols().stream()
                     .map(UserProjectRol::getRol)
                     .filter(rol -> !"ROLE_ADMIN".equals(rol.getName()))
                     .findFirst();
@@ -211,7 +211,7 @@ public class ProjectServices {
     }
 
     private Rol getUserValidRol(Users user) {
-        return user.getUsuarioProyectoRols().stream()
+        return user.getUserProjectRols().stream()
                 .map(UserProjectRol::getRol)
                 .filter(role -> !"ROLE_ADMIN".equals(role.getName()))
                 .findFirst()

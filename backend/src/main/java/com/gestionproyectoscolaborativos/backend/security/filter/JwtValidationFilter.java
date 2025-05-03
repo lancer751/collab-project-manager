@@ -49,10 +49,12 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
                 }
             }
             if (header == null) { // Si no se encontró token-jwt
-                for (Cookie cookie : request.getCookies()) {
-                    if ("refresh-token".equals(cookie.getName())) {
-                        header = PREFIX_TOKEN + cookie.getValue();
-                        break;
+                if(request.getCookies() != null ) {
+                    for (Cookie cookie : request.getCookies()) {
+                        if ("refresh-token".equals(cookie.getName())) {
+                            header = PREFIX_TOKEN + cookie.getValue();
+                            break;
+                        }
                     }
                 }
             }

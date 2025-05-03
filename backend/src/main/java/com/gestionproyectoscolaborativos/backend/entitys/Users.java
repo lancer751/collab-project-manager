@@ -57,7 +57,7 @@ public class Users {
     private AuditFields auditFields;
 
     @OneToMany(mappedBy = "users")
-    private List<UserProjectRol> usuarioProyectoRols;
+    private List<UserProjectRol> userProjectRols;
 
     @ManyToMany
     @JoinTable(name = "user_activities",

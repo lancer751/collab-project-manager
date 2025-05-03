@@ -16,6 +16,7 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -87,7 +88,7 @@ public class UserServices {
                 }
             }
             user.setEmail(userDto.getEmail());
-            user.setUsuarioProyectoRols(userProjectRolList);
+            user.setUserProjectRols(userProjectRolList);
             user.setEnable(true);
             user.setActivities(null);
             userRepository.save(user);
@@ -102,13 +103,20 @@ public class UserServices {
     }
 
     @Transactional(readOnly = true)
-    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable) {
+    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable, String role) {
 
         Page<Users> usersPage = userRepository.findAll(pageable);
         if (enable.equals("true")) {
             usersPage = userRepository.findByEnable(true, pageable);
         } else if (enable.equals("false")) {
             usersPage = userRepository.findByEnable(false, pageable);
+        }
+        if (!role.isBlank()) {
+            Rol rolOptional = rolRepository.findByName(role).orElseThrow(); // Obtienes el rol por nombre
+            usersPage = userRepository
+                    .findDistinctByUserProjectRols_Rol_NameIgnoreCase(role, pageable);; // Llamas al repositorio para obtener los usuarios
+        } else {
+            usersPage = userRepository.findAll(pageable);
         }
 
         List<UserDtoResponse> userDtoResponses = usersPage.getContent().stream().map(users -> {
@@ -123,7 +131,7 @@ public class UserServices {
             userDtoResponse.setEntryDate(users.getEntryDate());
             Set<String> roleUnique = new HashSet<>();
 
-            List<RolDto> rolDtoList = users.getUsuarioProyectoRols().stream()
+            List<RolDto> rolDtoList = users.getUserProjectRols().stream()
                             .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
                             .filter(roleUnique::add) // solo agrega si es nuevo
                             .map(nombre -> {
@@ -175,7 +183,7 @@ public class UserServices {
         userDtoResponse.setActive(users.isEnable());
         Set<String> roleUnique = new HashSet<>();
         userDtoResponse.setRolDtoList(
-                users.getUsuarioProyectoRols().stream()
+                users.getUserProjectRols().stream()
                         .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
                         .filter(roleUnique::add) // solo agrega si es nuevo
                         .map(nombre -> {
