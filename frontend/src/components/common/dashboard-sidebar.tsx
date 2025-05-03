@@ -21,37 +21,37 @@ const data = {
   navMain: [
     {
       title: "Inicio",
-      url: "/dashboard",
+      url: "/dashboard/inicio",
       icon: House,
       isActive: true,
     },
     {
       title: "Bandeja de Entrada",
-      url: "/inbox",
+      url: "/dashboard/inbox",
       icon: Inbox,
       isActive: false,
     },
     {
       title: "Usuarios",
-      url: "/users",
+      url: "/dashboard/users",
       icon: UsersRound,
       isActive: false,
     },
     {
       title: "Proyectos",
-      url: "/proyectos",
+      url: "/dashboard/projects",
       icon: Target,
       isActive: false,
     },
     {
       title: "Tareas",
-      url: "/tareas",
+      url: "/dashboard/tasks",
       icon: SquareCheck,
       isActive: false,
     },
     {
       title: "Ajustes",
-      url: "/settings",
+      url: "/dashboard/settings",
       icon: Settings,
       isActive: false,
     },
@@ -60,7 +60,7 @@ const data = {
 
 export function DasboardSidebar({ ...props }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar variant="sidebar" className="top-16" collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser user={data.user} />
       </SidebarHeader>

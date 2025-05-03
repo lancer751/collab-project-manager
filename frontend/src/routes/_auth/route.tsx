@@ -1,7 +1,7 @@
-import { DasboardSidebar } from "@/components/common/dashboard-sidebar";
-import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { SearchForm } from "@/components/common/SearchForm";
+import { LoadingScreen } from "@/components/common/LoadingScreen";
 
 export const Route = createFileRoute("/_auth")({
   beforeLoad: async ({context, location}) => {
@@ -22,23 +22,31 @@ export const Route = createFileRoute("/_auth")({
     }
   },
   component: RouteComponent,
+  pendingComponent: () => <LoadingScreen/>
 });
 
 function RouteComponent() {
   return (
-    <SidebarProvider>
-      <DasboardSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-          </div>
-        </header>
-        <div className="p-4">
-          <Outlet/>
+    <>
+      <header className="sticky top-0 z-30 w-full border-b bg-background flex items-center h-16 px-4 gap-4">
+        {/* Logo a la izquierda */}
+        <div className="flex items-center min-w-32">
+          <img src="/logo.png" alt="logo" className="h-10 w-10" />
+          <span className="ml-2 font-bold text-lg hidden md:block">Mescob S.A.C</span>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        {/* Search al centro */}
+        <div className="flex-1 flex justify-center">
+          <SearchForm className="max-w-md w-full" />
+        </div>
+        {/* Avatar a la derecha */}
+        <div className="flex items-center min-w-16 justify-end">
+          <Avatar>
+            <AvatarImage src={undefined} alt="avatar" />
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
+        </div>
+      </header>
+      <Outlet/>
+    </>
   );
 }

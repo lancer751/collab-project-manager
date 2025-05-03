@@ -2,11 +2,9 @@ import { UserLoginData } from "@/types/auth.types";
 import { User } from "@/types/user.types";
 import { mainApiInstance } from "./instaces";
 
-export async function login(userData: UserLoginData): Promise<User> {
+export async function login(userData: UserLoginData): Promise<void> {
   try {
-    const response = await mainApiInstance.post<User>("/login", userData);
-
-    return response.data;
+    await mainApiInstance.post<User>("/login", userData);
   } catch (error) {
     console.log("Error in login", error);
     throw error;
@@ -18,10 +16,7 @@ export async function logout() {
     const response = await fetch("/logout", {
       method: "post",
     });
-
-    const data = await response.json();
-
-    return data;
+    await response.json();
   } catch (error) {
     console.log("Error in logout service", error);
   }
