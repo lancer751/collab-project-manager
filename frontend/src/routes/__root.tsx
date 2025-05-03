@@ -1,3 +1,4 @@
+import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { AuthContext } from "@/contexts/Auth";
 import {
   createRootRouteWithContext,
@@ -19,7 +20,8 @@ export const Route = createRootRouteWithContext<MyRouterContex>()({
       </div>
     );
   },
-  pendingMs: 200
+  pendingMs: 200,
+  pendingComponent: () => <LoadingScreen/>
 });
 
 function RootComponent() {

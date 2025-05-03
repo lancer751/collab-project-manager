@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { z } from "zod";
 
-export const fallback = "/dashboard" as const;
+export const fallback = "/dashboard/inicio" as const;
 
 export const Route = createFileRoute("/")({
   validateSearch: z.object({

@@ -1,4 +1,3 @@
-
 import {
   SidebarGroup,
   SidebarMenu,
@@ -25,12 +24,16 @@ export function NavMain({ items }: NavMainProps) {
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.url}>
-            <SidebarMenuButton tooltip={item.title} asChild>
-              <Link to={item.url}>
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
-              </Link>
-            </SidebarMenuButton>
+            <Link to={item.url}>
+              {({ isActive }) => (
+                <SidebarMenuButton className="cursor-pointer" isActive={isActive} tooltip={item.title}>
+                  <>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  </>
+                </SidebarMenuButton>
+              )}
+            </Link>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

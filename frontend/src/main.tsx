@@ -6,8 +6,7 @@ import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./components/theme-provider";
 import { AuthProvider } from "./contexts/Auth";
 import { useAuth } from "./hooks/useAuth";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-
+import { TanStackRouterDevtoolsInProd } from "@tanstack/react-router-devtools";
 export const router = createRouter({
   routeTree,
   defaultPreload: "intent",
@@ -28,7 +27,7 @@ function InnerApp() {
   return (
     <>
       <RouterProvider router={router} context={{ auth }} />
-      <TanStackRouterDevtools router={router} position="bottom-right"/>
+      <TanStackRouterDevtoolsInProd router={router} position="bottom-right"/>
     </>
   );
 }
@@ -46,10 +45,8 @@ const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
   const root = createRoot(rootElement);
   root.render(
-    <StrictMode>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <App />
       </ThemeProvider>
-    </StrictMode>
   );
 }
