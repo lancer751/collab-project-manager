@@ -78,8 +78,6 @@ public class AuthenticationServices {
             refreshCookie.setSecure(true);
             refreshCookie.setPath("/");
             refreshCookie.setMaxAge(0); // Elimina la cookie*/
-            response.setHeader("Set-Cookie",
-                    "token-jwt=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0");
 
             /* Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
             cookieRefresh.setHttpOnly(false); // impide q JS acceda a la cookie
@@ -89,7 +87,11 @@ public class AuthenticationServices {
 
             response.addCookie(cookieRefresh);*/
             // Cookie del refresh token
-            response.setHeader("Set-Cookie",
+
+            response.addHeader("Set-Cookie",
+                    "token-jwt=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0");
+
+            response.addHeader("Set-Cookie",
                     "refresh-token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0");
 
 
