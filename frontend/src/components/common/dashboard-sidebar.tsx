@@ -5,10 +5,21 @@ import {
   Inbox,
   UsersRound,
   Settings,
+  LogOut,
 } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "../ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "../ui/sidebar";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
+import { getRouteApi, useRouter } from "@tanstack/react-router";
+import { Button } from "../ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 // hardcode
 const data = {
@@ -59,15 +70,37 @@ const data = {
 };
 
 export function DasboardSidebar({ ...props }) {
+  const currRoute = getRouteApi("/_auth");
+  const router = useRouter()
+  const {user: currentUser, logoutSession} = useAuth()
+  const navigate = currRoute.useNavigate()
+
+  const handleLogout = () => {
+    logoutSession().then(() => {
+      router.invalidate().finally(() => {
+        navigate({to: "/"})
+      })
+    })
+  }
+
   return (
-    <Sidebar variant="sidebar" className="top-16" collapsible="icon" {...props}>
+    <Sidebar
+      variant="sidebar"
+      className="top-16 h-[calc(100%-64px)]"
+      collapsible="icon"
+      {...props}
+    >
       <SidebarHeader>
-        <NavUser user={data.user} />
+        <NavUser user={currentUser} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain}></NavMain>
       </SidebarContent>
       <SidebarFooter>
+        <Button onClick={handleLogout} variant={"destructive"}>
+          <LogOut/>
+          <span>Salir</span>
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );

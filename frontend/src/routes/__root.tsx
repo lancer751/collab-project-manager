@@ -1,27 +1,21 @@
-import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { AuthContext } from "@/contexts/Auth";
 import {
   createRootRouteWithContext,
   Link,
   Outlet,
 } from "@tanstack/react-router";
+import {QueryClient} from "@tanstack/react-query"
+import NotFound from "@/components/common/NotFound";
 
 interface MyRouterContex {
-  auth: AuthContext
+  auth: AuthContext,
+  queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContex>()({
   component: RootComponent,
-  notFoundComponent: () => {
-    return (
-      <div>
-        <h1>404 not found</h1>
-        <Link to="/">Regresar</Link>
-      </div>
-    );
-  },
+  notFoundComponent: NotFound,
   pendingMs: 200,
-  pendingComponent: () => <LoadingScreen/>
 });
 
 function RootComponent() {

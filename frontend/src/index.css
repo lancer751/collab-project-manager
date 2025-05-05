@@ -78,6 +78,11 @@
   --task-status-completed: oklch(0.72 0.2294 155.65);
   --task-status-archived: oklch(0.85 0.0937 84.71 );
   --task-status-unstarted:  oklch(0.87 0.0271 237.18);
+  --project-status-completed: var(--completed);
+  --project-status-canceled: var(--canceled);
+  --project-status-risk: oklch(0.8 0.13666994070794525 55.20426727240262 / 96.76%);
+  --project-status-paused: oklch(0.63 0.13666994070794525 298.06 / 96.76%);
+  --project-status-inprogress: var(--task-status-inprogress)
 }
 
 .dark {

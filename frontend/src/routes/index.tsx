@@ -1,4 +1,5 @@
 import LoginForm from "@/components/auth/LoginForm";
+import { LoadingScreen } from "@/components/common/LoadingScreen";
 import {
   createFileRoute,
   Link,
@@ -15,12 +16,12 @@ export const Route = createFileRoute("/")({
   beforeLoad: async ({ context, search }) => {
     const {auth} = context
     const authenticated = await auth.isAuthenticated()
-    console.log(authenticated)
     if (authenticated) {
       throw redirect({ to: search.redirect || fallback });
     }
   },
   component: LoginPage,
+  pendingComponent: () => <LoadingScreen/>
 });
 
 function LoginPage() {

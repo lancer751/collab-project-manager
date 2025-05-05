@@ -15,13 +15,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-  { status: "en revisión", count: 275, fill: "var(--task-status-revision)" },
-  { status: "en curso", count: 200, fill: "var(--task-status-inprogress)" },
-  { status: "sin empezar", count: 187, fill: "var(--task-status-unstarted)" },
-  { status: "archivado", count: 173, fill: "var(--task-status-archived)" },
-  { status: "completado", count: 173, fill: "var(--task-status-completed)" },
-];
+import { MonthlyData, TasksStatusCount } from "@/types/graph.types";
+import { useTasksByState } from "@/hooks/queries/graphs";
 
 const chartConfig = {
   count: {
@@ -30,6 +25,21 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CurrentTasks() {
+  const { data, isLoading, error } = useTasksByState();
+
+  if (isLoading) return <div>Cargando tareas actuales...</div>;
+  if (error) return <div>Error al cargar las tareas actuales</div>;
+  if (!data) return null;
+
+  // Adaptar los datos recibidos de la API al formato que espera el gráfico
+  const chartData = [
+    { status: "En Revisión", count: data["En Revisión"], fill: "var(--task-status-revision)" },
+    { status: "En Curso", count: data["En Curso"], fill: "var(--task-status-inprogress)" },
+    { status: "Sin Empezar", count: data["Sin Empezar"], fill: "var(--task-status-unstarted)" },
+    { status: "Archivadas", count: data["Archivadas"], fill: "var(--task-status-archived)" },
+    { status: "Terminados", count: data["Terminados"], fill: "var(--task-status-completed)" },
+  ];
+
   return (
     <Card className="flex flex-col max-h-[500px]">
       <CardHeader className="items-center pb-0">
