@@ -2,6 +2,7 @@ package com.gestionproyectoscolaborativos.backend.Controller.dashboard.users;
 
 import com.gestionproyectoscolaborativos.backend.services.UserServices;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,5 +42,10 @@ public class PageUser {
     public ResponseEntity<?> register(@RequestBody UserDto userDto){
 
         return userServices.save(userDto);
+    }
+
+    @PutMapping("/edituser/{id}")
+    public  ResponseEntity<?> edit (@PathVariable Integer id, @RequestBody UserDto userDto) {
+        return userServices.edit(id, userDto);
     }
 }

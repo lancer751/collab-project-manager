@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,7 @@ public class UserServices {
             user.setPassword(password);
             user.setDescription(userDto.getDescription());
             user.setNumberPhone(userDto.getNumberPhone());
+            user.setEntryDate(userDto.getEntryDate());
             List<RolDto> rolDtoList = new ArrayList<>();
             List<UserProjectRol> userProjectRolList = new ArrayList<>();
 
@@ -112,11 +114,8 @@ public class UserServices {
             usersPage = userRepository.findByEnable(false, pageable);
         }
         if (!role.isBlank()) {
-            Rol rolOptional = rolRepository.findByName(role).orElseThrow(); // Obtienes el rol por nombre
             usersPage = userRepository
-                    .findDistinctByUserProjectRols_Rol_NameIgnoreCase(role, pageable);; // Llamas al repositorio para obtener los usuarios
-        } else {
-            usersPage = userRepository.findAll(pageable);
+                    .findDistinctByUserProjectRols_Rol_NameIgnoreCase("ROLE_" + role, pageable);; // Llamas al repositorio para obtener los usuarios
         }
 
         List<UserDtoResponse> userDtoResponses = usersPage.getContent().stream().map(users -> {
@@ -165,6 +164,37 @@ public class UserServices {
         return ResponseEntity.ok().body(response);
     }
 
+    // one user
+    @Transactional
+    public ResponseEntity<?> edit (Integer id, UserDto userDto){
+        Map<String, String> json = new HashMap<>();
+
+        return userRepository.findById(id).map(user -> {
+            updateUserFields(user, userDto);
+            user.setEnable(userDto.isEnable()); // activo
+            userRepository.save(user);
+
+            json.put("message", "user edit");
+            return ResponseEntity.ok().body(json);
+        }).orElseGet( () -> {
+            json.put("message", "User with ID: " + id + " not exist");
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(json);
+        });
+    }
+
+    private void updateUserFields(Users user, UserDto dto) {
+        if (isNotBlank(dto.getName())) user.setName(dto.getName());
+        if (isNotBlank(dto.getLastname())) user.setLastname(dto.getLastname());
+        if (isNotBlank(dto.getNumberPhone())) user.setNumberPhone(dto.getNumberPhone());
+        if (dto.getEntryDate() != null) user.setEntryDate(dto.getEntryDate());
+        if (isNotBlank(dto.getEmail())) user.setEmail(dto.getEmail());
+        if (isNotBlank(dto.getDescription())) user.setDescription(dto.getDescription());
+        if (isNotBlank(dto.getPassword())) user.setPassword(passwordEncoder.encode(dto.getPassword())); // ⚠️ Idealmente encriptar aquí
+    }
+    private boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
     public boolean existsByUsername(String username) {
         return userRepository.existsByEmail(username);
     }
@@ -195,8 +225,7 @@ public class UserServices {
         );
         return  userDtoResponse;
     }
-    // endpoint con el token
-    // user -> todo menos su contraseña
+
     private void emailSender (UserDto userDto) throws MessagingException {
         Map<String, String> message = new HashMap<>();
         message.put("name", userDto.getName() + " " + userDto.getLastname());

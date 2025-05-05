@@ -65,7 +65,7 @@ public class AuthenticationServices {
 
     public ResponseEntity<?> logout (HttpServletResponse response) {
         try {
-            // Eliminar token-jwt
+            /*// Eliminar token-jwt
             Cookie jwtCookie = new Cookie("token-jwt", null);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true);
@@ -77,10 +77,21 @@ public class AuthenticationServices {
             refreshCookie.setHttpOnly(true);
             refreshCookie.setSecure(true);
             refreshCookie.setPath("/");
-            refreshCookie.setMaxAge(0); // Elimina la cookie
+            refreshCookie.setMaxAge(0); // Elimina la cookie*/
+            response.setHeader("Set-Cookie",
+                    "token-jwt=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0");
 
-            response.addCookie(jwtCookie);
-            response.addCookie(refreshCookie);
+            /* Cookie cookieRefresh = new Cookie("refresh-token", refreshToken);
+            cookieRefresh.setHttpOnly(false); // impide q JS acceda a la cookie
+            cookieRefresh.setSecure(false);
+            cookieRefresh.setPath("/"); // para todo el backend
+            cookieRefresh.setMaxAge(86400); // 1 hora
+
+            response.addCookie(cookieRefresh);*/
+            // Cookie del refresh token
+            response.setHeader("Set-Cookie",
+                    "refresh-token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0");
+
 
             return ResponseEntity.ok().body(Map.of("message", "Logout exitoso"));
         } catch (Exception e) {
