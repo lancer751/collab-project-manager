@@ -1,7 +1,15 @@
-export type User = {
-  id: number,
-  username: string,
-  email: string,
-  profile: string,
-  message?: string,
-};
+export interface User {
+  id:          number;
+  name:        string;
+  lastname:    string;
+  entryDate:   Date;
+  email:       string;
+  numberPhone: null;
+  description: null;
+  rolDtoList:  RolDtoList[];
+  active:      boolean;
+}
+
+export interface RolDtoList {
+  name: string;
+}
