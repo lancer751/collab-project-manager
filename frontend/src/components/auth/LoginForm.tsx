@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { useRouter, useRouterState } from "@tanstack/react-router";
-import { fallback, Route as LoginRoute } from "@/routes";
+import { getRouteApi, useRouter, useRouterState } from "@tanstack/react-router";
+import { fallback } from "@/routes";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { UserLoginData } from "@/types/auth.types";
@@ -15,6 +15,7 @@ export default function LoginForm({
   const auth = useAuth();
   const router = useRouter();
   const isLoading = useRouterState({ select: (s) => s.isLoading });
+  const LoginRoute = getRouteApi("/")
   const navigate = LoginRoute.useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const search = LoginRoute.useSearch();
@@ -73,8 +74,8 @@ export default function LoginForm({
           </div>
           <Input type="password" name="password" id="password" required />
         </div>
-        <Button type="submit" className="w-full">
-          Enviar
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {isLoading ? "Validando..." : "Enviar"}
         </Button>
       </div>
     </form>

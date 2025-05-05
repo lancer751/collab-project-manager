@@ -13,21 +13,25 @@ export async function login(userData: UserLoginData): Promise<void> {
 
 export async function logout() {
   try {
-    const response = await fetch("/logout", {
-      method: "post",
+    await mainApiInstance.post("/dashboard/logout", null, {
+      withCredentials: true
     });
-    await response.json();
   } catch (error) {
-    console.log("Error in logout service", error);
+    console.log("Error en logout", error);
+    throw error;
   }
 }
 
 export async function isAuthenticated(): Promise<User | null> {
   try {
-    const response = await mainApiInstance.get<User>("/dashboard/validation", {
-      withCredentials: true,
-    });
-    return response.data;
+    const response = await mainApiInstance.get<{ message: string; user: User }>(
+      "/dashboard/validation",
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response)
+    return response.data.user;
   } catch (error) {
     console.log("error", error);
     return null;

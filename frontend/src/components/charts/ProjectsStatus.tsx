@@ -18,24 +18,33 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useCountProjectsByState } from "@/hooks/queries/graphs";
 
-const chartData = [
-  { status: "chrome", count: 275, fill: "var(--color-chrome)" },
-  { status: "safari", count: 200, fill: "var(--color-safari)" },
-  { status: "firefox", count: 287, fill: "var(--color-firefox)" },
-  { status: "edge", count: 173, fill: "var(--color-edge)" },
-  { status: "other", count: 190, fill: "var(--color-other)" },
-];
+// const chartData = [
+//   { status: "chrome", count: 275, fill: "var(--project-status-inprogress)" },
+//   { status: "safari", count: 200, fill: "var(--color-safari)" },
+//   { status: "firefox", count: 287, fill: "var(--color-firefox)" },
+//   { status: "edge", count: 173, fill: "var(--color-edge)" },
+//   { status: "other", count: 190, fill: "var(--color-other)" },
+// ];
+
+const statusColors: Record<string, string> = {
+  "Completados": "var(--project-status-completed)",
+  "En Pausa": "var(--project-status-paused)",
+  "En Curso": "var(--project-status-inprogress)",
+  "Cancelado": "var(--project-status-canceled)",
+  "En Riesgo": "var(--project-status-risk)",
+};
 
 const chartConfig = {
   count: {
     label: "Proyectos",
   },
-  chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
+  "Completados": {
+    label: "Completados",
+    color: "var(--project-status-completed)",
   },
-  safari: {
+  "En Pausa": {
     label: "Safari",
     color: "hsl(var(--chart-2))",
   },
@@ -54,15 +63,36 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ProjectsStatus() {
+  const { data: countProjects, isPending, isError } = useCountProjectsByState();
+  
+  const chartData = React.useMemo(
+    () =>
+      countProjects
+        ? Object.entries(countProjects).map(([status, count]) => ({
+          status,
+          count,
+          fill: statusColors[status] || "var(--default-color]"
+        }))
+        : [],
+        [countProjects]
+      );
+
   const totalProjects = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
-  }, []);
+  }, [chartData]);
+  
+  const growthPercent = 5.2; // Assuming a default growth percent
+  const topStatus = chartData.length
+    ? chartData.reduce((max, curr) => (curr.count > max.count ? curr : max)).status
+    : "";
 
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle className="text-lg">Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle className="text-lg">
+          Recuento de proyectos por estado
+        </CardTitle>
+        <CardDescription>Enero - Junio 2025</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ResponsiveContainer>
@@ -104,7 +134,7 @@ export function ProjectsStatus() {
                             y={(viewBox.cy || 0) + 24}
                             className="fill-muted-foreground"
                           >
-                            Visitors
+                            Proyectos
                           </tspan>
                         </text>
                       );
@@ -118,10 +148,13 @@ export function ProjectsStatus() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          {`Este mes los proyectos aumentaron un ${growthPercent}%`} <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          {`Total: ${totalProjects} proyectos. El estado más frecuente es "${topStatus}".`}
+        </div>
+        <div className="leading-none text-muted-foreground">
+          {`Datos de enero a junio de 2025.`}
         </div>
       </CardFooter>
     </Card>
