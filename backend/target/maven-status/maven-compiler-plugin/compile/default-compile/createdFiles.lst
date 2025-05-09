@@ -15,6 +15,7 @@ com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\UserCo
 com\gestionproyectoscolaborativos\backend\services\auth\AuthenticationServices.class
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\KpisClave.class
+com\gestionproyectoscolaborativos\backend\entitys\histories\UserPorjectRoleHisotry.class
 com\gestionproyectoscolaborativos\backend\services\ProjectServices.class
 com\gestionproyectoscolaborativos\backend\repository\RolRepository.class
 com\gestionproyectoscolaborativos\backend\entitys\enums\Priority.class

@@ -14,9 +14,7 @@ import com.gestionproyectoscolaborativos.backend.services.mail.impl.IEmailServic
 import com.gestionproyectoscolaborativos.backend.services.mail.model.EmailDto;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -182,6 +180,7 @@ public class UserServices {
         });
     }
 
+    
     private void updateUserFields(Users user, UserDto dto) {
         if (isNotBlank(dto.getName())) user.setName(dto.getName());
         if (isNotBlank(dto.getLastname())) user.setLastname(dto.getLastname());
@@ -190,6 +189,42 @@ public class UserServices {
         if (isNotBlank(dto.getEmail())) user.setEmail(dto.getEmail());
         if (isNotBlank(dto.getDescription())) user.setDescription(dto.getDescription());
         if (isNotBlank(dto.getPassword())) user.setPassword(passwordEncoder.encode(dto.getPassword())); // ⚠️ Idealmente encriptar aquí
+        if (!dto.getRolDtoList().isEmpty())  editUserRol(user, dto);
+    }
+    private void editUserRol (Users user, UserDto dto) {
+        // 1. Obtener roles actuales del usuario
+        List<UserProjectRol> rolesActuales = userProjectRolRepository.findByUsers(user);
+
+        // 2. Crear un Set con los nombres de roles nuevos desde el DTO
+        Set<String> nuevosRolesNombres = dto.getRolDtoList().stream()
+                .map(RolDto::getName)
+                .collect(Collectors.toSet());
+
+        // 3. Eliminar roles que ya no están en el DTO
+        for (UserProjectRol upr : rolesActuales) {
+            if (upr.getProject() == null) { // solo si no está ligado a un proyecto
+                String nombreRolActual = upr.getRol().getName();
+                if (!nuevosRolesNombres.contains(nombreRolActual)) {
+                    userProjectRolRepository.delete(upr);
+                }
+            }
+        }
+
+        // 4. Agregar roles nuevos que aún no tiene
+        Set<String> rolesActualesNombres = rolesActuales.stream()
+                .map(upr -> upr.getRol().getName())
+                .collect(Collectors.toSet());
+
+        for (String nombreNuevoRol : nuevosRolesNombres) {
+            if (!rolesActualesNombres.contains(nombreNuevoRol)) {
+                Rol rol = rolRepository.findByName(nombreNuevoRol)
+                        .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombreNuevoRol));
+                UserProjectRol nuevo = new UserProjectRol();
+                nuevo.setUsers(user);
+                nuevo.setRol(rol);
+                userProjectRolRepository.save(nuevo);
+            }
+        }
     }
     private boolean isNotBlank(String value) {
         return value != null && !value.isBlank();
