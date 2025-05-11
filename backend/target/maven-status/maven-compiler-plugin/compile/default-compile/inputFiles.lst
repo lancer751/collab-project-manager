@@ -3,6 +3,7 @@ C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectos
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\config\EmailConfig.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\History\ProjectHistoryController.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\projects\ProjectController.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\rol\RolController.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\users\PageUser.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\Activity.java
@@ -48,4 +49,5 @@ C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectos
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\mail\impl\IEmailServices.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\mail\model\EmailDto.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\ProjectServices.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\RolServices.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\UserServices.java

@@ -23,7 +23,7 @@ public class PageUser {
             @RequestParam(defaultValue = "") String enable,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size,
-            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "entryDate") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir){
         Pageable pageable;
 

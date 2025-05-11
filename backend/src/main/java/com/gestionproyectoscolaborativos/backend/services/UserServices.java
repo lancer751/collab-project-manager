@@ -70,7 +70,7 @@ public class UserServices {
                 if (!rol.isPresent()) {
                     UserProjectRol userProjectRolNew = new UserProjectRol();
                     Rol rol1 = new Rol();
-                    rol1.setName(r.getName());
+                    rol1.setName("ROLE_" + r.getName());
                     rolRepository.save(rol1);
 
                     userProjectRolNew.setRol(rol1);
@@ -86,6 +86,9 @@ public class UserServices {
 
                     userProjectRolList.add(userProjectRolNew);
                 }
+            }
+            if (existsByUsername(userDto.getEmail())){
+                return ResponseEntity.badRequest().body("EL gmail ya exites, el email no se puede repetir entre usuarios.");
             }
             user.setEmail(userDto.getEmail());
             user.setUserProjectRols(userProjectRolList);
@@ -170,6 +173,12 @@ public class UserServices {
         Map<String, String> json = new HashMap<>();
 
         return userRepository.findById(id).map(user -> {
+            if (!user.getEmail().equals(userDto.getEmail())){
+                if (existsByUsername(userDto.getEmail())){
+                    json.put("message", "EL gmail ya exites, el email no se puede repetir entre usuarios.");
+                    return ResponseEntity.badRequest().body(json);
+                }
+            }
             updateUserFields(user, userDto);
             user.setEnable(userDto.isEnable()); // activo
             userRepository.save(user);
