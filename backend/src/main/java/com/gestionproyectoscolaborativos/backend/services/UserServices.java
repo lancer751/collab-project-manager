@@ -2,11 +2,9 @@ package com.gestionproyectoscolaborativos.backend.services;
 
 import com.gestionproyectoscolaborativos.backend.entitys.Rol;
 import com.gestionproyectoscolaborativos.backend.entitys.Users;
+import com.gestionproyectoscolaborativos.backend.entitys.histories.UserProjectRoleHistory;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
-import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
-import com.gestionproyectoscolaborativos.backend.repository.RolRepository;
-import com.gestionproyectoscolaborativos.backend.repository.UserProjectRolRepository;
-import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
+import com.gestionproyectoscolaborativos.backend.repository.*;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
@@ -38,6 +36,8 @@ public class UserServices {
 
     @Autowired
     private IEmailServices emailServices;
+    @Autowired
+    private UserProjectRoleHistoryRepository userProjectRoleHistoryRepository;
 
     @Autowired
     private UserProjectRolRepository userProjectRolRepository;
@@ -105,16 +105,18 @@ public class UserServices {
     @Transactional(readOnly = true)
     public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable, String role) {
 
-        Page<Users> usersPage = userRepository.findAll(pageable);
-        if (enable.equals("true")) {
-            usersPage = userRepository.findByEnable(true, pageable);
-        } else if (enable.equals("false")) {
-            usersPage = userRepository.findByEnable(false, pageable);
+        Page<Users> usersPage;
+        if (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
+            boolean enabled = Boolean.parseBoolean(enable);
+            usersPage = userRepository.findDistinctByEnableAndUserProjectRols_Rol_NameIgnoreCase(enabled, "ROLE_" + role, pageable);
+        } else if (!role.isBlank()) {
+            usersPage = userRepository.findDistinctByUserProjectRols_Rol_NameIgnoreCase("ROLE_" + role, pageable);
+        } else if (enable.equals("true") || enable.equals("false")) {
+            usersPage = userRepository.findByEnable(Boolean.parseBoolean(enable), pageable);
+        } else {
+            usersPage = userRepository.findAll(pageable); // Sin filtros
         }
-        if (!role.isBlank()) {
-            usersPage = userRepository
-                    .findDistinctByUserProjectRols_Rol_NameIgnoreCase("ROLE_" + role, pageable);; // Llamas al repositorio para obtener los usuarios
-        }
+
 
         List<UserDtoResponse> userDtoResponses = usersPage.getContent().stream().map(users -> {
             UserDtoResponse userDtoResponse = new UserDtoResponse();
@@ -155,7 +157,7 @@ public class UserServices {
             userDtoResponses.sort(comparator);
         }
         Map<String, Object> response = new HashMap<>();
-        response.put("content", userDtoResponses);
+        response.put("users", userDtoResponses);
         response.put("currentPage", usersPage.getNumber());
         response.put("totalItems", usersPage.getTotalElements());
         response.put("totalPages", usersPage.getTotalPages());
@@ -201,15 +203,19 @@ public class UserServices {
                 .collect(Collectors.toSet());
 
         // 3. Eliminar roles que ya no están en el DTO
-        for (UserProjectRol upr : rolesActuales) {
-            if (upr.getProject() == null) { // solo si no está ligado a un proyecto
-                String nombreRolActual = upr.getRol().getName();
-                if (!nuevosRolesNombres.contains(nombreRolActual)) {
-                    userProjectRolRepository.delete(upr);
-                }
-            }
-        }
+        for (UserProjectRol upr : rolesActuales) {// solo si no está ligado a un proyecto
+            String nombreRolActual = upr.getRol().getName();
 
+            if (!nuevosRolesNombres.contains(nombreRolActual)) {
+                if (upr.getProject() != null && upr.getRol().getName() != null && (upr.getRol().getName().startsWith("ROLE_LIDER") || upr.getRol().getName().startsWith("ROLE_ADMIN"))) {
+                    UserProjectRoleHistory userProjectRoleHistory = getUserProjectRoleHistory(upr);
+                    userProjectRoleHistoryRepository.save(userProjectRoleHistory);
+                }
+
+                userProjectRolRepository.delete(upr);
+            }
+
+        }
         // 4. Agregar roles nuevos que aún no tiene
         Set<String> rolesActualesNombres = rolesActuales.stream()
                 .map(upr -> upr.getRol().getName())
@@ -226,6 +232,18 @@ public class UserServices {
             }
         }
     }
+
+    private static UserProjectRoleHistory getUserProjectRoleHistory(UserProjectRol upr) {
+        UserProjectRoleHistory userProjectRoleHistory = new UserProjectRoleHistory();
+        userProjectRoleHistory.setIdProject(upr.getProject().getId());
+        userProjectRoleHistory.setNameProject(upr.getProject().getName());
+        userProjectRoleHistory.setIdUser(upr.getUsers().getId());
+        userProjectRoleHistory.setUserName(upr.getUsers().getName() + " " + upr.getUsers().getLastname());
+        userProjectRoleHistory.setIdRol(upr.getRol().getId());
+        userProjectRoleHistory.setRolName(upr.getRol().getName());
+        return userProjectRoleHistory;
+    }
+
     private boolean isNotBlank(String value) {
         return value != null && !value.isBlank();
     }

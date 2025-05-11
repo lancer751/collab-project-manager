@@ -33,6 +33,7 @@ public interface UserProjectRolRepository extends JpaRepository<UserProjectRol, 
     @Query("SELECT upr FROM UserProjectRol upr WHERE upr.project = :project")
     List<UserProjectRol> findByProject(@Param("project") Project project);
 
+    boolean existsByUsersAndRolAndProject (Users users, Rol rol, Project project);
 
     @Modifying
     @Transactional

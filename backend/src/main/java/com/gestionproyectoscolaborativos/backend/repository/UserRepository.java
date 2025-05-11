@@ -24,4 +24,7 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
             String roleName,
             Pageable pageable
     );
+
+    Page<Users> findDistinctByEnableAndUserProjectRols_Rol_NameIgnoreCase(boolean enable, String role, Pageable pageable);
+
 }

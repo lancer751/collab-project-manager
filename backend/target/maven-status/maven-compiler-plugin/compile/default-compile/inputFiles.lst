@@ -1,6 +1,7 @@
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\auth\Login.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\BackendApplication.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\config\EmailConfig.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\History\ProjectHistoryController.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\projects\ProjectController.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\Controller\dashboard\users\PageUser.java
@@ -8,7 +9,7 @@ C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectos
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\Coment.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\enums\Priority.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\fields\AuditFields.java
-C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\histories\UserPorjectRoleHisotry.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\histories\UserProjectRoleHistory.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\Project.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\Report.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\entitys\Rol.java
@@ -19,6 +20,7 @@ C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectos
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\repository\ProjectRepository.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\repository\RolRepository.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\repository\StateRepository.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\repository\UserProjectRoleHistoryRepository.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\repository\UserProjectRolRepository.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\repository\UserRepository.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\security\filter\JwtAuthenticacionFilter.java
@@ -29,8 +31,10 @@ C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectos
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\security\validation\ExistsByUsername.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\security\validation\ExistsByUsernameValidation.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\auth\AuthenticationServices.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dashboard\AdminFunctionsServices.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dashboard\PageStartServices.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectDto.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectHistoryDto.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\RolDto.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\StateDto.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\UserDto.java

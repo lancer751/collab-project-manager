@@ -4,8 +4,10 @@ com\gestionproyectoscolaborativos\backend\entitys\Project.class
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\projects\ProjectController.class
 com\gestionproyectoscolaborativos\backend\repository\UserProjectRolRepository.class
 com\gestionproyectoscolaborativos\backend\entitys\Users.class
+com\gestionproyectoscolaborativos\backend\entitys\histories\UserProjectRoleHistory.class
 com\gestionproyectoscolaborativos\backend\security\SecurityConfig.class
 com\gestionproyectoscolaborativos\backend\repository\ActivityRepository.class
+com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectHistoryDto.class
 com\gestionproyectoscolaborativos\backend\repository\UserRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\RolDto.class
 com\gestionproyectoscolaborativos\backend\services\mail\model\EmailDto.class
@@ -15,7 +17,6 @@ com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\UserCo
 com\gestionproyectoscolaborativos\backend\services\auth\AuthenticationServices.class
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\KpisClave.class
-com\gestionproyectoscolaborativos\backend\entitys\histories\UserPorjectRoleHisotry.class
 com\gestionproyectoscolaborativos\backend\services\ProjectServices.class
 com\gestionproyectoscolaborativos\backend\repository\RolRepository.class
 com\gestionproyectoscolaborativos\backend\entitys\enums\Priority.class
@@ -41,7 +42,10 @@ com\gestionproyectoscolaborativos\backend\entitys\Report.class
 com\gestionproyectoscolaborativos\backend\security\filter\JwtValidationFilter.class
 com\gestionproyectoscolaborativos\backend\services\mail\impl\IEmailServices.class
 com\gestionproyectoscolaborativos\backend\entitys\Rol.class
+com\gestionproyectoscolaborativos\backend\services\dashboard\AdminFunctionsServices.class
 com\gestionproyectoscolaborativos\backend\services\mail\impl\EmailServicesImpl.class
+com\gestionproyectoscolaborativos\backend\Controller\dashboard\History\ProjectHistoryController.class
+com\gestionproyectoscolaborativos\backend\repository\UserProjectRoleHistoryRepository.class
 com\gestionproyectoscolaborativos\backend\entitys\Coment.class
 com\gestionproyectoscolaborativos\backend\entitys\Activity.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\UserDtoResponse.class
