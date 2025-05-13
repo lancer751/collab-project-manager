@@ -19,7 +19,6 @@ export const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  console.log(user);
 
   const isAuthenticated = useCallback(async () => {
     const user = await authCheck()
