@@ -30,7 +30,6 @@ export async function isAuthenticated(): Promise<User | null> {
         withCredentials: true,
       }
     );
-    console.log(response)
     return response.data.user;
   } catch (error) {
     console.log("error", error);

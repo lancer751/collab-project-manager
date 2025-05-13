@@ -1,15 +1,20 @@
-export interface User {
+import { Rol } from "./roles.types";
+
+export interface UsersInfoData {
+  totalItems: number,
+  totalPages: number,
+  currentPage: number,
+  users: User[]
+}
+
+export type User = {
   id:          number;
   name:        string;
   lastname:    string;
   entryDate:   Date;
   email:       string;
-  numberPhone: null;
-  description: null;
-  rolDtoList:  RolDtoList[];
+  numberPhone: string | null;
+  description: string;
+  rolDtoList:  Rol[];
   active:      boolean;
-}
-
-export interface RolDtoList {
-  name: string;
 }

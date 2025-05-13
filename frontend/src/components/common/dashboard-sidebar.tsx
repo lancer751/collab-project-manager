@@ -72,7 +72,7 @@ const data = {
 export function DasboardSidebar({ ...props }) {
   const currRoute = getRouteApi("/_auth");
   const router = useRouter()
-  const {user: currentUser, logoutSession} = useAuth()
+  const {auth: {user: currentUser, logoutSession}} = currRoute.useRouteContext()
   const navigate = currRoute.useNavigate()
 
   const handleLogout = () => {
