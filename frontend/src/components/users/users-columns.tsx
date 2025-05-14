@@ -9,16 +9,45 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { Rol } from "@/types/roles.types";
+import { Checkbox } from "../ui/checkbox";
 
 export const UsersColumns: ColumnDef<User>[] = [
   {
+    id: "select",
+    header: ({ table }) => {
+      return (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select All"
+      />
+    )
+    },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="selected-row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false
+  },
+  {
     accessorKey: "name",
     header: () => <div className="text-center">Nombres y Apellidos</div>,
-    cell: ({row}) => {
-      const user = row.original as User
+    cell: ({ row }) => {
+      const user = row.original as User;
 
-      return <div className="capitalize">{user.name.concat(", ", user.lastname)}</div>
-    }
+      return (
+        <div className="capitalize">
+          {user.name.concat(", ", user.lastname)}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "email",
@@ -27,10 +56,10 @@ export const UsersColumns: ColumnDef<User>[] = [
   {
     accessorKey: "rolDtoList",
     header: () => <div className="text-center">Rol</div>,
-    cell: ({row}) => {
-      const rolObject = row.getValue("rolDtoList") as Rol[]
-      return <div className="text-center">{rolObject[0].name}</div>
-    }
+    cell: ({ row }) => {
+      const rolObject = row.getValue("rolDtoList") as Rol[];
+      return <div className="text-center">{rolObject[0].name}</div>;
+    },
   },
   {
     accessorKey: "numberPhone",
@@ -45,14 +74,21 @@ export const UsersColumns: ColumnDef<User>[] = [
   {
     accessorKey: "entryDate",
     header: () => <div className="text-center">Fecha de ingreso</div>,
-    cell: ({row}) => {
-      const entryDate = row.getValue("entryDate") as Date
-      const dateInstace = new Date(entryDate)
-      const options: Intl.DateTimeFormatOptions = {day: "numeric", month: "long", year: "numeric"}
-      const formatedEntryDate = new Intl.DateTimeFormat("es-ES", options).format(dateInstace)
+    cell: ({ row }) => {
+      const entryDate = row.getValue("entryDate") as Date;
+      const dateInstace = new Date(entryDate);
+      const options: Intl.DateTimeFormatOptions = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      };
+      const formatedEntryDate = new Intl.DateTimeFormat(
+        "es-ES",
+        options
+      ).format(dateInstace);
 
-      return formatedEntryDate
-    }
+      return formatedEntryDate;
+    },
   },
   {
     id: "actions",
