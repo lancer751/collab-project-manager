@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Search, Check } from "lucide-react";
-import { getAllUsers } from "@/services/users";
+import { getAllUsers, getInfiniteUsers } from "@/services/users";
 import { DataTable } from "@/components/common/data-table";
 import { UsersColumns } from "@/components/users/users-columns";
-import { useUsers } from "@/hooks/queries/users";
+import { useInfiniteUsers, useUsers } from "@/hooks/queries/users";
 
 const ORDER = [
   { label: "Nombre", value: "name" },
@@ -22,37 +22,61 @@ const ORDER = [
 ];
 
 const STATUS = [
-  {label: "todos", value: "all"},
-  {label: "Activo", value: "true"},
-  {label: "Retirado", value: "false"},
-]
+  { label: "todos", value: "all" },
+  { label: "Activo", value: "true" },
+  { label: "Retirado", value: "false" },
+];
 
 export const Route = createFileRoute("/_auth/dashboard/users")({
   component: RouteComponent,
   loader: async ({ context: { queryClient } }) => {
-    queryClient.prefetchQuery({
+    queryClient.prefetchInfiniteQuery({
       queryKey: ["users"],
-      queryFn: getAllUsers,
+      queryFn: ({ pageParam = 1 }) => getInfiniteUsers({ page: pageParam }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+        if (lastPage?.users.length === 0) {
+          return undefined;
+        }
+        return ++lastPageParam;
+      },
+      pages: 1,
     });
   },
 });
 
 interface UserFilters {
-  status: string,
-  sortBy: string,
-  rol: string,
+  status: string;
+  sortBy: string;
+  rol: string;
 }
 
 function RouteComponent() {
-  const {data, isPending, isError} = useUsers()
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    error,
+    isError,
+  } = useInfiniteUsers();
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<Partial<UserFilters>>({
     status: "all",
     sortBy: "recientes",
-    rol: "all"
-  })
-
-  const users = data ? data.users : []
+    rol: "all",
+  });
+  const queryUtilities = {
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isError,
+    error,
+  };
+  console.log(data);
+  const users = useMemo(() => {
+    return data ? data.pages.flatMap((page) => page?.users ?? []) : [];
+  }, [data]);
 
   return (
     <div className="space-y-6">
@@ -81,14 +105,16 @@ function RouteComponent() {
                 <DropdownMenuRadioItem value={"todos"}>
                   Todos
                 </DropdownMenuRadioItem>
-                
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          
         </div>
       </div>
-      <DataTable columns={UsersColumns} data={users}/>
+      <DataTable
+        columns={UsersColumns}
+        data={users}
+        queryUtilities={queryUtilities}
+      />
     </div>
   );
 }
