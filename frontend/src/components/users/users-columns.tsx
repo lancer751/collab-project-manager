@@ -38,7 +38,7 @@ export const UsersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "name",
-    header: () => <div className="text-center">Nombres y Apellidos</div>,
+    header: "Nombres y Apellidos",
     cell: ({ row }) => {
       const user = row.original as User;
 
@@ -51,24 +51,24 @@ export const UsersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "email",
-    header: () => <div className="text-center">Gmail</div>,
+    header: "Correo electrónico"
   },
   {
     accessorKey: "rolDtoList",
-    header: () => <div className="text-center">Rol</div>,
+    header: () => "Rol",
     cell: ({ row }) => {
       const rolObject = row.getValue("rolDtoList") as Rol[];
-      return <div className="text-center">{rolObject[0].name}</div>;
+      return rolObject[0].name
     },
   },
   {
     accessorKey: "numberPhone",
-    header: () => <div className="text-center">Teléfono</div>,
+    header: () => <p className="text-center">Teléfono</p>,
     cell: ({ row }) => {
       const cellPhone = row.getValue("numberPhone");
       if (typeof cellPhone !== "string")
-        return <div className="text-center">-</div>;
-      return <div className="text-center">{cellPhone}</div>;
+        return <p className="text-center">-</p>;
+      return <p className="text-center">{cellPhone}</p>;
     },
   },
   {
@@ -87,7 +87,15 @@ export const UsersColumns: ColumnDef<User>[] = [
         options
       ).format(dateInstace);
 
-      return formatedEntryDate;
+      return <div className="text-center">{formatedEntryDate}</div>;
+    },
+  },
+  {
+    accessorKey: "active",
+    header: () => <div className="text-center">Estado</div>,
+    cell: ({ row }) => {
+      const status = row.getValue("active") as boolean;
+      return <div className="text-center">{status ? "Activo" : "Retirado"}</div>;
     },
   },
   {

@@ -1,5 +1,15 @@
-import { UsersInfoData } from "@/types/user.types";
+import {
+  UserRequestFilters,
+  UserRequestSort,
+  UsersInfoData,
+} from "@/types/user.types";
 import { mainApiInstance } from "./instaces";
+
+interface UserGetGrouping {
+  page: number;
+  filters?: Partial<UserRequestFilters>;
+  sorters?: Partial<UserRequestSort>;
+}
 
 export const getAllUsers = async () => {
   try {
@@ -12,10 +22,17 @@ export const getAllUsers = async () => {
   }
 };
 
-export const getInfiniteUsers = async ({ page = 0 }) => {
+export const getInfiniteUsers = async ({
+  page = 0,
+  filters,
+  sorters,
+}: UserGetGrouping) => {
+  const { name, rol, status } = filters ?? {};
+  const { by, direction } = sorters ?? {};
+
   try {
     const response = await mainApiInstance.get<UsersInfoData>(
-      `/dashboardadmin/user?sortBy=&page=${page}&sortDir=&role`
+      `/dashboardadmin/user?sortBy=${by ?? ""}&page=${page ?? ""}&sortDir=${direction ?? ""}&role=${rol ?? ""}&enable=${status ?? ""}`
     );
     return response.data;
   } catch (error) {

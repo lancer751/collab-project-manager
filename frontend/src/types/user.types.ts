@@ -18,3 +18,14 @@ export type User = {
   rolDtoList:  Rol[];
   active:      boolean;
 }
+
+export interface UserRequestFilters {
+  name?: string;
+  status?: string;
+  rol?: string;
+}
+
+export interface UserRequestSort {
+  by?: string;
+  direction?: string;
+}

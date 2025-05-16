@@ -60,7 +60,6 @@ export function DataTable<TData extends { id: number }, TValue, T>({
       rowSelection,
     },
   });
-
   const sentinelRef = useRef<null | HTMLTableRowElement>(null);
   const observerRef = useRef<IntersectionObserver>(null);
 
@@ -93,96 +92,98 @@ export function DataTable<TData extends { id: number }, TValue, T>({
   }, [onIntersecting]);
 
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
+    <>
+      <div>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              <>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
                         )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length ? (
-            <>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+                <TableRow ref={sentinelRef}>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="hidden text-center"
+                  ></TableCell>
                 </TableRow>
-              ))}
-              <TableRow ref={sentinelRef}>
-                <TableCell
-                  colSpan={columns.length}
-                  className="hidden text-center"
-                ></TableCell>
-              </TableRow>
-              <TableRow className="hover:bg-transparent">
-                <TableCell
-                  colSpan={columns.length}
-                  className={`${!isFetchingNextPage && !hasNextPage && "hidden"} text-center h-10 pt-5`}
-                >
-                  <div className="mx-auto flex justify-center">
-                    <LoaderCircle className="animate-spin" />
-                  </div>
-                </TableCell>
-              </TableRow>
-              {!hasNextPage && !isFetchingNextPage && (
                 <TableRow className="hover:bg-transparent">
                   <TableCell
                     colSpan={columns.length}
-                    className="text-neutral-50 text-center h-10 pt-5"
+                    className={`${!isFetchingNextPage && !hasNextPage && "hidden"} text-center h-10 pt-5`}
                   >
-                    No hay más resultados disponibles
+                    <div className="mx-auto flex justify-center">
+                      <LoaderCircle className="animate-spin" />
+                    </div>
                   </TableCell>
                 </TableRow>
-              )}
-            </>
-          ) : (
-            <>
-              {isError && error ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    {error.message}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No Results
-                  </TableCell>
-                </TableRow>
-              )}
-            </>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+                {!hasNextPage && !isFetchingNextPage && (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell
+                      colSpan={columns.length}
+                      className="text-neutral-50 text-center h-10 pt-5"
+                    >
+                      No hay más resultados disponibles
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
+            ) : (
+              <>
+                {isError && error ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      {error.message}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No Results
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 }
