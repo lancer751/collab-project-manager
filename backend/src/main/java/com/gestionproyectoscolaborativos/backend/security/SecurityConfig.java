@@ -51,6 +51,7 @@ public class SecurityConfig {
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.POST, "/dashboardadmin/registeruser").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.PUT, "/dashboardadmin/edituser/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/dashboardadmin/usereditlist").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/dashboardadmin/project/restore").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/project/add").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
                         .requestMatchers(HttpMethod.PUT, "/project/edit/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")

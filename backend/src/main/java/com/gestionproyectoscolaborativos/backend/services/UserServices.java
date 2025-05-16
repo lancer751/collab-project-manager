@@ -106,18 +106,35 @@ public class UserServices {
     }
 
     @Transactional(readOnly = true)
-    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable, String role) {
-
+    public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable, String role, String search) {
         Page<Users> usersPage;
-        if (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
-            boolean enabled = Boolean.parseBoolean(enable);
-            usersPage = userRepository.findDistinctByEnableAndUserProjectRols_Rol_NameIgnoreCase(enabled, "ROLE_" + role, pageable);
-        } else if (!role.isBlank()) {
-            usersPage = userRepository.findDistinctByUserProjectRols_Rol_NameIgnoreCase("ROLE_" + role, pageable);
-        } else if (enable.equals("true") || enable.equals("false")) {
-            usersPage = userRepository.findByEnable(Boolean.parseBoolean(enable), pageable);
+        if (!search.isBlank()) {
+            if (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
+                    boolean enabled = Boolean.parseBoolean(enable);
+                    usersPage = userRepository.findByNameContainingIgnoreCaseAndEnableAndUserProjectRols_Rol_NameIgnoreCase(
+                            search, enabled, "ROLE_" + role, pageable);
+            } else if (!role.isBlank()) {
+
+                    usersPage = userRepository.findByNameContainingIgnoreCaseAndUserProjectRols_Rol_NameIgnoreCase(
+                            search, "ROLE_" + role, pageable);
+            } else if (enable.equals("true") || enable.equals("false")) {
+
+                    usersPage = userRepository.findByNameContainingIgnoreCaseAndEnable(
+                            search, Boolean.parseBoolean(enable), pageable);
+            } else {
+                    usersPage = userRepository.findByNameContainingIgnoreCase(search, pageable);
+            }
         } else {
-            usersPage = userRepository.findAll(pageable); // Sin filtros
+            if  (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
+                boolean enabled = Boolean.parseBoolean(enable);
+                usersPage = userRepository.findDistinctByEnableAndUserProjectRols_Rol_NameIgnoreCase(enabled, "ROLE_" + role, pageable);
+            } else if (!role.isBlank()) {
+                usersPage = userRepository.findDistinctByUserProjectRols_Rol_NameIgnoreCase("ROLE_" + role, pageable);
+            } else if (enable.equals("true") || enable.equals("false")) {
+                usersPage = userRepository.findByEnable(Boolean.parseBoolean(enable), pageable);
+            } else {
+                usersPage = userRepository.findAll(pageable); // Sin filtros
+            }
         }
 
 

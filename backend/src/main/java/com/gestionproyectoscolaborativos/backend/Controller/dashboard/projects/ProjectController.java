@@ -2,7 +2,7 @@ package com.gestionproyectoscolaborativos.backend.Controller.dashboard.projects;
 
 
 import com.gestionproyectoscolaborativos.backend.services.ProjectServices;
-import com.gestionproyectoscolaborativos.backend.services.dto.response.ProjectDtoResponse;
+import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.ProjectDtoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +13,7 @@ public class ProjectController {
 
     @Autowired
     private ProjectServices projectServices;
+
 
     @GetMapping("/")
     public ResponseEntity<?> readproject () {
