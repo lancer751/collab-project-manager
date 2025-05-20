@@ -1,12 +1,14 @@
-import { getAllUsers, getInfiniteUsers } from "@/services/users";
+import {getInfiniteUsers, getSingleUserById } from "@/services/users";
 import { UserRequestFilters, UserRequestSort } from "@/types/user.types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-export function useUsers() {
+export function useSingleUserById(userId: number | null) {
   return useQuery({
-    queryKey: ["users"],
-    queryFn: getAllUsers,
-  });
+    queryKey: ["user", {userId}],
+    queryFn: () => getSingleUserById(userId!),
+    enabled: !!userId,
+    refetchOnWindowFocus: false
+  })
 }
 
 export function useInfiniteUsers({

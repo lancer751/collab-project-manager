@@ -1,30 +1,34 @@
 import { User } from "@/types/user.types";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { Rol } from "@/types/roles.types";
 import { Checkbox } from "../ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
-export const UsersColumns: ColumnDef<User>[] = [
+export const UsersColumns = ({
+  onEdit,
+}: {
+  onEdit: (userId: number) => void;
+}): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => {
       return (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select All"
-      />
-    )
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select All"
+        />
+      );
     },
     cell: ({ row }) => (
       <Checkbox
@@ -34,7 +38,7 @@ export const UsersColumns: ColumnDef<User>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
     accessorKey: "name",
@@ -51,14 +55,14 @@ export const UsersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "email",
-    header: "Correo electrónico"
+    header: "Correo electrónico",
   },
   {
     accessorKey: "rolDtoList",
     header: () => "Rol",
     cell: ({ row }) => {
       const rolObject = row.getValue("rolDtoList") as Rol[];
-      return rolObject[0].name
+      return rolObject[0].name;
     },
   },
   {
@@ -95,7 +99,9 @@ export const UsersColumns: ColumnDef<User>[] = [
     header: () => <div className="text-center">Estado</div>,
     cell: ({ row }) => {
       const status = row.getValue("active") as boolean;
-      return <div className="text-center">{status ? "Activo" : "Retirado"}</div>;
+      return (
+        <div className="text-center">{status ? "Activo" : "Retirado"}</div>
+      );
     },
   },
   {
@@ -113,7 +119,7 @@ export const UsersColumns: ColumnDef<User>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuItem>Ver Usuario</DropdownMenuItem>
             <DropdownMenuItem>Eliminar</DropdownMenuItem>
-            <DropdownMenuItem>Editar</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(user.id)}>Editar</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

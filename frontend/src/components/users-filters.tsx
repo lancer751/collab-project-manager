@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Input } from "./ui/input";
 import { CheckCircle, ChevronDown, Circle, Search } from "lucide-react";
 import {
@@ -28,22 +27,21 @@ export default function UsersFilters({
   setFilters,
   setSorters,
 }: UserFiltersProps) {
-  const [search, setSearch] = useState("");
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="flex flex-col md:flex-row items-center md:justify-between gap-4">
       {/* search bar */}
       <div className="relative w-full max-w-xs">
         <Input
           placeholder="Buscar"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={filters.name}
+          onChange={(e) => setFilters({...filters, name: e.target.value})}
           className="pl-9"
         />
         <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
       </div>
       {/* dropdowns sorters and filters */}
-      <div className="flex gap-4 items-center justify-end w-full md:w-auto">
+      <div className="flex gap-4 items-center justify-center w-full md:w-auto">
         {/* filter by status */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
