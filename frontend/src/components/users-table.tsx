@@ -1,19 +1,23 @@
-import { useInfiniteUsers } from "@/hooks/queries/users";
+import { useInfiniteUsers, useSingleUserById } from "@/hooks/queries/users";
 import { useMemo, useState } from "react";
 import UsersFilters from "./users-filters";
 import { DataTable } from "./common/data-table";
 import { UsersColumns } from "./users/users-columns";
 import { UserRequestFilters, UserRequestSort } from "@/types/user.types";
-
+import { ModalFormUser } from "./common/ModalFormUser";
+import { Button } from "./ui/button";
+import { PlusCircle } from "lucide-react";
 
 export default function UsersTable() {
+  const [modalMode, setModalMode] = useState<"edit" | "create">("create");
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<UserRequestFilters>({
     name: "",
     rol: "",
-    status: ""
-  })
-  const [sorters, setSorters] = useState<UserRequestSort>({})
-  console.log(sorters)
+    status: "",
+  });
+  const [sorters, setSorters] = useState<UserRequestSort>({});
   const {
     data,
     fetchNextPage,
@@ -21,9 +25,7 @@ export default function UsersTable() {
     hasNextPage,
     error,
     isError,
-  } = useInfiniteUsers({filters, sorters});
-
-    
+  } = useInfiniteUsers({ filters, sorters });
   const queryUtilities = {
     fetchNextPage,
     isFetchingNextPage,
@@ -35,16 +37,52 @@ export default function UsersTable() {
   const users = useMemo(() => {
     return data ? data.pages.flatMap((page) => page?.users ?? []) : [];
   }, [data]);
-  console.log(users)
+  console.log(users);
+
+  const handleUserEdit = (userId: number) => {
+    setModalOpen(true);
+    setSelectedUserId(userId);
+    setModalMode("edit");
+  };
+
+  const handleCreateNewUser = () => {
+    setModalOpen(true);
+    setSelectedUserId(null);
+    setModalMode("create");
+  };
 
   return (
-    <div className="space-y-6">
-      <UsersFilters filters={filters} sorters={sorters} setFilters={setFilters} setSorters={setSorters}/>
-      <DataTable
-        columns={UsersColumns}
-        data={users}
-        queryUtilities={queryUtilities}
+    <section>
+      <div className="mb-6 flex flex-col md:flex-row items-center md:justify-between md:items-end gap-5">
+        <div className="space-y-4 text-center md:text-left">
+          <h1 className="text-4xl font-bold">Usuarios</h1>
+          <p className="text-primary">
+            Administra a todos los usuarios existentes en el sistema.
+          </p>
+        </div>
+        <Button className="max-w-max" onClick={handleCreateNewUser}>
+          <PlusCircle /> Nuevo Usuario
+        </Button>
+      </div>
+      <div className="space-y-6">
+        <UsersFilters
+          filters={filters}
+          sorters={sorters}
+          setFilters={setFilters}
+          setSorters={setSorters}
+        />
+        <DataTable
+          columns={UsersColumns({ onEdit: handleUserEdit })}
+          data={users}
+          queryUtilities={queryUtilities}
+        />
+      </div>
+      <ModalFormUser
+        isOpen={isModalOpen}
+        mode={modalMode}
+        onClose={() => setModalOpen(false)}
+        userId={selectedUserId}
       />
-    </div>
-  )
+    </section>
+  );
 }

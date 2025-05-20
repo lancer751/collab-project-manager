@@ -1,24 +1,29 @@
 import { Rol } from "./roles.types";
 
 export interface UsersInfoData {
-  totalItems: number,
-  totalPages: number,
-  currentPage: number,
-  users: User[]
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  users: User[];
 }
 
 export type User = {
-  id:          number;
-  name:        string;
-  lastname:    string;
-  entryDate:   Date;
-  email:       string;
+  readonly id: number;
+  name: string;
+  lastname: string;
+  entryDate: Date;
+  email: string;
   numberPhone: string | null;
-  description: string;
-  rolDtoList:  Rol[];
-  active:      boolean;
-}
+  description: string | null;
+  rolDtoList: Rol[];
+  active: boolean;
+};
 
+export type SingleUserData = User & { readonly password: string };
+
+export type CreateUserDto = Omit<SingleUserData, "id" | "active">
+
+export type UpdateUserDto = Partial<Pick<CreateUserDto, "password">> & Omit<CreateUserDto, "password">
 export interface UserRequestFilters {
   name?: string;
   status?: string;
