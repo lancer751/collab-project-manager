@@ -2,10 +2,15 @@ package com.gestionproyectoscolaborativos.backend.services.dashboard;
 
 import com.gestionproyectoscolaborativos.backend.entitys.Coment;
 import com.gestionproyectoscolaborativos.backend.entitys.Project;
+import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 import com.gestionproyectoscolaborativos.backend.repository.ComentRepository;
 import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
+import com.gestionproyectoscolaborativos.backend.repository.UserProjectRepository;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.ProjectDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.StateDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.ComentsRecentResponseDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.ProjectRecentResponseDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.UserRolProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +22,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PageProjectServices {
@@ -26,6 +32,10 @@ public class PageProjectServices {
 
     @Autowired
     private ComentRepository comentRepository;
+
+
+    @Autowired
+    private UserProjectRepository userProjectRepository;
 
     // recently published projects
     public ResponseEntity<?> readprojectrecient () {
@@ -117,4 +127,40 @@ public class PageProjectServices {
         if (segundos < 172800) return "Hace 1 día";
         return "Hace " + (segundos / 86400) + " días";
     }
+
+    public ResponseEntity<?> readProjectsAdmin (){
+        List<ProjectDto> projectDtos = projectRepository.findAll().stream()
+                .map(p -> {
+                    // Lista de usuarios del proyecto
+                    List<UserRolProjectRequest> userDtos = userProjectRepository.findByProject(p).stream().map(u -> {
+                        UserRolProjectRequest userRolProjectRequest = new UserRolProjectRequest();
+                        userRolProjectRequest.setId(u.getUsers().getId());
+                        userRolProjectRequest.setEmail(u.getUsers().getEmail());
+                        userRolProjectRequest.setRolProject(u.getRolproject());
+
+                        return userRolProjectRequest;
+                    }).collect(Collectors.toList());
+
+                    // Armar DTO del proyecto
+                    ProjectDto projectDto = new ProjectDto();
+                    projectDto.setId(p.getId());
+                    projectDto.setName(p.getName());
+                    projectDto.setCreatedBy(p.getCreatedBy());
+                    projectDto.setActive(p.isActive());
+                    projectDto.setPriority(p.getPriority());
+                    projectDto.setDescription(p.getDescription());
+                    projectDto.setDateStart(p.getDateStart());
+                    projectDto.setDateDeliver(p.getDateDeliver());
+                    projectDto.setStateDto(new StateDto(p.getState().getName()));
+                    projectDto.setUserRolProjectRequestList(userDtos);
+                    return projectDto;
+                }).collect(Collectors.toList());
+
+        if (projectDtos.isEmpty()) {
+            return ResponseEntity.ok("You don't have any associated projects");
+        }
+
+        return ResponseEntity.ok(projectDtos);
+    }
+
 }

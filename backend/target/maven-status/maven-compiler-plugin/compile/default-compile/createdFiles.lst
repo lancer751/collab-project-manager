@@ -21,6 +21,7 @@ com\gestionproyectoscolaborativos\backend\services\auth\AuthenticationServices.c
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\KpisClave.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\UserPatchDto.class
+com\gestionproyectoscolaborativos\backend\entitys\tablesintermedate\UserProject.class
 com\gestionproyectoscolaborativos\backend\services\ProjectServices.class
 com\gestionproyectoscolaborativos\backend\repository\RolRepository.class
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\projects\PageProject.class
@@ -30,8 +31,10 @@ com\gestionproyectoscolaborativos\backend\entitys\fields\AuditFields.class
 com\gestionproyectoscolaborativos\backend\security\validation\ExistsByUsernameValidation.class
 com\gestionproyectoscolaborativos\backend\services\dashboard\PageProjectServices.class
 com\gestionproyectoscolaborativos\backend\services\dashboard\PageStartServices.class
+com\gestionproyectoscolaborativos\backend\services\dto\response\projects\UserRolProjectRequest.class
 com\gestionproyectoscolaborativos\backend\entitys\State.class
 com\gestionproyectoscolaborativos\backend\security\TokenJwtConfig.class
+com\gestionproyectoscolaborativos\backend\repository\UserProjectRepository.class
 com\gestionproyectoscolaborativos\backend\BackendApplication.class
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\users\PageUser.class
 com\gestionproyectoscolaborativos\backend\security\validation\ExistsByUsername.class

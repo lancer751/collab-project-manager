@@ -1,11 +1,13 @@
 package com.gestionproyectoscolaborativos.backend.entitys;
 
 import com.gestionproyectoscolaborativos.backend.entitys.fields.AuditFields;
+import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +60,10 @@ public class Users {
 
     @OneToMany(mappedBy = "users")
     private List<UserProjectRol> userProjectRols;
+
+    //creado recien
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserProject> userProjects = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "user_activities",

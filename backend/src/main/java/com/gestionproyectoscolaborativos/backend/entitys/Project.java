@@ -2,6 +2,7 @@ package com.gestionproyectoscolaborativos.backend.entitys;
 
 import com.gestionproyectoscolaborativos.backend.entitys.enums.Priority;
 import com.gestionproyectoscolaborativos.backend.entitys.fields.AuditFields;
+import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -42,9 +44,16 @@ public class Project {
     @Column(name = "date_deliver", nullable = false)
     private LocalDateTime dateDeliver; // fecha entrega
 
+    @Column(name = "createdby")
+    private String createdBy;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", length = 20)
     private Priority priority;
+
+    @Column(name = "active")
+    private boolean active;
+
 
     @Embedded
     private AuditFields auditFields;
@@ -55,4 +64,8 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<UserProjectRol> projectUserRol;
+
+    //creado recien
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserProject> userProjects = new ArrayList<>();
 }

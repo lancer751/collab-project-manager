@@ -4,12 +4,15 @@ import com.gestionproyectoscolaborativos.backend.entitys.Project;
 import com.gestionproyectoscolaborativos.backend.entitys.Rol;
 import com.gestionproyectoscolaborativos.backend.entitys.State;
 import com.gestionproyectoscolaborativos.backend.entitys.Users;
+import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
 import com.gestionproyectoscolaborativos.backend.repository.*;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.ProjectDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.ProjectDtoResponse;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.StateDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
+import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.UserRolProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,11 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Service
 public class ProjectServices {
@@ -37,41 +39,40 @@ public class ProjectServices {
     @Autowired
     private StateRepository stateRepository;
 
+    @Autowired
+    private UserProjectRepository userProjectRepository;
+
+
+
     @Transactional(readOnly = true)
     public ResponseEntity<?> readprojet () {
         Users users = getAuthenticatedUser();
-        List<UserProjectRol> userProjectRolList = userProjectRolRepository.findByUsers(users);
-        List<ProjectDtoResponse> projectDtos = userProjectRolList.stream()
-                .filter(p -> p.getProject() != null)
+        List<UserProject> userProjectRolList = userProjectRepository.findByUsers(users);
+        List<ProjectDto> projectDtos = userProjectRolList.stream()
                 .map(p -> {
                     Project project = p.getProject();
                     // Lista de usuarios del proyecto
-                    List<UserDtoResponse> userDtos = userProjectRolRepository.findByProject(project).stream()
-                            .map(us -> {
-                                List<RolDto> rolDtoList = userProjectRolRepository.findRolesByUser(us.getUsers()).stream().map( r -> {
-                                    RolDto rolDto = new RolDto();
-                                    if(!r.getName().equals("ROL_ADMIN")){
-                                        rolDto.setName(r.getName());
-                                        return rolDto;
-                                    }
-                                    return  rolDto;
-                                }).collect(Collectors.toList());
-                                UserDtoResponse user = new UserDtoResponse();
-                                user.setName(us.getUsers().getName());
-                                user.setLastname(us.getUsers().getLastname());
-                                user.setEmail(us.getUsers().getEmail());
-                                user.setRolDtoList(rolDtoList);
-                                return user;
-                            }).collect(Collectors.toList());
+                    List<UserRolProjectRequest> userDtos = userProjectRepository.findByProject(p.getProject()).stream().map(u -> {
+                        UserRolProjectRequest userRolProjectRequest = new UserRolProjectRequest();
+                        userRolProjectRequest.setId(u.getUsers().getId());
+                        userRolProjectRequest.setEmail(u.getUsers().getEmail());
+                        userRolProjectRequest.setRolProject(u.getRolproject());
+
+                        return userRolProjectRequest;
+                    }).collect(Collectors.toList());
+
                     // Armar DTO del proyecto
-                    ProjectDtoResponse projectDto = new ProjectDtoResponse();
+                    ProjectDto projectDto = new ProjectDto();
+                    projectDto.setId(projectDto.getId());
                     projectDto.setName(project.getName());
+                    projectDto.setCreatedBy(project.getCreatedBy());
+                    projectDto.setActive(project.isActive());
                     projectDto.setPriority(project.getPriority());
                     projectDto.setDescription(project.getDescription());
                     projectDto.setDateStart(project.getDateStart());
                     projectDto.setDateDeliver(project.getDateDeliver());
                     projectDto.setStateDto(new StateDto(project.getState().getName()));
-                    projectDto.setUserDtos(userDtos);
+                    projectDto.setUserRolProjectRequestList(userDtos);
                     return projectDto;
                 }).collect(Collectors.toList());
 
@@ -89,69 +90,54 @@ public class ProjectServices {
 
         // Verificar que tenga un rol válido
         Rol userRol = getUserValidRol(user);
-        if (userRol == null) {
-            return ResponseEntity.badRequest().body("The user rol is invalid");
-        }
+
 
         // Crear o usar estado
         State state = getOrCreateState(projectDto.getStateDto().getName());
 
         // Crear el proyecto
-        Project project = createAndSaveProject(projectDto, state);
+        Project project = createAndSaveProject(projectDto, state, user);
 
         // Asociar al usuario autenticado
-        createUserProjectRelation(user, userRol, project);
+        //createUserProjectRelation(user, projectDto.getRolProject(), project);
 
         // Asociar a otros usuarios (si vienen en la lista)
-        if (projectDto.getUserDtos() != null) {
-            for (UserDtoResponse userDto : projectDto.getUserDtos()) {
+        if (projectDto.getUserRolProjectRequestList() != null) {
+            for (UserRolProjectRequest userDto : projectDto.getUserRolProjectRequestList()) {
                 userRepository.findByEmail(userDto.getEmail()).ifPresent(extraUser -> {
-                    Rol extraRol = extraUser.getUserProjectRols().stream().map(UserProjectRol::getRol)
-                            .filter(r -> !"ROLE_ADMIN".equals(r.getName()))
-                            .findFirst()
-                            .orElse(null);
-                    if (extraRol != null) {
-                        createUserProjectRelation(extraUser, extraRol, project);
-                    }
+                        createUserProjectRelation(extraUser, userDto.getRolProject(), project);
                 });
             }
         }
         return ResponseEntity.ok("project created successful");
     }
 
-    @Transactional
-    public ResponseEntity<?> editproject (Integer id, ProjectDtoResponse projectDto) {
-        Integer idexit = 0;
 
+
+    @Transactional
+    public ResponseEntity<?> editproject(Integer id, ProjectDtoResponse projectDto) {
         Users user = getAuthenticatedUser();
 
-        List<UserProjectRol> userProjectRolList = userProjectRolRepository.findByUsers(user);
+        List<UserProject> userProjectRolList = userProjectRepository.findByUsers(user);
 
-        for (UserProjectRol userProjectRol : userProjectRolList) {
-            Project project = userProjectRol.getProject();
-            if (project != null && project.getId().equals(id)) {
-                idexit = id;
-            }
-        }
-        if (idexit == 0 ) {
-            return ResponseEntity.badRequest().body("Your cant this project");
-        }
-        Project project = projectRepository.findById(idexit).orElseThrow();
 
-        State state = getOrCreateState(projectDto.getStateDto().getName());
-        project.setName(projectDto.getName());
-        project.setDescription(projectDto.getDescription());
-        project.setState(state);
-        project.setDateDeliver(projectDto.getDateDeliver());
-        project.setDateStart(projectDto.getDateStart());
-        project.setPriority(projectDto.getPriority());
+        Project project = projectRepository.findById(id).orElseThrow();
+
+        // ✅ Usamos el nuevo método para actualizar campos
+        updateProjectFields(project, projectDto);
+
+        // Guardamos el proyecto actualizado
         project = projectRepository.save(project);
 
-        List<UserProjectRol> actualUserProjectRol = userProjectRolRepository.findByProject(project);
-        Set<String> emailsActual = actualUserProjectRol.stream().map(upr -> upr.getUsers().getEmail()).collect(Collectors.toSet());
+        // Manejo de usuarios asignados al proyecto
+        List<UserProject> actualUserProjectRol = userProjectRepository.findByProject(project);
+        Set<String> emailsActual = actualUserProjectRol.stream()
+                .map(u -> u.getUsers().getEmail())
+                .collect(Collectors.toSet());
 
-        //emails news
-        Set<String> emailsNew = projectDto.getUserDtos().stream().map(UserDtoResponse::getEmail).collect(Collectors.toSet());
+        Set<String> emailsNew = projectDto.getUserRolProjectRequestList().stream()
+                .map(UserRolProjectRequest::getEmail)
+                .collect(Collectors.toSet());
 
         Set<String> emailsForEliminated = new HashSet<>(emailsActual);
         emailsForEliminated.removeAll(emailsNew);
@@ -159,30 +145,27 @@ public class ProjectServices {
         Set<String> emailsForAdd = new HashSet<>(emailsNew);
         emailsForAdd.removeAll(emailsActual);
 
-        //deleted users in the project
+        // Eliminar usuarios
         for (String email : emailsForEliminated) {
-            Users users = userRepository.findByEmail(email).orElseThrow();
-            userProjectRolRepository.deleteByUsersAndProject(users, project);
+            Users u = userRepository.findByEmail(email).orElseThrow();
+            userProjectRepository.deleteByUsersAndProject(u, project);
         }
 
-        // add users
+        // Agregar usuarios
         for (String email : emailsForAdd) {
-            Users users = userRepository.findByEmail(email).orElseThrow();
-            Optional<Rol> rolOptional= users.getUserProjectRols().stream()
-                    .map(UserProjectRol::getRol)
-                    .filter(rol -> !"ROLE_ADMIN".equals(rol.getName()))
-                    .findFirst();
-
-            if (rolOptional.isPresent()) {
-                UserProjectRol nuevo = new UserProjectRol();
-                nuevo.setUsers(users);
-                nuevo.setRol(rolOptional.get());
-                nuevo.setProject(project);
-                userProjectRolRepository.save(nuevo);
+            Users u = userRepository.findByEmail(email).orElseThrow();
+            for (UserRolProjectRequest request : projectDto.getUserRolProjectRequestList()) {
+                if (request.getEmail().equals(email)) {
+                    UserProject nuevo = new UserProject();
+                    nuevo.setUsers(u);
+                    nuevo.setProject(project);
+                    nuevo.setRolproject(request.getRolProject());
+                    userProjectRepository.save(nuevo);
+                }
             }
         }
 
-        return ResponseEntity.ok().body("se edito el project");
+        return ResponseEntity.ok("Project edited successfully");
     }
 
     @Transactional
@@ -191,13 +174,16 @@ public class ProjectServices {
 
             Project project = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Not exits this project"));
 
-            userProjectRolRepository.deleteByProjectId(project.getId());
+            userProjectRepository.deleteByProjectId(project.getId());
 
             projectRepository.deleteById(id);
-
-            return ResponseEntity.ok("delete project correct");
+            Map<String, String> json = new HashMap<>();
+            json.put("message", "delete project correct");
+            return ResponseEntity.ok(json);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Map<String, String> json = new HashMap<>();
+            json.put("message", "error " + e.getMessage());
+            return ResponseEntity.badRequest().body(json);
         }
 
     }
@@ -209,6 +195,7 @@ public class ProjectServices {
     }
 
     private Rol getUserValidRol(Users user) {
+        System.out.println(user.getUserProjectRols().get(0).getRol().getName());
         return user.getUserProjectRols().stream()
                 .map(UserProjectRol::getRol)
                 .filter(role -> !"ROLE_ADMIN".equals(role.getName()))
@@ -223,23 +210,39 @@ public class ProjectServices {
             return stateRepository.save(newState);
         });
     }
-    private Project createAndSaveProject(ProjectDtoResponse dto, State state) {
+    private Project createAndSaveProject(ProjectDtoResponse dto, State state, Users users) {
         Project project = new Project();
         project.setName(dto.getName());
         project.setDescription(dto.getDescription());
         project.setDateStart(dto.getDateStart());
+        project.setCreatedBy(users.getName() + " " + users.getLastname());
         project.setDateDeliver(dto.getDateDeliver());
         project.setPriority(dto.getPriority());
+        project.setActive(dto.isActive());
         project.setState(state);
         return projectRepository.save(project);
     }
 
-    private void createUserProjectRelation(Users user, Rol rol, Project project) {
-        UserProjectRol userProjectRol = new UserProjectRol();
+    private void createUserProjectRelation(Users user, String rol, Project project) {
+        UserProject userProjectRol = new UserProject();
         userProjectRol.setUsers(user);
-        userProjectRol.setRol(rol);
+        userProjectRol.setRolproject(rol);
         userProjectRol.setProject(project);
-        userProjectRolRepository.save(userProjectRol);
+        userProjectRepository.save(userProjectRol);
+    }
+    private void updateProjectFields(Project project, ProjectDtoResponse dto) {
+        if (isNotBlank(dto.getName())) project.setName(dto.getName());
+        if (isNotBlank(dto.getDescription())) project.setDescription(dto.getDescription());
+        if (dto.getDateDeliver() != null) project.setDateDeliver(dto.getDateDeliver());
+        if (dto.getDateStart() != null) project.setDateStart(dto.getDateStart());
+        if (dto.getPriority() != null) project.setPriority(dto.getPriority());
+        if (dto.getCreatedBy() != null) project.setCreatedBy(dto.getCreatedBy());
+        project.setActive(dto.isActive());
+
+        if (dto.getStateDto() != null && isNotBlank(dto.getStateDto().getName())) {
+            State state = getOrCreateState(dto.getStateDto().getName());
+            project.setState(state);
+        }
     }
 
 }

@@ -25,4 +25,8 @@ public class PageProject {
     private ResponseEntity<?> readcomentrecient() {
         return projectServices.readcomentrecient();
     }
+    @GetMapping("/projectall")
+    private ResponseEntity<?> readprojectsall ()  {
+        return projectServices.readProjectsAdmin();
+    }
 }

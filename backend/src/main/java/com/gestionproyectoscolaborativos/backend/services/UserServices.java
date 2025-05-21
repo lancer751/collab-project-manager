@@ -51,7 +51,6 @@ public class UserServices {
         try {
 
             String password = passwordEncoder.encode(userDto.getPassword());
-
             Users user = new Users();
             user.setName(userDto.getName());
             user.setLastname(userDto.getLastname());

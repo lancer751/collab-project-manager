@@ -20,7 +20,10 @@ public class ProjectDtoResponse {
     private String description;
     private LocalDateTime dateStart;
     private LocalDateTime dateDeliver; // fecha limite
+    private String createdBy;
     private Priority priority;
     private StateDto stateDto;
-    private List<UserDtoResponse> userDtos;
+    private boolean active = true;
+    private List<UserDtoResponse> userDtos; // creador del proyecto
+    private List<UserRolProjectRequest> userRolProjectRequestList; // integrantes del proyecto
 }

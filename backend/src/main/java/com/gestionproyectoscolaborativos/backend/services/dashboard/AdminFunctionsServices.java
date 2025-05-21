@@ -83,7 +83,7 @@ public class AdminFunctionsServices {
             Set<String> roleUnique = new HashSet<>();
 
             List<RolDto> rolDtoList = users.getUserProjectRols().stream()
-                    .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                    .map(rol -> rol.getRol().getName())
                     .filter(roleUnique::add) // solo agrega si es nuevo
                     .map(nombre -> {
                         RolDto rolDto = new RolDto();
