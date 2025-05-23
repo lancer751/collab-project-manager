@@ -1,11 +1,79 @@
-import { mainApiInstance } from "./instaces"
+import {
+  CreateUserDto,
+  SingleUserData,
+  UpdateUserDto,
+  User,
+  UserRequestFilters,
+  UserRequestSort,
+  UsersInfoData,
+} from "@/types/user.types";
+import { mainApiInstance } from "./instaces";
 
+interface UserGetGrouping {
+  page: number;
+  filters?: Partial<UserRequestFilters>;
+  sorters?: Partial<UserRequestSort>;
+}
 
-export const getAllUsers = async () => {
-    try {
-        await mainApiInstance.get("/users")
-        
-    } catch (error) {
-        console.log("Error on getAllUsers", error)
-    }    
-} 
+export const getInfiniteUsers = async ({
+  page = 0,
+  filters,
+  sorters,
+}: UserGetGrouping) => {
+  const { name, rol, status } = filters ?? {};
+  const { by, direction } = sorters ?? {};
+  try {
+    const response = await mainApiInstance.get<UsersInfoData>(
+      `/dashboardadmin/user?sortBy=${by ?? ""}&page=${page ?? ""}&sortDir=${direction ?? ""}&role=${rol ?? ""}&enable=${status ?? ""}&search=${name ?? ""}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getInifiniteUsers service", error);
+  }
+};
+
+export const getSingleUserById = async (userId: number) => {
+  try {
+    const response = await mainApiInstance.get<SingleUserData>(
+      `/dashboardadmin/userid/${userId}`,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getSingleUserById service", error);
+  }
+};
+
+export const createNewUser = async (userData: CreateUserDto) => {
+  const lastFormatUserData = {
+    ...userData,
+    rolDtoList: [{ name: `ROLE_${userData.rolDtoList[0].name}` }],
+  };
+  try {
+    const response = await mainApiInstance.post<SingleUserData>(
+      "/dashboardadmin/registeruser",
+      lastFormatUserData,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in createNewUser service", error);
+  }
+};
+
+export const editUserData = async (id: number, userUpdates: UpdateUserDto) => {
+  const lastFormatUserData = {
+    ...userUpdates,
+    rolDtoList: [{ name: `ROLE_${userUpdates?.rolDtoList[0].name}` }],
+  };
+  try {
+    const response = await mainApiInstance.put<SingleUserData>(
+      `/dashboardadmin/edituser/${id}`,
+      lastFormatUserData,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in createNewUser service", error);
+  }
+};
