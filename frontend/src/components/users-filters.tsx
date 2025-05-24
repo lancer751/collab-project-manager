@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { UserRequestFilters, UserRequestSort } from "@/types/user.types";
+import { useGetAllRols } from "@/hooks/queries/roles";
 
 interface UserFiltersProps {
   filters: UserRequestFilters;
@@ -27,6 +28,7 @@ export default function UsersFilters({
   setFilters,
   setSorters,
 }: UserFiltersProps) {
+  const { data: rols, isPending } = useGetAllRols();
 
   return (
     <div className="flex flex-col md:flex-row items-center md:justify-between gap-4">
@@ -35,7 +37,7 @@ export default function UsersFilters({
         <Input
           placeholder="Buscar"
           value={filters.name}
-          onChange={(e) => setFilters({...filters, name: e.target.value})}
+          onChange={(e) => setFilters({ ...filters, name: e.target.value })}
           className="pl-9"
         />
         <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -87,24 +89,14 @@ export default function UsersFilters({
               onValueChange={(rol) => setFilters({ ...filters, rol })}
             >
               <DropdownMenuRadioItem value={""}>Todos</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value={"ADMIN"}>
-                <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-                  <Circle className="size-3.5" />
-                </span>
-                Admin
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value={"LIDERSISTEMAS"}>
-                <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-                  <Circle className="size-3.5" />
-                </span>
-                Lider de Sistemas
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value={"LIDERSOFTWARE"}>
-                <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-                  <Circle className="size-3.5" />
-                </span>
-                Lider de Software
-              </DropdownMenuRadioItem>
+              {rols?.map((rol) => (
+                <DropdownMenuRadioItem value={rol.name}>
+                  <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+                    <Circle className="size-3.5" />
+                  </span>
+                  {rol.name}
+                </DropdownMenuRadioItem>
+              ))}
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
