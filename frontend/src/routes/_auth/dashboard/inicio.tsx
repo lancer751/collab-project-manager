@@ -3,6 +3,7 @@ import { KPIsPanel } from "@/components/charts/KPIsPanel";
 import { LatestMonths } from "@/components/charts/LatestMonths";
 import { ProjectsStatus } from "@/components/charts/ProjectsStatus";
 import { TaskByUser } from "@/components/charts/TaskByUser";
+
 import {
   getCountLatestProjects,
   getCountProjectsByState,
@@ -10,6 +11,7 @@ import {
   getTasksByState,
   getTasksByUser,
 } from "@/services/graphs";
+
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/dashboard/inicio")({
