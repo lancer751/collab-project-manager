@@ -40,7 +40,7 @@ public class AuthenticationServices {
             Set<String> roleUnique = new HashSet<>();
             userDtoResponse.setRolDtoList(
                     users.getUserProjectRols().stream()
-                            .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                            .map(rol -> rol.getRol().getName())
                             .filter(roleUnique::add) // solo agrega si es nuevo
                             .map(nombre -> {
                                 RolDto rolDto = new RolDto();

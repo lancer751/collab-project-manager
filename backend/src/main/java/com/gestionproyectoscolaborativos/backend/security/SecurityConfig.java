@@ -49,13 +49,13 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain (HttpSecurity http) throws Exception{
         return http.authorizeHttpRequests((authz) -> authz
-                .requestMatchers(HttpMethod.POST, "/dashboardadmin/registeruser").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
+                .requestMatchers(HttpMethod.POST, "/dashboardadmin/registeruser").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
                         .requestMatchers(HttpMethod.PUT, "/dashboardadmin/edituser/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/dashboardadmin/usereditlist").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/dashboardadmin/project/restore").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/project/add").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
-                        .requestMatchers(HttpMethod.PUT, "/project/edit/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
-                        .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE")
+                        .requestMatchers(HttpMethod.POST, "/project/add").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
+                        .requestMatchers(HttpMethod.PUT, "/project/edit/{id}").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
+                        .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
                         .requestMatchers(HttpMethod.GET, "/dashboardadmin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/project/").authenticated()
                         .requestMatchers(HttpMethod.POST, "/dashboard/logout").authenticated()

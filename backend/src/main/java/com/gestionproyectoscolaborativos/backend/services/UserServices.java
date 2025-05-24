@@ -69,7 +69,7 @@ public class UserServices {
                 if (!rol.isPresent()) {
                     UserProjectRol userProjectRolNew = new UserProjectRol();
                     Rol rol1 = new Rol();
-                    rol1.setName("ROLE_" + r.getName());
+                    rol1.setName(r.getName());
                     rolRepository.save(rol1);
 
                     userProjectRolNew.setRol(rol1);
@@ -111,11 +111,11 @@ public class UserServices {
             if (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
                     boolean enabled = Boolean.parseBoolean(enable);
                     usersPage = userRepository.findByNameContainingIgnoreCaseAndEnableAndUserProjectRols_Rol_NameIgnoreCase(
-                            search, enabled, "ROLE_" + role, pageable);
+                            search, enabled,  role, pageable);
             } else if (!role.isBlank()) {
 
                     usersPage = userRepository.findByNameContainingIgnoreCaseAndUserProjectRols_Rol_NameIgnoreCase(
-                            search, "ROLE_" + role, pageable);
+                            search,  role, pageable);
             } else if (enable.equals("true") || enable.equals("false")) {
 
                     usersPage = userRepository.findByNameContainingIgnoreCaseAndEnable(
@@ -150,7 +150,7 @@ public class UserServices {
             Set<String> roleUnique = new HashSet<>();
 
             List<RolDto> rolDtoList = users.getUserProjectRols().stream()
-                            .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                            .map(rol -> rol.getRol().getName())
                             .filter(roleUnique::add) // solo agrega si es nuevo
                             .map(nombre -> {
                                 RolDto rolDto = new RolDto();
