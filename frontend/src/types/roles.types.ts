@@ -1,4 +1,4 @@
-type RolList =
+export type RolList =
   | "ADMIN"
   | "LIDERSISTEMAS"
   | "LIDERSOFTWARE"

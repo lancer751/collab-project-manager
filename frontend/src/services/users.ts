@@ -1,5 +1,6 @@
 import {
   CreateUserDto,
+  EditMultipleUsers,
   SingleUserData,
   UpdateUserDto,
   User,
@@ -77,3 +78,12 @@ export const editUserData = async (id: number, userUpdates: UpdateUserDto) => {
     console.error("Error in createNewUser service", error);
   }
 };
+
+export const editMultipleUsers = async (usersAndModifies: EditMultipleUsers) => {
+  try{
+    const response = await mainApiInstance.patch("/dashboardadmin/usereditlist", usersAndModifies)
+    return response.data
+  }catch(error) {
+    console.error("Erron in editMultipleUsers service", error)
+  }
+}

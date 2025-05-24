@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_auth/dashboard/users")({
 
 function RouteComponent() {
   return (
-    <div className="">
+    <div className="relative">
       <UsersTable/>
     </div>
   );
