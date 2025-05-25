@@ -1,5 +1,5 @@
 import { isAuthenticated as authCheck, login, logout } from "@/services/auth";
-import { UserLoginData } from "@/types/auth.types";
+import { UserLoginData } from "@/types/user.types";
 import { User } from "@/types/user.types";
 import {
   createContext,
@@ -10,9 +10,10 @@ import {
 
 export interface AuthContext {
   isAuthenticated: () => Promise<User | null>;
-  loginUser: (userData: UserLoginData) => Promise<void>;
+  loginUser: (userData: UserLoginData) => Promise<User>;
   logoutSession: () => Promise<void>;
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
 export const AuthContext = createContext<AuthContext | null>(null);
@@ -28,7 +29,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginUser = useCallback(
     async (userData:UserLoginData) => {
-      await login(userData);
+      const authUser = await login(userData);
+      setUser(authUser)
+      return authUser
     },
     []
   );
@@ -40,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, loginUser, logoutSession }}
+      value={{ isAuthenticated, user, loginUser, logoutSession, setUser }}
     >
       {children}
     </AuthContext.Provider>

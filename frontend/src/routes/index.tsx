@@ -17,7 +17,13 @@ export const Route = createFileRoute("/")({
     const {auth} = context
     const authenticated = await auth.isAuthenticated()
     if (authenticated) {
-      throw redirect({ to: search.redirect || fallback });
+      redirect({ to: search.redirect || fallback });
+      return {
+        auth: {
+          ...context.auth,
+          user: authenticated
+        }
+      }
     }
   },
   component: LoginPage,
