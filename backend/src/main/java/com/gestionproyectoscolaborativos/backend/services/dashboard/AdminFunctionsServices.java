@@ -8,9 +8,11 @@ import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserP
 import com.gestionproyectoscolaborativos.backend.repository.*;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.ProjectHistoryDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.RolDto;
+import com.gestionproyectoscolaborativos.backend.services.dto.request.UserDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.UserPatchDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,62 +100,40 @@ public class AdminFunctionsServices {
         }
     }
 
-    @Transactional
-    public ResponseEntity<?> editbylist(List<UserPatchDto> userPatchDtos) {
-        Map<String, String> josn = new HashMap<>();
+    public ResponseEntity<Map<String, String>> editarUsuarios(UserPatchDto userPatchDtos) {
+        Map<String, String> json = new HashMap<>();
+
         try {
-            if (!userPatchDtos.isEmpty()) {
-                for (UserPatchDto userPatchDto : userPatchDtos) {
-                    Users users = userRepository.findById(userPatchDto.getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + userPatchDto.getId()));
-                    if (userPatchDto.getEntryDate() != null) users.setEntryDate(userPatchDto.getEntryDate());
-                    users.setEnable(userPatchDto.isEnable());
+            for (Integer id : userPatchDtos.getUserIds()) {
+                Users user = userRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Usuario con ID " + id + " no encontrado"));
 
-                    // 1. Obtener roles actuales del usuario
-                    List<UserProjectRol> rolesActuales = userProjectRolRepository.findByUsers(users);
-
-                    // 2. Preparar el nuevo rol (formato: "ADMIN", "LIDER", etc.)
-                    String nuevoRolNombre = userPatchDto.getRol();
-
-                    if (nuevoRolNombre != null && !nuevoRolNombre.isBlank()) {
-                        // Asegurar prefijo "ROLE_"
-                        if (!nuevoRolNombre.startsWith("ROLE_")) {
-                            nuevoRolNombre = "ROLE_" + nuevoRolNombre.toUpperCase();
-                        }
-
-                        // 3. Eliminar TODOS los roles actuales (guardando historial si aplica)
-                        for (UserProjectRol upr : rolesActuales) {
-                            String nombreRolActual = upr.getRol().getName();
-
-                            if (upr.getProject() != null && (nombreRolActual.startsWith("ROLE_LIDER") || nombreRolActual.startsWith("ROLE_ADMIN"))) {
-                                UserProjectRoleHistory historial = getUserProjectRoleHistory(upr);
-                                userProjectRoleHistoryRepository.save(historial);
-                            }
-
-                            userProjectRolRepository.delete(upr);
-                        }
-
-                        // 4. Buscar y asignar el nuevo rol
-                        Rol nuevoRol = rolRepository.findByName(nuevoRolNombre)
-                                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " ));
-
-                        UserProjectRol nuevo = new UserProjectRol();
-                        nuevo.setUsers(users);
-                        nuevo.setRol(nuevoRol);
-                        userProjectRolRepository.save(nuevo);
-                    }
-
+                // Actualizar atributos generales si están presentes
+                if (userPatchDtos.getEntryDate() != null) {
+                    user.setEntryDate(userPatchDtos.getEntryDate());
                 }
+
+                user.setEnable(userPatchDtos.isEnable());
+
+                // Actualizar rol si viene en el DTO
+                if (userPatchDtos.getRol() != null && !userPatchDtos.getRol().isBlank()) {
+                    editUserRol(user, userPatchDtos); // Este método ya guarda el nuevo rol
+                }
+
+                // Guardar cambios del usuario
+                userRepository.save(user);
             }
-            josn.put("message", "Usuarios editados");
-            return ResponseEntity.ok().body(josn);
+
+            json.put("message", "Usuarios editados exitosamente");
+            return ResponseEntity.ok(json);
+
         } catch (Exception e) {
-            josn.put("message", "Hubo un error " + e.getMessage());
-            return ResponseEntity.ok().body(josn);
+            json.put("message", "Hubo un error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(json);
         }
-
-
-
     }
+
+
     private static UserProjectRoleHistory getUserProjectRoleHistory(UserProjectRol upr) {
         UserProjectRoleHistory userProjectRoleHistory = new UserProjectRoleHistory();
         userProjectRoleHistory.setIdProject(upr.getProject().getId());
@@ -164,4 +144,42 @@ public class AdminFunctionsServices {
         userProjectRoleHistory.setRolName(upr.getRol().getName());
         return userProjectRoleHistory;
     }
+
+    private void editUserRol(Users user, UserPatchDto dto) {
+        // 1. Obtener los roles actuales del usuario
+        List<UserProjectRol> rolesActuales = userProjectRolRepository.findByUsers(user);
+
+        // 2. Obtener el nuevo rol desde el DTO
+        String nuevoRol = dto.getRol();
+
+        // 3. Si el usuario ya tiene ese rol, no hacemos nada
+        boolean yaTieneRol = rolesActuales.stream()
+                .anyMatch(r -> r.getRol().getName().equalsIgnoreCase(nuevoRol));
+
+        if (yaTieneRol) {
+            return; // Nada que actualizar
+        }
+
+        // 4. Guardar historial si tenía algún rol "fuerte" (por ejemplo, lider o admin)
+        for (UserProjectRol upr : rolesActuales) {
+            String nombreRolActual = upr.getRol().getName();
+
+            if (nombreRolActual != null && (nombreRolActual.startsWith("ROLE_LIDER") || nombreRolActual.startsWith("ROLE_ADMIN"))) {
+                if (upr.getProject() != null) {
+                    UserProjectRoleHistory historial = getUserProjectRoleHistory(upr);
+                    userProjectRoleHistoryRepository.save(historial);
+                }
+            }
+
+            userProjectRolRepository.delete(upr); // eliminar todos los roles actuales
+        }
+        Rol rol = rolRepository.findByName(nuevoRol).orElseThrow();
+        // 5. Asignar el nuevo rol
+        UserProjectRol nuevo = new UserProjectRol();
+        nuevo.setUsers(user);
+        nuevo.setRol(rol);
+        userProjectRolRepository.save(nuevo);
+    }
+
+
 }

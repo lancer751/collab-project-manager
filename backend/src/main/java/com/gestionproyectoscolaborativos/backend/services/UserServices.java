@@ -126,9 +126,9 @@ public class UserServices {
         } else {
             if  (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
                 boolean enabled = Boolean.parseBoolean(enable);
-                usersPage = userRepository.findDistinctByEnableAndUserProjectRols_Rol_NameIgnoreCase(enabled, "ROLE_" + role, pageable);
+                usersPage = userRepository.findDistinctByEnableAndUserProjectRols_Rol_NameIgnoreCase(enabled,  role, pageable);
             } else if (!role.isBlank()) {
-                usersPage = userRepository.findDistinctByUserProjectRols_Rol_NameIgnoreCase("ROLE_" + role, pageable);
+                usersPage = userRepository.findDistinctByUserProjectRols_Rol_NameIgnoreCase(role, pageable);
             } else if (enable.equals("true") || enable.equals("false")) {
                 usersPage = userRepository.findByEnable(Boolean.parseBoolean(enable), pageable);
             } else {

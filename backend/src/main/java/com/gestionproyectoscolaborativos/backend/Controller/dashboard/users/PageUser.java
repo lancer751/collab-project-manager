@@ -61,7 +61,7 @@ public class PageUser {
     }
 
     @PatchMapping("/usereditlist")
-    public ResponseEntity<?> editList(@RequestBody List<UserPatchDto> usuariosParciales) {
-        return adminFunctionsServices.editbylist(usuariosParciales);
+    public ResponseEntity<?> editList(@RequestBody UserPatchDto usuariosParciales) {
+        return adminFunctionsServices.editarUsuarios(usuariosParciales);
     }
 }
