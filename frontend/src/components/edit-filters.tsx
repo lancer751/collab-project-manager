@@ -3,14 +3,12 @@ import {
   Circle,
   CircleDot,
   SquareUser,
-  Trash,
   X,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
@@ -40,9 +38,10 @@ export function EditFilters({
   const { mutateAsync } = useUpdateUsers();
 
   useEffect(() => {
+    console.log(modifyUsers)
     if (
       selectedUsersId.length > 0 &&
-      (modifyUsers.enable || modifyUsers.entryDate || modifyUsers.enable)
+      (modifyUsers.enable || modifyUsers.entryDate || modifyUsers.rol)
     ) {
       mutateAsync({...modifyUsers, userIds: selectedUsersId});
       setModifyUsers({userIds: []})
@@ -50,7 +49,6 @@ export function EditFilters({
   }, [modifyUsers, mutateAsync, handleSelectedRows, selectedUsersId]);
 
   console.log(selectedUsersId);
-  console.log(modifyUsers);
 
   return (
     <div className="fixed bottom-5 bg-secondary text-white rounded-md px-1.5 py-1.5 w-[90%] max-w-2xl -translate-x-1/2 left-1/2">
@@ -73,7 +71,7 @@ export function EditFilters({
                 size={"sm"}
               >
                 <CircleDot />
-                Estado
+                {modifyUsers.enable ?  `Estado: ${modifyUsers.enable}` : "Estado"}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" sideOffset={14}>
@@ -115,19 +113,19 @@ export function EditFilters({
                 value={modifyUsers.rol}
                 onValueChange={(rol) => setModifyUsers({ ...modifyUsers, rol })}
               >
-                <DropdownMenuRadioItem value={"ADMIN"}>
+                <DropdownMenuRadioItem value={"ROLE_ADMIN"}>
                   <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
                     <Circle className="size-3.5" />
                   </span>
                   Admin
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value={"LIDERSISTEMAS"}>
+                <DropdownMenuRadioItem value={"ROLE_LIDER_SISTEMAS"}>
                   <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
                     <Circle className="size-3.5" />
                   </span>
                   Lider de Sistemas
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value={"LIDERSOFTWARE"}>
+                <DropdownMenuRadioItem value={"ROLE_LIDER_SOFTWARE"}>
                   <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
                     <Circle className="size-3.5" />
                   </span>
@@ -162,14 +160,6 @@ export function EditFilters({
               />
             </PopoverContent>
           </Popover>
-
-          <Button
-            variant="destructive"
-            className="rounded-md p-0.5"
-            size="icon"
-          >
-            <Trash />
-          </Button>
         </div>
       </div>
     </div>

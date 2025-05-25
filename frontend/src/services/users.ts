@@ -77,7 +77,7 @@ export const editMultipleUsers = async (
   try {
     const response = await mainApiInstance.patch(
       "/dashboardadmin/usereditlist",
-      usersAndModifies
+      usersAndModifies, {withCredentials: true}
     );
     return response.data;
   } catch (error) {

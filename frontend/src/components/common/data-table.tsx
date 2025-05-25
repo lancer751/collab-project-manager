@@ -64,7 +64,6 @@ export function DataTable<TData extends { id: number }, TValue, T>({
       rowSelection,
     },
   });
-  console.log(rowSelection)
   const sentinelRef = useRef<null | HTMLTableRowElement>(null);
   const observerRef = useRef<IntersectionObserver>(null);
 
