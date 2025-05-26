@@ -6,7 +6,7 @@ import MainHeader from "@/components/common/MainHeader";
 
 export const Route = createFileRoute("/_auth")({
   beforeLoad: async ({context, location}) => {
-    const currentUser = context.auth.user ?? await context.auth.isAuthenticated()
+    const currentUser = await context.auth.isAuthenticated()
     console.log(currentUser)
     if(!currentUser){
       throw redirect({

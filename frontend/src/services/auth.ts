@@ -25,7 +25,7 @@ export async function login(userData: UserLoginData): Promise<User> {
   }
 }
 
-export async function logout() {
+export async function logoutSession() {
   try {
     await mainApiInstance.post("/dashboard/logout", null, {
       withCredentials: true
@@ -36,7 +36,7 @@ export async function logout() {
   }
 }
 
-export async function isAuthenticated(): Promise<User | null> {
+export async function getMeAuthenticated(): Promise<User | null> {
   try {
     const response = await mainApiInstance.get<{ message: string; user: User }>(
       "/dashboard/validation",

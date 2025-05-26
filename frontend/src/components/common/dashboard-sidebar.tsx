@@ -12,14 +12,12 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "../ui/sidebar";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { getRouteApi, useRouter } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useLogoutMutation } from "@/hooks/mutations/auth.mutation";
 
 // hardcode
 const data = {
@@ -70,18 +68,8 @@ const data = {
 };
 
 export function DasboardSidebar({ ...props }) {
-  const currRoute = getRouteApi("/_auth");
-  const router = useRouter()
-  const {auth: {user: currentUser, logoutSession}} = currRoute.useRouteContext()
-  const navigate = currRoute.useNavigate()
-
-  const handleLogout = () => {
-    logoutSession().then(() => {
-      router.invalidate().finally(() => {
-        navigate({to: "/"})
-      })
-    })
-  }
+  const {user: currentUser} = useAuth()
+  const {mutateAsync: logoutSession} = useLogoutMutation()
 
   return (
     <Sidebar
@@ -97,7 +85,7 @@ export function DasboardSidebar({ ...props }) {
         <NavMain items={data.navMain}></NavMain>
       </SidebarContent>
       <SidebarFooter>
-        <Button onClick={handleLogout} variant={"destructive"}>
+        <Button onClick={async() => logoutSession()} variant={"destructive"}>
           <LogOut/>
           <span>Salir</span>
         </Button>
