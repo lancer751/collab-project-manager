@@ -16,8 +16,8 @@ import {
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { Button } from "../ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import { useLogoutMutation } from "@/hooks/mutations/auth.mutation";
+import { getRouteApi } from "@tanstack/react-router";
 
 // hardcode
 const data = {
@@ -68,7 +68,8 @@ const data = {
 };
 
 export function DasboardSidebar({ ...props }) {
-  const {user: currentUser} = useAuth()
+  const currRoute = getRouteApi("/_auth")
+  const {auth: {user: currentUser}} = currRoute.useRouteContext()
   const {mutateAsync: logoutSession} = useLogoutMutation()
 
   return (

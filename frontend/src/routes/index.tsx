@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   }),
   beforeLoad: async ({ context, search }) => {
     const { auth } = context;
-    const authenticated = await auth.isAuthenticated();
+    const authenticated = auth.user ?? await auth.isAuthenticated();
     console.log(authenticated);
     console.log(fallback);
     if (authenticated) {

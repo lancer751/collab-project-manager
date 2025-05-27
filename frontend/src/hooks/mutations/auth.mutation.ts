@@ -34,7 +34,7 @@ export function useLogoutMutation() {
     onSuccess: async () => {
       setUser(null)
       queryClient.removeQueries()
-      router.invalidate().finally(() => {
+      await router.invalidate().finally(() => {
         navigate({to: "/"})
       })
     },
