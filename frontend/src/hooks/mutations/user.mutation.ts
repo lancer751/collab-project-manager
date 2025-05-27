@@ -1,3 +1,4 @@
+import { ErrorLoginResponse } from "@/services/auth";
 import {
   createNewUser,
   editMultipleUsers,
@@ -46,6 +47,6 @@ export function useUpdateUsers() {
       editMultipleUsers(usersModifications),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
+    }
   });
 }

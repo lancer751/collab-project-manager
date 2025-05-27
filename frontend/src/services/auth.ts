@@ -1,17 +1,31 @@
-import { UserLoginData } from "@/types/auth.types";
+import { UserLoginData } from "@/types/user.types";
 import { User } from "@/types/user.types";
 import { mainApiInstance } from "./instaces";
+import { AxiosError } from "axios";
 
-export async function login(userData: UserLoginData): Promise<void> {
+export interface ErrorLoginResponse {
+  message: string,
+  error: string
+}
+
+export async function login(userData: UserLoginData): Promise<User> {
   try {
-    await mainApiInstance.post<User>("/login", userData);
+    const response = await mainApiInstance.post<{message: string, user: User}>("/login", userData);
+    return response.data.user
   } catch (error) {
-    console.log("Error in login", error);
-    throw error;
+    const axiosError = error as AxiosError
+    console.log("Error in user login authenticacion", axiosError);
+    const errorLoginResponse = axiosError.response
+    
+    if(errorLoginResponse) {
+      const errorDetails = errorLoginResponse.data as ErrorLoginResponse
+      throw errorDetails
+    }
+    throw AxiosError
   }
 }
 
-export async function logout() {
+export async function logoutSession() {
   try {
     await mainApiInstance.post("/dashboard/logout", null, {
       withCredentials: true
@@ -22,7 +36,7 @@ export async function logout() {
   }
 }
 
-export async function isAuthenticated(): Promise<User | null> {
+export async function getMeAuthenticated(): Promise<User | null> {
   try {
     const response = await mainApiInstance.get<{ message: string; user: User }>(
       "/dashboard/validation",

@@ -40,4 +40,6 @@ export type EditMultipleUsers = {
   rol?: string,
   entryDate?: Date,
   enable?: string
-} 
+}
+
+export type UserLoginData = Pick<SingleUserData, "password"> & Pick<SingleUserData, "email"> 
