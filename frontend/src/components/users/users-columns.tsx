@@ -38,7 +38,7 @@ export const UsersColumns = ({
       />
     ),
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: true,
   },
   {
     accessorKey: "name",

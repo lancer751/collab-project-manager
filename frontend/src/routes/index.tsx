@@ -1,10 +1,7 @@
 import LoginForm from "@/components/auth/LoginForm";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
-import {
-  createFileRoute,
-  Link,
-  redirect,
-} from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
 export const fallback = "/dashboard/inicio" as const;
@@ -14,18 +11,27 @@ export const Route = createFileRoute("/")({
     redirect: z.string().optional().catch(""),
   }),
   beforeLoad: async ({ context, search }) => {
-    const {auth} = context
-    const authenticated = await auth.isAuthenticated()
+    const { auth } = context;
+    const authenticated = auth.user ?? await auth.isAuthenticated();
+    console.log(authenticated);
+    console.log(fallback);
     if (authenticated) {
       throw redirect({ to: search.redirect || fallback });
     }
+    return {
+      auth: {
+        ...context.auth,
+        user: authenticated,
+      },
+    };
   },
   component: LoginPage,
-  pendingComponent: () => <LoadingScreen/>
+  pendingComponent: () => <LoadingScreen />,
 });
 
 function LoginPage() {
-  
+  const { user: checkAuthUser } = useAuth();
+  console.log(checkAuthUser);
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:py-10">

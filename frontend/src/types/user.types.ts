@@ -1,4 +1,4 @@
-import { Rol } from "./roles.types";
+import { Rol, RolList } from "./roles.types";
 
 export interface UsersInfoData {
   totalItems: number;
@@ -34,3 +34,12 @@ export interface UserRequestSort {
   by?: string;
   direction?: string;
 }
+
+export type EditMultipleUsers = {
+  userIds: number[],
+  rol?: string,
+  entryDate?: Date,
+  enable?: string
+}
+
+export type UserLoginData = Pick<SingleUserData, "password"> & Pick<SingleUserData, "email"> 

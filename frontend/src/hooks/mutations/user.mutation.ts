@@ -1,19 +1,28 @@
-import { createNewUser, editUserData } from "@/services/users";
-import { CreateUserDto, UpdateUserDto } from "@/types/user.types";
+import { ErrorLoginResponse } from "@/services/auth";
+import {
+  createNewUser,
+  editMultipleUsers,
+  editUserData,
+} from "@/services/users";
+import {
+  CreateUserDto,
+  EditMultipleUsers,
+  UpdateUserDto,
+} from "@/types/user.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useCreateNewUser({onClose} : {onClose: ()=> void}) {
+export function useCreateNewUser({ onClose }: { onClose: () => void }) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userData: CreateUserDto) => createNewUser(userData),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["users"] });
-      onClose()
+      onClose();
     },
   });
 }
 
-export function useUpdateSingleUser({onClose} : {onClose: ()=> void}) {
+export function useUpdateSingleUser({ onClose }: { onClose: () => void }) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -26,7 +35,18 @@ export function useUpdateSingleUser({onClose} : {onClose: ()=> void}) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["users"] });
       await queryClient.invalidateQueries({ queryKey: ["user"] });
-      onClose()
+      onClose();
     },
+  });
+}
+
+export function useUpdateUsers() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usersModifications: EditMultipleUsers) =>
+      editMultipleUsers(usersModifications),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
+    }
   });
 }

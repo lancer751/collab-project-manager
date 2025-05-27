@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  RowSelectionState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -36,19 +37,22 @@ interface DataTableProps<TData extends { id: number }, TValue, T> {
     isError: boolean;
     error: Error | null;
   };
+  rowSelection: RowSelectionState,
+  setRowSelection: React.Dispatch<React.SetStateAction<RowSelectionState>>
 }
 
 export function DataTable<TData extends { id: number }, TValue, T>({
   columns,
   data,
   queryUtilities,
+  rowSelection,
+  setRowSelection
 }: DataTableProps<TData, TValue, T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
   const { fetchNextPage, isFetchingNextPage, hasNextPage, isError, error } =
     queryUtilities;
-  const table = useReactTable({
-    getRowId: (row) => String(row.id),
+    const table = useReactTable({
+      getRowId: (row) => String(row.id),
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),

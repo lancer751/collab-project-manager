@@ -1,5 +1,6 @@
 import {
   CreateUserDto,
+  EditMultipleUsers,
   SingleUserData,
   UpdateUserDto,
   User,
@@ -45,14 +46,10 @@ export const getSingleUserById = async (userId: number) => {
 };
 
 export const createNewUser = async (userData: CreateUserDto) => {
-  const lastFormatUserData = {
-    ...userData,
-    rolDtoList: [{ name: `ROLE_${userData.rolDtoList[0].name}` }],
-  };
   try {
     const response = await mainApiInstance.post<SingleUserData>(
       "/dashboardadmin/registeruser",
-      lastFormatUserData,
+      userData,
       { withCredentials: true }
     );
     return response.data;
@@ -62,18 +59,28 @@ export const createNewUser = async (userData: CreateUserDto) => {
 };
 
 export const editUserData = async (id: number, userUpdates: UpdateUserDto) => {
-  const lastFormatUserData = {
-    ...userUpdates,
-    rolDtoList: [{ name: `ROLE_${userUpdates?.rolDtoList[0].name}` }],
-  };
   try {
     const response = await mainApiInstance.put<SingleUserData>(
       `/dashboardadmin/edituser/${id}`,
-      lastFormatUserData,
+      userUpdates,
       { withCredentials: true }
     );
     return response.data;
   } catch (error) {
     console.error("Error in createNewUser service", error);
+  }
+};
+
+export const editMultipleUsers = async (
+  usersAndModifies: EditMultipleUsers
+) => {
+  try {
+    const response = await mainApiInstance.patch(
+      "/dashboardadmin/usereditlist",
+      usersAndModifies, {withCredentials: true}
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erron in editMultipleUsers service", error);
   }
 };

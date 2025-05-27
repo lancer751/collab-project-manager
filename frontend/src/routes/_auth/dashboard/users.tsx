@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getInfiniteUsers } from "@/services/users";
 import UsersTable from "@/components/users-table";
+import { getAllRoles } from "@/services/roles";
 
 export const Route = createFileRoute("/_auth/dashboard/users")({
   component: RouteComponent,
@@ -17,12 +18,16 @@ export const Route = createFileRoute("/_auth/dashboard/users")({
       },
       pages: 1,
     });
+    queryClient.prefetchQuery({
+      queryKey: ["rols"],
+      queryFn: getAllRoles,
+    })
   },
 });
 
 function RouteComponent() {
   return (
-    <div className="">
+    <div className="relative">
       <UsersTable/>
     </div>
   );

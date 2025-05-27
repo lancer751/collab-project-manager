@@ -30,6 +30,7 @@ import {
   useCreateNewUser,
   useUpdateSingleUser,
 } from "@/hooks/mutations/user.mutation";
+import { useGetAllRols } from "@/hooks/queries/roles";
 interface UserFormProps {
   user?: SingleUserData;
   mode: "create" | "edit";
@@ -53,7 +54,7 @@ const createUserSchema = z.object({
     .max(9, { message: "El teléfono debe tener 9 carácteres como máximo" })
     .optional(),
   rolDtoList: z.enum(
-    ["ADMIN", "LIDERSISTEMAS", "LIDERSOFTWARE", "USER", "LIDERPROYECTO"],
+    ["ROLE_ADMIN", "ROLE_LIDER_SISTEMAS", "ROLE_LIDER_SOFTWARE", "ROLE_USER", "ROLE_LIDER_PROYECTO"],
     { required_error: "Selecciona el Rol que tendrá el usuario" }
   ),
   entryDate: z.date({
@@ -69,6 +70,7 @@ const editUserSchema = createUserSchema.omit({ password: true }).extend({
 export function UserForm({ user, mode, onClose }: UserFormProps) {
   const { mutateAsync: createUser } = useCreateNewUser({ onClose });
   const { mutateAsync: editSingleUser } = useUpdateSingleUser({ onClose });
+  const {data: rols, isPending} = useGetAllRols()
   // Elegimos el schema según el modo
   const schema = mode === "create" ? createUserSchema : editUserSchema;
   type FormSchema = z.infer<typeof schema>;
@@ -204,14 +206,14 @@ export function UserForm({ user, mode, onClose }: UserFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="ADMIN">Administrador</SelectItem>
-                    <SelectItem value="LIDERSISTEMAS">
+                    <SelectItem value="ROLE_ADMIN">Administrador</SelectItem>
+                    <SelectItem value="ROLE_LIDER_SISTEMAS">
                       Lider de Sistemas
                     </SelectItem>
-                    <SelectItem value="LIDERSOFTWARE">
+                    <SelectItem value="ROLE_LIDER_SOFTWARE">
                       Lider de Software
                     </SelectItem>
-                    <SelectItem value="USER">Usuario</SelectItem>
+                    <SelectItem value="ROLE_USER">Usuario</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

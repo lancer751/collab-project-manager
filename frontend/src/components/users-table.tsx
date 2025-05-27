@@ -1,4 +1,4 @@
-import { useInfiniteUsers, useSingleUserById } from "@/hooks/queries/users";
+import { useInfiniteUsers } from "@/hooks/queries/users";
 import { useMemo, useState } from "react";
 import UsersFilters from "./users-filters";
 import { DataTable } from "./common/data-table";
@@ -7,11 +7,14 @@ import { UserRequestFilters, UserRequestSort } from "@/types/user.types";
 import { ModalFormUser } from "./common/ModalFormUser";
 import { Button } from "./ui/button";
 import { PlusCircle } from "lucide-react";
+import { EditFilters } from "./edit-filters";
+import { RowSelectionState } from "@tanstack/react-table";
 
 export default function UsersTable() {
   const [modalMode, setModalMode] = useState<"edit" | "create">("create");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [filters, setFilters] = useState<UserRequestFilters>({
     name: "",
     rol: "",
@@ -37,7 +40,8 @@ export default function UsersTable() {
   const users = useMemo(() => {
     return data ? data.pages.flatMap((page) => page?.users ?? []) : [];
   }, [data]);
-  console.log(users);
+
+  const cleanSelectedRows = () => setRowSelection({});
 
   const handleUserEdit = (userId: number) => {
     setModalOpen(true);
@@ -75,7 +79,15 @@ export default function UsersTable() {
           columns={UsersColumns({ onEdit: handleUserEdit })}
           data={users}
           queryUtilities={queryUtilities}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
         />
+        {Object.keys(rowSelection).length > 0 && (
+          <EditFilters
+            selectedRows={rowSelection}
+            handleSelectedRows={cleanSelectedRows}
+          />
+        )}
       </div>
       <ModalFormUser
         isOpen={isModalOpen}
