@@ -16,7 +16,7 @@ import {
 } from "../ui/chart";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useCountTaksByUser } from "@/hooks/queries/graphs";
-import { useMemo } from "react";
+import { ComponentPropsWithoutRef, useMemo } from "react";
 
 interface TaskByUser {
   user: string;
@@ -32,9 +32,10 @@ const chartConfig = {
     label: "Tareas Asignadas",
   },
 } satisfies ChartConfig;
+type CardWrapperProps = ComponentPropsWithoutRef<"div">;
 
-export function TaskByUser() {
-  const {data: taskByUserData, isPending, isError} = useCountTaksByUser()
+export function TaskByUser(props: CardWrapperProps) {
+  const {data: taskByUserData} = useCountTaksByUser()
 
   const chartData = useMemo(() => {
     return taskByUserData ? taskByUserData.map(data => ({
@@ -48,7 +49,7 @@ export function TaskByUser() {
   const totalAssigned = chartData.reduce((acc, curr) => acc + curr.assigned, 0);
 
   return (
-    <Card>
+    <Card {...props}>
       <CardHeader>
         <CardTitle className="text-lg">Carga de trabajo por usuario</CardTitle>
         <CardDescription>
@@ -79,12 +80,14 @@ export function TaskByUser() {
               stackId="a"
               fill="var(--task-status-completed)"
               radius={[4, 0, 0, 4]}
+              isAnimationActive={false}
             />
             <Bar
               dataKey="assigned"
               stackId="a"
               fill="var(--task-status-inprogress)"
               radius={[0, 4, 4, 0]}
+              isAnimationActive={false}
             />
             <ChartLegend content={<ChartLegendContent />} />
           </BarChart>

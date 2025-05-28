@@ -1,8 +1,7 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import React from "react";
+import React, { ComponentPropsWithoutRef } from "react";
 
 import {
   Card,
@@ -20,7 +19,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { getRouteApi } from "@tanstack/react-router";
 import { useLatestMonthProjects } from "@/hooks/queries/graphs";
 
 const chartConfig = {
@@ -34,8 +32,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function LatestMonths() {
-  const { data, isLoading, error } = useLatestMonthProjects();
+
+type CardWrapperProps = ComponentPropsWithoutRef<"div">;
+
+export function LatestMonths(props: CardWrapperProps) {
+  const { data } = useLatestMonthProjects();
 
   const customInfoData = React.useMemo(() => (
     data ? Object.entries(data).map((arr) => {
@@ -58,7 +59,7 @@ export function LatestMonths() {
   ), [customInfoData]);
 
   return (
-    <Card>
+    <Card {...props}>
       <CardHeader>
         <CardTitle className="text-lg">Últimos 4 meses</CardTitle>
         <CardDescription>Enero - Junio 2025</CardDescription>
@@ -81,8 +82,8 @@ export function LatestMonths() {
               cursor={false}
               content={<ChartTooltipContent indicator="dashed" />}
             />
-            <Bar dataKey="completados" fill="var(--completed)" radius={4} />
-            <Bar dataKey="cancelados" fill="var(--canceled)" radius={4} />
+            <Bar dataKey="completados" fill="var(--completed)" radius={4} isAnimationActive={false} />
+            <Bar dataKey="cancelados" fill="var(--canceled)" radius={4} isAnimationActive={false} />
             <ChartLegend content={<ChartLegendContent />} />
           </BarChart>
         </ChartContainer>

@@ -17,14 +17,17 @@ import {
 } from "@/components/ui/chart";
 import { MonthlyData, TasksStatusCount } from "@/types/graph.types";
 import { useTasksByState } from "@/hooks/queries/graphs";
+import { ComponentPropsWithoutRef } from "react";
 
 const chartConfig = {
   count: {
     label: "cantidad",
   },
 } satisfies ChartConfig;
+type CardWrapperProps = ComponentPropsWithoutRef<"div">;
 
-export function CurrentTasks() {
+
+export function CurrentTasks(props: CardWrapperProps) {
   const { data, isLoading, error } = useTasksByState();
 
   if (isLoading) return <div>Cargando tareas actuales...</div>;
@@ -41,7 +44,7 @@ export function CurrentTasks() {
   ];
 
   return (
-    <Card className="flex flex-col max-h-[500px]">
+    <Card {...props}>
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-lg">Tareas Actuales</CardTitle>
         <CardDescription>
@@ -56,7 +59,7 @@ export function CurrentTasks() {
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie data={chartData} dataKey="count" label nameKey="status" />
+              <Pie data={chartData} dataKey="count" label nameKey="status" isAnimationActive={false} />
               <Legend />
             </PieChart>
           </ChartContainer>

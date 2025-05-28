@@ -13,7 +13,6 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard/route'
 import { Route as AuthDashboardUsersImport } from './routes/_auth/dashboard/users'
 import { Route as AuthDashboardTasksImport } from './routes/_auth/dashboard/tasks'
 import { Route as AuthDashboardProjectsImport } from './routes/_auth/dashboard/projects'
@@ -33,40 +32,34 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthDashboardRouteRoute = AuthDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthDashboardUsersRoute = AuthDashboardUsersImport.update({
+  id: '/dashboard/users',
+  path: '/dashboard/users',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
-const AuthDashboardUsersRoute = AuthDashboardUsersImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AuthDashboardRouteRoute,
-} as any)
-
 const AuthDashboardTasksRoute = AuthDashboardTasksImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => AuthDashboardRouteRoute,
+  id: '/dashboard/tasks',
+  path: '/dashboard/tasks',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const AuthDashboardProjectsRoute = AuthDashboardProjectsImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => AuthDashboardRouteRoute,
+  id: '/dashboard/projects',
+  path: '/dashboard/projects',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const AuthDashboardInicioRoute = AuthDashboardInicioImport.update({
-  id: '/inicio',
-  path: '/inicio',
-  getParentRoute: () => AuthDashboardRouteRoute,
+  id: '/dashboard/inicio',
+  path: '/dashboard/inicio',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const AuthDashboardInboxRoute = AuthDashboardInboxImport.update({
-  id: '/inbox',
-  path: '/inbox',
-  getParentRoute: () => AuthDashboardRouteRoute,
+  id: '/dashboard/inbox',
+  path: '/dashboard/inbox',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -87,54 +80,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/dashboard': {
-      id: '/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardRouteImport
-      parentRoute: typeof AuthRouteImport
-    }
     '/_auth/dashboard/inbox': {
       id: '/_auth/dashboard/inbox'
-      path: '/inbox'
+      path: '/dashboard/inbox'
       fullPath: '/dashboard/inbox'
       preLoaderRoute: typeof AuthDashboardInboxImport
-      parentRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/dashboard/inicio': {
       id: '/_auth/dashboard/inicio'
-      path: '/inicio'
+      path: '/dashboard/inicio'
       fullPath: '/dashboard/inicio'
       preLoaderRoute: typeof AuthDashboardInicioImport
-      parentRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/dashboard/projects': {
       id: '/_auth/dashboard/projects'
-      path: '/projects'
+      path: '/dashboard/projects'
       fullPath: '/dashboard/projects'
       preLoaderRoute: typeof AuthDashboardProjectsImport
-      parentRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/dashboard/tasks': {
       id: '/_auth/dashboard/tasks'
-      path: '/tasks'
+      path: '/dashboard/tasks'
       fullPath: '/dashboard/tasks'
       preLoaderRoute: typeof AuthDashboardTasksImport
-      parentRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/dashboard/users': {
       id: '/_auth/dashboard/users'
-      path: '/users'
+      path: '/dashboard/users'
       fullPath: '/dashboard/users'
       preLoaderRoute: typeof AuthDashboardUsersImport
-      parentRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthDashboardRouteRouteChildren {
+interface AuthRouteRouteChildren {
   AuthDashboardInboxRoute: typeof AuthDashboardInboxRoute
   AuthDashboardInicioRoute: typeof AuthDashboardInicioRoute
   AuthDashboardProjectsRoute: typeof AuthDashboardProjectsRoute
@@ -142,23 +128,12 @@ interface AuthDashboardRouteRouteChildren {
   AuthDashboardUsersRoute: typeof AuthDashboardUsersRoute
 }
 
-const AuthDashboardRouteRouteChildren: AuthDashboardRouteRouteChildren = {
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthDashboardInboxRoute: AuthDashboardInboxRoute,
   AuthDashboardInicioRoute: AuthDashboardInicioRoute,
   AuthDashboardProjectsRoute: AuthDashboardProjectsRoute,
   AuthDashboardTasksRoute: AuthDashboardTasksRoute,
   AuthDashboardUsersRoute: AuthDashboardUsersRoute,
-}
-
-const AuthDashboardRouteRouteWithChildren =
-  AuthDashboardRouteRoute._addFileChildren(AuthDashboardRouteRouteChildren)
-
-interface AuthRouteRouteChildren {
-  AuthDashboardRouteRoute: typeof AuthDashboardRouteRouteWithChildren
-}
-
-const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthDashboardRouteRoute: AuthDashboardRouteRouteWithChildren,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -168,7 +143,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthRouteRouteWithChildren
-  '/dashboard': typeof AuthDashboardRouteRouteWithChildren
   '/dashboard/inbox': typeof AuthDashboardInboxRoute
   '/dashboard/inicio': typeof AuthDashboardInicioRoute
   '/dashboard/projects': typeof AuthDashboardProjectsRoute
@@ -179,7 +153,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthRouteRouteWithChildren
-  '/dashboard': typeof AuthDashboardRouteRouteWithChildren
   '/dashboard/inbox': typeof AuthDashboardInboxRoute
   '/dashboard/inicio': typeof AuthDashboardInicioRoute
   '/dashboard/projects': typeof AuthDashboardProjectsRoute
@@ -191,7 +164,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
-  '/_auth/dashboard': typeof AuthDashboardRouteRouteWithChildren
   '/_auth/dashboard/inbox': typeof AuthDashboardInboxRoute
   '/_auth/dashboard/inicio': typeof AuthDashboardInicioRoute
   '/_auth/dashboard/projects': typeof AuthDashboardProjectsRoute
@@ -204,7 +176,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
-    | '/dashboard'
     | '/dashboard/inbox'
     | '/dashboard/inicio'
     | '/dashboard/projects'
@@ -214,7 +185,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
-    | '/dashboard'
     | '/dashboard/inbox'
     | '/dashboard/inicio'
     | '/dashboard/projects'
@@ -224,7 +194,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_auth/dashboard'
     | '/_auth/dashboard/inbox'
     | '/_auth/dashboard/inicio'
     | '/_auth/dashboard/projects'
@@ -263,13 +232,6 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth/route.tsx",
       "children": [
-        "/_auth/dashboard"
-      ]
-    },
-    "/_auth/dashboard": {
-      "filePath": "_auth/dashboard/route.tsx",
-      "parent": "/_auth",
-      "children": [
         "/_auth/dashboard/inbox",
         "/_auth/dashboard/inicio",
         "/_auth/dashboard/projects",
@@ -279,23 +241,23 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/inbox": {
       "filePath": "_auth/dashboard/inbox.tsx",
-      "parent": "/_auth/dashboard"
+      "parent": "/_auth"
     },
     "/_auth/dashboard/inicio": {
       "filePath": "_auth/dashboard/inicio.tsx",
-      "parent": "/_auth/dashboard"
+      "parent": "/_auth"
     },
     "/_auth/dashboard/projects": {
       "filePath": "_auth/dashboard/projects.tsx",
-      "parent": "/_auth/dashboard"
+      "parent": "/_auth"
     },
     "/_auth/dashboard/tasks": {
       "filePath": "_auth/dashboard/tasks.tsx",
-      "parent": "/_auth/dashboard"
+      "parent": "/_auth"
     },
     "/_auth/dashboard/users": {
       "filePath": "_auth/dashboard/users.tsx",
-      "parent": "/_auth/dashboard"
+      "parent": "/_auth"
     }
   }
 }

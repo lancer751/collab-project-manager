@@ -23,10 +23,12 @@ import {
   Settings,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useLogoutMutation } from "@/hooks/mutations/auth.mutation";
 
 export function NavUser({ user }: { user: User | null }) {
   const { isMobile } = useSidebar();
-
+  const {mutateAsync: logoutSessionMutation} = useLogoutMutation() 
+  const handleLogout = () => logoutSessionMutation()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -57,8 +59,8 @@ export function NavUser({ user }: { user: User | null }) {
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
-            align="start"
-            sideOffset={3}
+            align="end"
+            sideOffset={15}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -91,7 +93,7 @@ export function NavUser({ user }: { user: User | null }) {
                 Configuración
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout} variant="destructive">
                 <LogOut />
                 Salir
               </DropdownMenuItem>
