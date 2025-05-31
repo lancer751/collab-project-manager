@@ -88,8 +88,6 @@ public class ProjectServices {
         // Obtener usuario autenticado
         Users user = getAuthenticatedUser();
 
-        // Verificar que tenga un rol válido
-        Rol userRol = getUserValidRol(user);
 
 
         // Crear o usar estado
@@ -98,8 +96,6 @@ public class ProjectServices {
         // Crear el proyecto
         Project project = createAndSaveProject(projectDto, state, user);
 
-        // Asociar al usuario autenticado
-        //createUserProjectRelation(user, projectDto.getRolProject(), project);
 
         // Asociar a otros usuarios (si vienen en la lista)
         if (projectDto.getUserRolProjectRequestList() != null) {

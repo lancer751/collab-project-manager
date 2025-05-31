@@ -29,4 +29,9 @@ public interface UserProjectRepository extends JpaRepository<UserProject, Long> 
     @Query("DELETE FROM UserProjectRol upr WHERE upr.project.id = :id")
     void deleteByProjectId(@Param("id") Integer id);
 
+
+
+    @Query("SELECT up FROM UserProject up WHERE up.rolproject = :rol")
+    List<UserProject> findByRolproject(@Param("rol") String rol);
+
 }

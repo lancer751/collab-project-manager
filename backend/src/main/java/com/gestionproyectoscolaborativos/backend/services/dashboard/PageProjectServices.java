@@ -2,6 +2,7 @@ package com.gestionproyectoscolaborativos.backend.services.dashboard;
 
 import com.gestionproyectoscolaborativos.backend.entitys.Coment;
 import com.gestionproyectoscolaborativos.backend.entitys.Project;
+import com.gestionproyectoscolaborativos.backend.entitys.enums.Priority;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 import com.gestionproyectoscolaborativos.backend.repository.ComentRepository;
 import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
@@ -12,16 +13,17 @@ import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.
 import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.ProjectRecentResponseDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.UserRolProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,6 +130,7 @@ public class PageProjectServices {
         return "Hace " + (segundos / 86400) + " días";
     }
 
+
     public ResponseEntity<?> readProjectsAdmin (){
         List<ProjectDto> projectDtos = projectRepository.findAll().stream()
                 .map(p -> {
@@ -162,5 +165,6 @@ public class PageProjectServices {
 
         return ResponseEntity.ok(projectDtos);
     }
+
 
 }

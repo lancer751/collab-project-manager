@@ -31,8 +31,11 @@ com\gestionproyectoscolaborativos\backend\entitys\fields\AuditFields.class
 com\gestionproyectoscolaborativos\backend\security\validation\ExistsByUsernameValidation.class
 com\gestionproyectoscolaborativos\backend\services\dashboard\PageProjectServices.class
 com\gestionproyectoscolaborativos\backend\services\dashboard\PageStartServices.class
+com\gestionproyectoscolaborativos\backend\Controller\dashboard\projects\FilterProjectController.class
+com\gestionproyectoscolaborativos\backend\services\dto\response\StateDto.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\projects\UserRolProjectRequest.class
 com\gestionproyectoscolaborativos\backend\entitys\State.class
+com\gestionproyectoscolaborativos\backend\services\FilterProjectServices.class
 com\gestionproyectoscolaborativos\backend\security\TokenJwtConfig.class
 com\gestionproyectoscolaborativos\backend\repository\UserProjectRepository.class
 com\gestionproyectoscolaborativos\backend\BackendApplication.class

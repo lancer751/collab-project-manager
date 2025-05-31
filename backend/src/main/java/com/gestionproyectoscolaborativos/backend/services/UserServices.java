@@ -106,7 +106,9 @@ public class UserServices {
 
     @Transactional(readOnly = true)
     public  ResponseEntity<?> read (Pageable pageable, String sortBy, String sortDir, String enable, String role, String search) {
+
         Page<Users> usersPage;
+
         if (!search.isBlank()) {
             if (!role.isBlank() && (enable.equals("true") || enable.equals("false"))) {
                     boolean enabled = Boolean.parseBoolean(enable);
@@ -292,7 +294,7 @@ public class UserServices {
         Set<String> roleUnique = new HashSet<>();
         userDtoResponse.setRolDtoList(
                 users.getUserProjectRols().stream()
-                        .map(rol -> rol.getRol().getName().replaceFirst("ROLE_",  ""))
+                        .map(rol -> rol.getRol().getName())
                         .filter(roleUnique::add) // solo agrega si es nuevo
                         .map(nombre -> {
                             RolDto rolDto = new RolDto();
@@ -301,6 +303,8 @@ public class UserServices {
                         })
                         .collect(Collectors.toList())
         );
+        userDtoResponse.setNumberPhone(users.getNumberPhone());
+        userDtoResponse.setDescription(users.getDescription());
         return  userDtoResponse;
     }
 
