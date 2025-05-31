@@ -74,6 +74,21 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+   /* Estados de tareas/proyectos */
+   --completed:           oklch(0.65 0.25 130);
+   --canceled:            oklch(0.65 0.25 30);
+   --task-status-revision:oklch(0.65 0.25 290);
+   --task-status-inprogress: oklch(0.65 0.25 90);
+   --task-status-archived:   oklch(0.65 0.25 60);
+   --task-status-unstarted:  oklch(0.65 0.25 220);
+ 
+   --task-status-completed: var(--completed);
+ 
+   --project-status-completed: var(--completed);
+   --project-status-canceled:  var(--canceled);
+   --project-status-risk:      oklch(0.65 0.25 15 / 96%);
+   --project-status-paused:    oklch(0.65 0.18 330 / 80%); /* menos croma y más transparente */
+   --project-status-inprogress: var(--task-status-inprogress);
 }
 
 .dark {

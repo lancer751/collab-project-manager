@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
@@ -8,7 +7,7 @@ import { AuthProvider } from "./contexts/Auth";
 import { useAuth } from "./hooks/useAuth";
 import { TanStackRouterDevtoolsInProd } from "@tanstack/react-router-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 const queryClient = new QueryClient();
 
 const router = createRouter({
@@ -32,7 +31,8 @@ function InnerApp() {
   return (
     <>
       <RouterProvider router={router} context={{ auth }} />
-      <TanStackRouterDevtoolsInProd router={router} position="bottom-right" />
+      <ReactQueryDevtools initialIsOpen={false} />
+      <TanStackRouterDevtoolsInProd router={router} position="bottom-left" />
     </>
   );
 }

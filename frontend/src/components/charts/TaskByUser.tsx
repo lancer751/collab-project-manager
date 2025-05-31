@@ -14,7 +14,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "../ui/chart";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { useCountTaksByUser } from "@/hooks/queries/graphs";
 import { ComponentPropsWithoutRef, useMemo } from "react";
 
@@ -35,17 +41,22 @@ const chartConfig = {
 type CardWrapperProps = ComponentPropsWithoutRef<"div">;
 
 export function TaskByUser(props: CardWrapperProps) {
-  const {data: taskByUserData} = useCountTaksByUser()
+  const { data: taskByUserData } = useCountTaksByUser();
 
   const chartData = useMemo(() => {
-    return taskByUserData ? taskByUserData.map(data => ({
-      user: data.fullName,
-      completed: data.tareasCompletadas,
-      assigned: data.tareasAsigandas
-    })) : []
-  },[taskByUserData])
-  
-  const totalCompleted = chartData.reduce((acc, curr) => acc + curr.completed, 0);
+    return taskByUserData
+      ? taskByUserData.map((data) => ({
+          user: data.fullName,
+          completed: data.tareasCompletadas,
+          assigned: data.tareasAsigandas,
+        }))
+      : [];
+  }, [taskByUserData]);
+
+  const totalCompleted = chartData.reduce(
+    (acc, curr) => acc + curr.completed,
+    0
+  );
   const totalAssigned = chartData.reduce((acc, curr) => acc + curr.assigned, 0);
 
   return (
@@ -56,9 +67,8 @@ export function TaskByUser(props: CardWrapperProps) {
           Observa quién tiene menos carga para delegar tareas.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-      <ResponsiveContainer>
-        <ChartContainer config={chartConfig}>
+      <CardContent className="flex-1 flex items-center">
+        <ChartContainer config={chartConfig} className="h-full max-h-[300px] w-full">
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -73,7 +83,7 @@ export function TaskByUser(props: CardWrapperProps) {
               tickMargin={10}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <XAxis type="number"/>
+            <XAxis type="number" />
             <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
             <Bar
               dataKey="completed"
@@ -92,7 +102,6 @@ export function TaskByUser(props: CardWrapperProps) {
             <ChartLegend content={<ChartLegendContent />} />
           </BarChart>
         </ChartContainer>
-      </ResponsiveContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         {chartData.length > 0 && (

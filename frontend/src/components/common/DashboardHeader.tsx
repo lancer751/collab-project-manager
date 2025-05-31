@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { SearchForm } from "./SearchForm";
 import {
   getRouteApi,
   Link,
@@ -20,10 +19,10 @@ import {
   CircleUser,
   LogOut,
   PlusCircle,
+  PlusCircleIcon,
   Settings,
   SquareCheck,
   Target,
-  User,
   UsersRound,
 } from "lucide-react";
 import { SidebarTrigger } from "../ui/sidebar";
@@ -38,6 +37,10 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 import { Button } from "../ui/button";
+import SearchCommandMenu from "./SearchCommandMenu";
+import { Route as ProjectsRoute } from "@/routes/_auth/dashboard/projects";
+import { ProjectsNavbar } from "./ProjectsNavbar";
+import { Fragment, useMemo } from "react";
 
 export default function DashboardHeader() {
   const router = getRouteApi("/_auth");
@@ -46,28 +49,28 @@ export default function DashboardHeader() {
     auth: { user: currentUser },
   } = router.useRouteContext();
   const matches = useMatches();
-  const breadCrumbItems = matches
-    .filter(({ loaderData }) => loaderData?.crumb)
-    .map(({ pathname, loaderData }) => ({
-      label: loaderData?.crumb,
-      href: pathname,
-    }));
+  const breadCrumbItems = useMemo(() => {
+    return matches
+      .filter(({ loaderData }) => loaderData?.crumb)
+      .map(({ pathname, loaderData }) => ({
+        label: loaderData?.crumb,
+        href: pathname,
+      }));
+  }, [matches]);
   const location = useLocation();
   const currentPath = location.pathname;
-  console.log(breadCrumbItems);
   const handleLogoutSession = () => LogoutSessionMutation();
   return (
     <header className="sticky top-0 z-10">
       <nav className=" w-full bg-background border-b flex items-center shrink-0 h-16 px-4 gap-4 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
-        {/* Search al centro */}
-        <div className="flex-1 flex justify-center items-center">
-          <SearchForm className="max-w-md w-full" />
+        <div className="flex-1 flex justify-center items-center gap-2">
+          <SearchCommandMenu />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size={"sm"}>
-                <PlusCircle /> Agregar
+                <PlusCircle /> Nuevo
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" sideOffset={10}>
@@ -153,26 +156,40 @@ export default function DashboardHeader() {
           </DropdownMenu>
         </div>
       </nav>
-      <nav className="w-full bg-background border-b flex items-center shrink-0 h-12 px-4 gap-4 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-        <Breadcrumb>
-          <BreadcrumbList>
-            {breadCrumbItems.map((crumb, index) => (
-              <BreadcrumbItem key={crumb.label}>
-                {crumb.href !== currentPath ? (
-                  <BreadcrumbLink href={crumb.href} className="capitalize">
-                    {crumb.label}
-                  </BreadcrumbLink>
-                ) : (
-                  <BreadcrumbPage className="capitalize">
-                    {crumb.label}
-                  </BreadcrumbPage>
-                )}
-                {index < breadCrumbItems.length - 1 && <BreadcrumbSeparator />}
-              </BreadcrumbItem>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
+      <nav className="w-full bg-background border-b flex items-center justify-between shrink-0 h-12 px-4 gap-4 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <div className="flex items-center gap-2">
+          <Breadcrumb>
+            <BreadcrumbList>
+              {breadCrumbItems.map((crumb, index) => (
+                <Fragment key={crumb.label}>
+                  <BreadcrumbItem key={crumb.label}>
+                    {!crumb.href.includes(currentPath) ? (
+                      <BreadcrumbLink href={crumb.href} className="capitalize">
+                        {crumb.label}
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage className="capitalize">
+                        {crumb.label}
+                      </BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                  {index < breadCrumbItems.length - 1 && (
+                    <BreadcrumbSeparator />
+                  )}
+                </Fragment>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+        <div className="items-center gap-2">
+          {currentPath.includes(ProjectsRoute.fullPath) && (
+            <Button size={"sm"}>
+              <PlusCircleIcon /> Agregar
+            </Button>
+          )}
+        </div>
       </nav>
+      {currentPath.includes(ProjectsRoute.fullPath) && <ProjectsNavbar />}
     </header>
   );
 }

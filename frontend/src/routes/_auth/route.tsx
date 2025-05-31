@@ -27,6 +27,8 @@ export const Route = createFileRoute("/_auth")({
     };
   },
   component: RouteComponent,
+  pendingComponent: () => <LoadingScreen/>,
+  notFoundComponent: () => <p>No encontrado</p>
 });
 
 function RouteComponent() {
