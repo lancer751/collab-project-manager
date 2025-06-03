@@ -24,6 +24,7 @@ public class ProjectDto {
     private StateDto stateDto;
     private String createdBy;
     private boolean active = true;
+    private List<UserRolProjectRequest> userLiders;
     private List<UserRolProjectRequest> userRolProjectRequestList; // integrantes del proyecto
 
 }

@@ -4,9 +4,7 @@ import com.gestionproyectoscolaborativos.backend.services.FilterProjectServices;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/dashboardadmin")
@@ -20,7 +18,9 @@ public class FilterProjectController {
     }
 
     @GetMapping("/directedby")
-    public  ResponseEntity<?> searchLiderProject() {
-        return filterProjectServices.searchLiderProject();
+    public ResponseEntity<?> searchLiderProject(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page) {
+        return filterProjectServices.searchLiderProject(search, page);
     }
 }

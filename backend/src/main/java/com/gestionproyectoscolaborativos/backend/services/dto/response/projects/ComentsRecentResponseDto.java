@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ComentsRecentResponseDto {
+    private Integer projectId;
     private String author;
     private String titleProject;
     private String lastTime;

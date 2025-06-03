@@ -26,4 +26,5 @@ public class ProjectDtoResponse {
     private boolean active = true;
     private List<UserDtoResponse> userDtos; // creador del proyecto
     private List<UserRolProjectRequest> userRolProjectRequestList; // integrantes del proyecto
+    private List<UserRolProjectRequest> userLider;
 }

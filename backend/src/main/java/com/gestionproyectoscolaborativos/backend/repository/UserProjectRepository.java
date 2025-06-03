@@ -5,6 +5,8 @@ import com.gestionproyectoscolaborativos.backend.entitys.Rol;
 import com.gestionproyectoscolaborativos.backend.entitys.Users;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,5 +35,41 @@ public interface UserProjectRepository extends JpaRepository<UserProject, Long> 
 
     @Query("SELECT up FROM UserProject up WHERE up.rolproject = :rol")
     List<UserProject> findByRolproject(@Param("rol") String rol);
+
+    Page<UserProject> findByRolproject(String rolproject, Pageable pageable);
+
+
+    @Query(
+            value = """
+        SELECT * FROM users 
+        WHERE id IN (
+          SELECT DISTINCT up.user_id 
+          FROM userproject up 
+          WHERE up.rolproject = 'Lider'
+        )
+        AND (
+            LOWER(users.name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+            LOWER(users.lastname) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
+        ORDER BY id
+        """,
+            countQuery = """
+        SELECT COUNT(*) FROM users 
+        WHERE id IN (
+          SELECT DISTINCT up.user_id 
+          FROM userproject up 
+          WHERE up.rolproject = 'Lider'
+        )
+        AND (
+            LOWER(users.name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+            LOWER(users.lastname) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
+        """,
+            nativeQuery = true
+    )
+    Page<Users> findDistinctLiderUsers(@Param("search") String search, Pageable pageable);
+
+
+
 
 }

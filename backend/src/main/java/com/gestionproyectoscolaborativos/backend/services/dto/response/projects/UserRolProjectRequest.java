@@ -11,6 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserRolProjectRequest {
     private Integer id;
+    private String name;
+    private String lastname;
+    private String numberPhone;
+    private String description;
     private String email;
-        private String rolProject;
+    private String rolProject;
 }

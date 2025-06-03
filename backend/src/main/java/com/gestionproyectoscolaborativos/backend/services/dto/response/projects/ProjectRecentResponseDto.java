@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectRecentResponseDto {
+    private Integer id;
     private String title;
     private String timeFinish;
 }

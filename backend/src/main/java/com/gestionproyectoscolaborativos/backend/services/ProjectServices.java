@@ -96,11 +96,18 @@ public class ProjectServices {
         // Crear el proyecto
         Project project = createAndSaveProject(projectDto, state, user);
 
+        if (projectDto.getUserLider() != null) {
+            for (UserRolProjectRequest userDto : projectDto.getUserLider()) {
+                userRepository.findById(userDto.getId()).ifPresent(extraUser -> {
+                    createUserProjectRelation(extraUser, userDto.getRolProject(), project);
+                });
+            }
+        }
 
         // Asociar a otros usuarios (si vienen en la lista)
         if (projectDto.getUserRolProjectRequestList() != null) {
             for (UserRolProjectRequest userDto : projectDto.getUserRolProjectRequestList()) {
-                userRepository.findByEmail(userDto.getEmail()).ifPresent(extraUser -> {
+                userRepository.findById(userDto.getId()).ifPresent(extraUser -> {
                         createUserProjectRelation(extraUser, userDto.getRolProject(), project);
                 });
             }
