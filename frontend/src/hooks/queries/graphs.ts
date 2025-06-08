@@ -1,6 +1,8 @@
 import {
   getCountLatestProjects,
   getCountProjectsByState,
+  getProjectsNearToFinish,
+  getRecentProjects,
   getRelevantKPIS,
   getTasksByState,
   getTasksByUser,
@@ -48,5 +50,19 @@ export function useCountTaksByUser() {
     queryFn: getTasksByUser,
     refetchOnWindowFocus: false
 
+  })
+}
+
+export function useRecentProjects() {
+  return useQuery({
+    queryKey: ["recent-projects"],
+    queryFn: getRecentProjects
+  })
+}
+
+export function useProjectsNearDeadline() {
+  return useQuery({
+    queryKey: ["projects-near-deadline"],
+    queryFn: getProjectsNearToFinish
   })
 }

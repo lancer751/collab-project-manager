@@ -1,4 +1,6 @@
 import { ProjectsAssigned } from '@/components/charts/ProjectsAssigned'
+import ProjectsNearDeadline from '@/components/ProjectsNearDeadline'
+import { RecentComments } from '@/components/RecentComments'
 import { RecentProjects } from '@/components/RecentProjects'
 import { TableWithProjects } from '@/components/TableWithProjects'
 import { createFileRoute } from '@tanstack/react-router'
@@ -12,8 +14,7 @@ function RouteComponent() {
     <RecentProjects className='col-span-1 md:col-span-2'/>
     <ProjectsAssigned className='col-span-1 md:col-span-2'/>
     <TableWithProjects className='col-span-1 sm:col-span-2 md:col-span-4'/>
-    <RecentProjects className='col-span-1 md:col-span-2'/>
-    <RecentProjects className='col-span-1 md:col-span-2'/>
-
+    <ProjectsNearDeadline className='col-span-1 md:col-span-2'/>
+    <RecentComments className='col-span-1 md:col-span-2'/>
   </div>
 }

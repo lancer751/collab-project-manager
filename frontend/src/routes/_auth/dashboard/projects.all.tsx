@@ -1,3 +1,4 @@
+import { ProjectsTable } from '@/components/ProjectsTable'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_auth/dashboard/projects/all')({
@@ -6,5 +7,8 @@ export const Route = createFileRoute('/_auth/dashboard/projects/all')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/_auth/dashboard/projects/all"!</div>
+  
+  return (
+    <ProjectsTable/>
+  )
 }

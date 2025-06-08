@@ -40,7 +40,9 @@ import { Button } from "../ui/button";
 import SearchCommandMenu from "./SearchCommandMenu";
 import { Route as ProjectsRoute } from "@/routes/_auth/dashboard/projects";
 import { ProjectsNavbar } from "./ProjectsNavbar";
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { ProjectModalForm } from "./ProjectModalForm";
 
 export default function DashboardHeader() {
   const router = getRouteApi("/_auth");
@@ -60,6 +62,7 @@ export default function DashboardHeader() {
   const location = useLocation();
   const currentPath = location.pathname;
   const handleLogoutSession = () => LogoutSessionMutation();
+  const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-10">
       <nav className=" w-full bg-background border-b flex items-center shrink-0 h-16 px-4 gap-4 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -156,6 +159,7 @@ export default function DashboardHeader() {
           </DropdownMenu>
         </div>
       </nav>
+      {/* second navigation */}
       <nav className="w-full bg-background border-b flex items-center justify-between shrink-0 h-12 px-4 gap-4 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2">
           <Breadcrumb>
@@ -183,11 +187,20 @@ export default function DashboardHeader() {
         </div>
         <div className="items-center gap-2">
           {currentPath.includes(ProjectsRoute.fullPath) && (
-            <Button size={"sm"}>
+            <Button size={"sm"} onClick={() => setOpen(true)}>
               <PlusCircleIcon /> Agregar
             </Button>
           )}
         </div>
+        {createPortal(
+          <ProjectModalForm
+            isOpen={open}
+            onClose={() => setOpen(!open)}
+            mode="create"
+            projectId={null}
+          />,
+          document.body
+        )}
       </nav>
       {currentPath.includes(ProjectsRoute.fullPath) && <ProjectsNavbar />}
     </header>

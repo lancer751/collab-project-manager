@@ -1,4 +1,4 @@
-import { Rol, RolList } from "./roles.types";
+import { Rol } from "./roles.types";
 
 export interface UsersInfoData {
   totalItems: number;
