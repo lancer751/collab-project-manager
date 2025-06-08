@@ -1,6 +1,7 @@
 package com.gestionproyectoscolaborativos.backend.repository;
 
 import com.gestionproyectoscolaborativos.backend.entitys.Project;
+import com.gestionproyectoscolaborativos.backend.entitys.State;
 import com.gestionproyectoscolaborativos.backend.entitys.enums.Priority;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +47,8 @@ public interface ProjectRepository extends JpaRepository<Project, Integer>, JpaS
                 @Param("size") int size,
                 @Param("offset") int offset
         );
+
+        List<Project> findByState (State state);
 }
 
 

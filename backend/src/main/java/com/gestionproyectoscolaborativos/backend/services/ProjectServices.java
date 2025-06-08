@@ -116,60 +116,68 @@ public class ProjectServices {
     }
 
 
-
     @Transactional
     public ResponseEntity<?> editproject(Integer id, ProjectDtoResponse projectDto) {
-        Users user = getAuthenticatedUser();
+        Users currentUser = getAuthenticatedUser();
 
-        List<UserProject> userProjectRolList = userProjectRepository.findByUsers(user);
+        // Buscar el proyecto
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + id));
 
-
-        Project project = projectRepository.findById(id).orElseThrow();
-
-        // ✅ Usamos el nuevo método para actualizar campos
+        // Actualizar campos del proyecto
         updateProjectFields(project, projectDto);
 
-        // Guardamos el proyecto actualizado
+        // Guardar cambios del proyecto
         project = projectRepository.save(project);
 
-        // Manejo de usuarios asignados al proyecto
-        List<UserProject> actualUserProjectRol = userProjectRepository.findByProject(project);
-        Set<String> emailsActual = actualUserProjectRol.stream()
-                .map(u -> u.getUsers().getEmail())
+        // Obtener todos los usuarios actuales asignados
+        List<UserProject> currentUserProjects = userProjectRepository.findByProject(project);
+        Set<Integer> currentUserIds = currentUserProjects.stream()
+                .map(up -> up.getUsers().getId())
                 .collect(Collectors.toSet());
 
-        Set<String> emailsNew = projectDto.getUserRolProjectRequestList().stream()
-                .map(UserRolProjectRequest::getEmail)
+        // Obtener todos los nuevos usuarios (colaboradores y líderes)
+        List<UserRolProjectRequest> totalUsersDto = new ArrayList<>();
+        if (projectDto.getUserRolProjectRequestList() != null)
+            totalUsersDto.addAll(projectDto.getUserRolProjectRequestList());
+        if (projectDto.getUserLider() != null)
+            totalUsersDto.addAll(projectDto.getUserLider());
+
+        Set<Integer> newUserIds = totalUsersDto.stream()
+                .map(UserRolProjectRequest::getId)
                 .collect(Collectors.toSet());
 
-        Set<String> emailsForEliminated = new HashSet<>(emailsActual);
-        emailsForEliminated.removeAll(emailsNew);
+        // Calcular usuarios a eliminar y a agregar
+        Set<Integer> userIdsToRemove = new HashSet<>(currentUserIds);
+        userIdsToRemove.removeAll(newUserIds);
 
-        Set<String> emailsForAdd = new HashSet<>(emailsNew);
-        emailsForAdd.removeAll(emailsActual);
+        Set<Integer> userIdsToAdd = new HashSet<>(newUserIds);
+        userIdsToAdd.removeAll(currentUserIds);
 
-        // Eliminar usuarios
-        for (String email : emailsForEliminated) {
-            Users u = userRepository.findByEmail(email).orElseThrow();
-            userProjectRepository.deleteByUsersAndProject(u, project);
+        // Eliminar relaciones obsoletas
+        for (Integer userId : userIdsToRemove) {
+            Users user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + userId));
+            userProjectRepository.deleteByUsersAndProject(user, project);
         }
 
-        // Agregar usuarios
-        for (String email : emailsForAdd) {
-            Users u = userRepository.findByEmail(email).orElseThrow();
-            for (UserRolProjectRequest request : projectDto.getUserRolProjectRequestList()) {
-                if (request.getEmail().equals(email)) {
-                    UserProject nuevo = new UserProject();
-                    nuevo.setUsers(u);
-                    nuevo.setProject(project);
-                    nuevo.setRolproject(request.getRolProject());
-                    userProjectRepository.save(nuevo);
-                }
+        // Agregar nuevas relaciones
+        for (UserRolProjectRequest request : totalUsersDto) {
+            if (userIdsToAdd.contains(request.getId())) {
+                Users user = userRepository.findById(request.getId())
+                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + request.getId()));
+
+                UserProject newUserProject = new UserProject();
+                newUserProject.setUsers(user);
+                newUserProject.setProject(project);
+                newUserProject.setRolproject(request.getRolProject());
+                userProjectRepository.save(newUserProject);
             }
         }
 
-        return ResponseEntity.ok("Project edited successfully");
+        return ResponseEntity.ok("Proyecto editado correctamente.");
     }
+
 
     @Transactional
     public ResponseEntity<?> deleteproject (Integer id) {
@@ -245,6 +253,51 @@ public class ProjectServices {
         if (dto.getStateDto() != null && isNotBlank(dto.getStateDto().getName())) {
             State state = getOrCreateState(dto.getStateDto().getName());
             project.setState(state);
+        }
+    }
+
+    public ResponseEntity<?>  findProjectState (String state) {
+        try {
+            State state1 = stateRepository.findByName(state).orElseThrow();
+            List<ProjectDto> projectDtos = projectRepository.findByState(state1).stream().map(p -> {
+                List<UserRolProjectRequest> userLider = p.getUserProjects().stream().filter(u -> u.getRolproject().equals("Lider")).map(u -> {
+                    UserRolProjectRequest userRolProjectRequest = new UserRolProjectRequest();
+                    userRolProjectRequest.setId(Math.toIntExact(u.getUsers().getId()));
+                    userRolProjectRequest.setName(u.getUsers().getName());
+                    userRolProjectRequest.setLastname(u.getUsers().getLastname());
+                    userRolProjectRequest.setEmail(u.getUsers().getEmail());
+                    userRolProjectRequest.setRolProject(u.getRolproject());
+                    return  userRolProjectRequest;
+                }).toList();
+                List<UserRolProjectRequest> userColaboreitor = userProjectRepository.findByProject(p).stream().filter(pr -> !Objects.equals(pr.getRolproject(), "Lider")).map(u -> {
+                    UserRolProjectRequest dto = new UserRolProjectRequest();
+                    dto.setId(u.getUsers().getId());
+                    dto.setEmail(u.getUsers().getEmail());
+                    dto.setName(u.getUsers().getName());
+                    dto.setLastname(u.getUsers().getLastname());
+                    dto.setNumberPhone(u.getUsers().getNumberPhone());
+                    dto.setDescription(u.getUsers().getDescription());
+                    dto.setRolProject(u.getRolproject());
+                    return dto;
+                }).collect(Collectors.toList());
+                StateDto stateDto = new StateDto(state1.getName());
+                ProjectDto projectDto = new ProjectDto();
+                projectDto.setId(p.getId());
+                projectDto.setName(p.getName());
+                projectDto.setDescription(p.getDescription());
+                projectDto.setPriority(p.getPriority());
+                projectDto.setDateStart(p.getDateStart());
+                projectDto.setDateDeliver(p.getDateDeliver());
+                projectDto.setCreatedBy(p.getCreatedBy());
+                projectDto.setUserLiders(userLider);
+                projectDto.setStateDto(stateDto);
+                projectDto.setUserRolProjectRequestList(userColaboreitor);
+                return projectDto;
+            }).toList();
+
+            return ResponseEntity.ok().body(projectDtos);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("hay un error " + e.getMessage());
         }
     }
 

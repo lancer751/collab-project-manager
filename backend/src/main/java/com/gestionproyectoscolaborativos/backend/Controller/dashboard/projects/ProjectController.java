@@ -32,4 +32,8 @@ public class ProjectController {
         return projectServices.deleteproject(id);
     }
 
+    @GetMapping("/projectstate/{state}")
+    private  ResponseEntity<?> findProjectState (@PathVariable String state){
+        return projectServices.findProjectState(state);
+    }
 }
