@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/project/add").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
                         .requestMatchers(HttpMethod.PUT, "/project/edit/{id}").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
                         .requestMatchers(HttpMethod.DELETE, "/project/delete/{id}").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
+                        .requestMatchers(HttpMethod.GET, "/project/projectstate/{state}").hasAnyRole("ADMIN", "LIDER_SISTEMAS", "LIDER_SOFTWARE")
                         .requestMatchers(HttpMethod.GET, "/dashboardadmin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/project/").authenticated()
                         .requestMatchers(HttpMethod.POST, "/dashboard/logout").authenticated()
