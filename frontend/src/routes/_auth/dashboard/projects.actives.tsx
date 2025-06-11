@@ -1,10 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { ProjectsTableDropdown } from "@/components/common/ProjectsTableDropdown";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_auth/dashboard/projects/actives')({
+export const Route = createFileRoute("/_auth/dashboard/projects/actives")({
   component: RouteComponent,
-  loader: () => ({crumb: "activos"})
-})
+  loader: () => ({ crumb: "activos" }),
+});
 
 function RouteComponent() {
-  return <div>Hello "/_auth/dashboard/projects/actives"!</div>
+  return (
+    <div className="relative overflow-auto w-full h-full pb-12">
+        <ProjectsTableDropdown/>
+    </div>
+  );
 }

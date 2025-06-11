@@ -1,4 +1,4 @@
-import { NewProjectData, ProjectsData } from "@/types/project.types";
+import { NewProjectData, Project, ProjectsData, StateDto } from "@/types/project.types";
 import { mainApiInstance } from "./instaces";
 
 export const createProject = async (projectData: NewProjectData) => {
@@ -25,3 +25,32 @@ export const getInfiniteProjects = async ({ page = 0 }) => {
     throw error;
   }
 };
+
+export const deleteProjectById = async (id: number) => {
+  try {
+    await mainApiInstance.delete(`/project/delete/${id}`, {withCredentials: true})
+  } catch (error) {
+    console.log("Error in deleteProjectById", error)
+    throw error
+  }
+}
+
+export const getProjectStatus = async () => {
+  try {
+    const response = await mainApiInstance.get<StateDto[]>("/dashboardadmin/filterstate")
+    return response.data
+  } catch (error) {
+    console.log("Error in getProjectStatus", error)
+    throw error
+  }
+}
+
+export const getProjectsByStatus = async(status: string) => {
+  try {
+    const response = await mainApiInstance.get<Project[]>(`/project/projectstate/${status}`)
+    return response.data
+  } catch (error) {
+    console.log("Error in getProjectsByStatus", error)
+    throw error
+  }
+}

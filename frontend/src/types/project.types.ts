@@ -24,13 +24,15 @@ export type Project = {
   stateDto: StateDto;
   createdBy: string;
   active: boolean;
-  userRolProjectRequestList: Omit<User, "password" | "rolDtoList" | "active"> & {rolProject: RolProject}[];
-  userLider: Omit<User, "password" | "rolDtoList" | "active">[];
+  userRolProjectRequestList: (Omit<User, "password" | "rolDtoList" | "active"> & {rolProject: RolProject})[];
+  userLiders: Omit<User, "password" | "rolDtoList" | "active">[];
 };
+export type ProjectStatus = "Completado" | "Curso" | "Pausa" | "Riesgo" | "Cancelado"
 
 export type StateDto = {
-  name: "Completado" | "Curso" | "Pausa" | "Riesgo" | "Cancelado";
+  name: ProjectStatus;
 };
+
 
 export type UserRolProjectRequestList = {
   id: number;
@@ -42,7 +44,7 @@ export type RolProject = "Lider" | "Colaborador"
 
 export type NewProjectData = Omit<
   Project,
-  "id" | "active" | "createdBy" | "userRolProjectRequestList" | "userLider"
+  "id" | "active" | "createdBy" | "userRolProjectRequestList" | "userLiders"
 > & {
   userRolProjectRequestList: UserRolProjectRequestList[],
   userLider: UserRolProjectRequestList[]

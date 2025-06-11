@@ -22,11 +22,13 @@ import {
   InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps<TData extends { id: number }, TValue, T> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  queryUtilities: {
+  isLoading?: boolean;
+  queryUtilities?: {
     fetchNextPage: (
       options?: FetchNextPageOptions
     ) => Promise<
@@ -37,8 +39,8 @@ interface DataTableProps<TData extends { id: number }, TValue, T> {
     isError: boolean;
     error: Error | null;
   };
-  rowSelection: RowSelectionState,
-  setRowSelection: React.Dispatch<React.SetStateAction<RowSelectionState>>
+  rowSelection: RowSelectionState;
+  setRowSelection: React.Dispatch<React.SetStateAction<RowSelectionState>>;
 }
 
 export function DataTable<TData extends { id: number }, TValue, T>({
@@ -46,13 +48,17 @@ export function DataTable<TData extends { id: number }, TValue, T>({
   data,
   queryUtilities,
   rowSelection,
-  setRowSelection
+  setRowSelection,
+  isLoading = false,
 }: DataTableProps<TData, TValue, T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { fetchNextPage, isFetchingNextPage, hasNextPage, isError, error } =
-    queryUtilities;
-    const table = useReactTable({
-      getRowId: (row) => String(row.id),
+  const fetchNextPage = queryUtilities?.fetchNextPage;
+  const isFetchingNextPage = queryUtilities?.isFetchingNextPage;
+  const hasNextPage = queryUtilities?.hasNextPage;
+  const isError = queryUtilities?.isError;
+  const error = queryUtilities?.error;
+  const table = useReactTable({
+    getRowId: (row) => String(row.id),
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -66,10 +72,16 @@ export function DataTable<TData extends { id: number }, TValue, T>({
   });
   const sentinelRef = useRef<null | HTMLTableRowElement>(null);
   const observerRef = useRef<IntersectionObserver>(null);
+  const SKELETON_ROWS = 10;
 
   const onIntersecting = useCallback(
     ([entry]: IntersectionObserverEntry[]) => {
-      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      if (
+        entry.isIntersecting &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        fetchNextPage
+      ) {
         fetchNextPage();
       }
     },
@@ -77,6 +89,7 @@ export function DataTable<TData extends { id: number }, TValue, T>({
   );
 
   useEffect(() => {
+    if (!queryUtilities) return;
     const sentineElement = sentinelRef.current;
     observerRef.current = new IntersectionObserver(onIntersecting, {
       root: null,
@@ -93,101 +106,104 @@ export function DataTable<TData extends { id: number }, TValue, T>({
         observerRef.current.unobserve(sentineElement);
       }
     };
-  }, [onIntersecting]);
+  }, [onIntersecting, queryUtilities]);
 
   return (
-    <>
-      <div>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              <>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-                <TableRow ref={sentinelRef}>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="hidden text-center"
-                  ></TableCell>
-                </TableRow>
-                <TableRow className="hover:bg-transparent">
-                  <TableCell
-                    colSpan={columns.length}
-                    className={`${!isFetchingNextPage && !hasNextPage && "hidden"} text-center h-10 pt-5`}
-                  >
-                    <div className="mx-auto flex justify-center">
-                      <LoaderCircle className="animate-spin" />
-                    </div>
+    <Table>
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => {
+              return (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        <>
+          {isLoading ? (
+            // row skeletons
+            Array.from({ length: SKELETON_ROWS }).map((_, rowIndex) => (
+              <TableRow key={`skeleton-${rowIndex}`}>
+                {columns.map((col, colIndex) => (
+                  <TableCell key={colIndex}>
+                    {colIndex > 0 && (
+                      <Skeleton className="h-4 w-full my-2 min-w-48" />
+                    )}
                   </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
-                {!hasNextPage && !isFetchingNextPage && (
+              ))}
+              {queryUtilities && (
+                <>
+                  <TableRow ref={sentinelRef}>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="hidden text-center"
+                    ></TableCell>
+                  </TableRow>
                   <TableRow className="hover:bg-transparent">
                     <TableCell
                       colSpan={columns.length}
-                      className="text-neutral-50 text-center h-10 pt-5"
+                      className={`${!isFetchingNextPage && !hasNextPage && "hidden"} text-center h-10 pt-5`}
                     >
-                      No hay más resultados disponibles
+                      <div className="mx-auto flex justify-center">
+                        <LoaderCircle className="animate-spin" />
+                      </div>
                     </TableCell>
                   </TableRow>
-                )}
-              </>
-            ) : (
-              <>
-                {isError && error ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      {error.message}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No Results
-                    </TableCell>
-                  </TableRow>
-                )}
-              </>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </>
+                  {!hasNextPage && !isFetchingNextPage && (
+                    <TableRow className="hover:bg-transparent">
+                      <TableCell
+                        colSpan={columns.length}
+                        className="text-neutral-50 text-center h-10 py-5"
+                      >
+                        No hay más resultados disponibles
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {isError && error && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-24 text-center"
+                      >
+                        {error.message}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </>
+      </TableBody>
+    </Table>
   );
 }

@@ -74,21 +74,32 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
-   /* Estados de tareas/proyectos */
-   --completed:           oklch(0.65 0.25 130);
-   --canceled:            oklch(0.65 0.25 30);
-   --task-status-revision:oklch(0.65 0.25 290);
-   --task-status-inprogress: oklch(0.65 0.25 90);
-   --task-status-archived:   oklch(0.65 0.25 60);
-   --task-status-unstarted:  oklch(0.65 0.25 220);
- 
-   --task-status-completed: var(--completed);
- 
-   --project-status-completed: var(--completed);
-   --project-status-canceled:  var(--canceled);
-   --project-status-risk:      oklch(0.65 0.25 15 / 96%);
-   --project-status-paused:    oklch(0.65 0.18 330 / 80%); /* menos croma y más transparente */
-   --project-status-inprogress: var(--task-status-inprogress);
+  /* Estados de tareas/proyectos */
+  --completed: oklch(0.65 0.25 130);
+  --canceled: oklch(0.65 0.25 30);
+  --task-status-revision: oklch(0.65 0.25 290);
+  --task-status-inprogress: oklch(0.65 0.25 90);
+  --task-status-archived: oklch(0.65 0.25 60);
+  --task-status-unstarted: oklch(0.65 0.25 220);
+
+  --task-status-completed: var(--completed);
+
+  --project-status-completed: var(--completed);
+  --project-status-canceled: var(--canceled);
+  --project-status-risk: oklch(0.65 0.25 15 / 96%);
+  --project-status-paused: oklch(
+    0.65 0.18 330 / 80%
+  ); /* menos croma y más transparente */
+  --project-status-inprogress: var(--task-status-inprogress);
+  /* Prioridad alta (rojo fuerte) */
+  --priority-high: oklch(62% 0.25 27);
+  --priority-high-bg: oklch(55% 0.12 27 / 0.2);
+  /* Prioridad media (naranja/ámbar) */
+  --priority-medium: oklch(65% 0.22 70);
+  --priority-medium-bg: oklch(55% 0.12 70 / 0.2);
+  /* Prioridad baja (verde suave) */
+  --priority-low: oklch(62% 0.18 140);
+  --priority-low-bg: oklch(55% 0.12 140 / 0.2);
 }
 
 .dark {
@@ -128,6 +139,8 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: 15px;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0);
   }
   body {
     @apply bg-background text-foreground;
@@ -135,5 +148,38 @@
   body[data-scroll-locked] {
     margin-right: 0 !important;
     overflow: visible !important;
+  }
+}
+
+@layer components {
+  .project-tag-status {
+    @apply w-max flex items-center px-2 py-1 gap-1 rounded-md border;
+  }
+  .project-completed {
+    @apply text-[var(--project-status-completed)] border-[var(--project-status-completed)];
+  }
+  .project-canceled {
+    @apply text-[var(--project-status-canceled)] border-[var(--project-status-canceled)];
+  }
+  .project-inprogress {
+    @apply text-[var(--project-status-inprogress)] border-[var(--project-status-inprogress)];
+  }
+  .project-paused {
+    @apply text-[var(--project-status-paused)] border-[var(--project-status-paused)];
+  }
+  .project-inrisk {
+    @apply text-[var(--project-status-risk)] border-[var(--project-status-risk)];
+  }
+  .priority-tag {
+    @apply w-max flex items-center px-2 py-1 rounded-sm;
+  }
+  .priority-high {
+    @apply bg-[var(--priority-high-bg)];
+  }
+  .priority-medium {
+    @apply bg-[var(--priority-medium-bg)];
+  }
+  .priority-low {
+    @apply bg-[var(--priority-low-bg)];
   }
 }

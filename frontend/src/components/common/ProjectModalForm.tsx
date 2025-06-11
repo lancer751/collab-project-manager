@@ -35,12 +35,10 @@ import { Project } from "@/types/project.types";
             <DialogTitle className="text-xl md:text-2xl">{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          {/* loading state */}
           {/* {mode == "edit" && isUserPeding && (
             <div className="flex justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          )}
+            </div>}
   
           {/* Error state*/}
           {/* {mode === "edit" && isErrorGetUser && (

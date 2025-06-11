@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_auth/dashboard/users")({
 
 function RouteComponent() {
   return (
-    <div className="relative p-4">
+    <div className="p-4 h-full">
       <UsersTable/>
     </div>
   );
