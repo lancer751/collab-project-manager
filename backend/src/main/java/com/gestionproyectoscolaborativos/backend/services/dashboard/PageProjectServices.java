@@ -4,10 +4,8 @@ import com.gestionproyectoscolaborativos.backend.entitys.Coment;
 import com.gestionproyectoscolaborativos.backend.entitys.Project;
 import com.gestionproyectoscolaborativos.backend.entitys.State;
 import com.gestionproyectoscolaborativos.backend.entitys.enums.Priority;
-import com.gestionproyectoscolaborativos.backend.repository.ComentRepository;
-import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
-import com.gestionproyectoscolaborativos.backend.repository.StateRepository;
-import com.gestionproyectoscolaborativos.backend.repository.UserProjectRepository;
+import com.gestionproyectoscolaborativos.backend.repository.*;
+import com.gestionproyectoscolaborativos.backend.services.dto.response.ActivtysProjects;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.ProjectDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.StateDto;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.dashboard.StatePatch;
@@ -35,7 +33,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class PageProjectServices {
-
+    private String rolProject;
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -47,6 +45,8 @@ public class PageProjectServices {
     @Autowired
     private UserProjectRepository userProjectRepository;
 
+    @Autowired
+    private ActivityRepository activityRepository;
     // recently published projects
     public ResponseEntity<?> readprojectrecient () {
         try {
@@ -260,5 +260,78 @@ public class PageProjectServices {
 
         return ResponseEntity.ok(json);
     }
+    public  ResponseEntity<?> searchprojectbyid (Integer id) {
+        Project project = projectRepository.findById(id).orElseThrow();
+        ProjectDto projectDto = new ProjectDto();
 
+        List<UserRolProjectRequest> userDtos = userProjectRepository.findByProject(project).stream().filter(pr -> pr.getRolproject().equals("Lider")).map(u -> {
+            UserRolProjectRequest dto = new UserRolProjectRequest();
+            dto.setId(u.getUsers().getId());
+            dto.setName(u.getUsers().getName());
+            dto.setLastname(u.getUsers().getLastname());
+            dto.setNumberPhone(u.getUsers().getNumberPhone());
+            dto.setDescription(u.getUsers().getDescription());
+            dto.setEmail(u.getUsers().getEmail());
+            dto.setRolProject(u.getRolproject());
+            rolProject = u.getRolproject();
+            return dto;
+        }).collect(Collectors.toList());
+        List<UserRolProjectRequest> userDtos2 = userProjectRepository.findByProject(project).stream().filter(pr -> !Objects.equals(pr.getRolproject(), "Lider")).map(u -> {
+            UserRolProjectRequest dto = new UserRolProjectRequest();
+            dto.setId(u.getUsers().getId());
+            dto.setEmail(u.getUsers().getEmail());
+            dto.setName(u.getUsers().getName());
+            dto.setLastname(u.getUsers().getLastname());
+            dto.setNumberPhone(u.getUsers().getNumberPhone());
+            dto.setDescription(u.getUsers().getDescription());
+            dto.setRolProject(u.getRolproject());
+            rolProject = u.getRolproject();
+            return dto;
+        }).collect(Collectors.toList());
+
+        projectDto.setId(project.getId());
+        projectDto.setName(project.getName());
+        projectDto.setCreatedBy(project.getCreatedBy());
+        projectDto.setActive(project.isActive());
+        projectDto.setPriority(project.getPriority());
+        projectDto.setDescription(project.getDescription());
+        projectDto.setDateStart(project.getDateStart());
+        projectDto.setDateDeliver(project.getDateDeliver());
+        projectDto.setStateDto(new StateDto(project.getState().getName()));
+        projectDto.setUserLiders(userDtos);
+        projectDto.setUserRolProjectRequestList(userDtos2);
+
+        List<ActivtysProjects> activtysProjects = activityRepository.findByProject(project).stream().map( a -> {
+
+            ActivtysProjects activtysProjects1 = new ActivtysProjects();
+            activtysProjects1.setId(a.getId());
+            activtysProjects1.setName(a.getName());
+            activtysProjects1.setDescription(a.getDescription());
+            activtysProjects1.setDateStart(a.getDateStart());
+            activtysProjects1.setDateDeliver(a.getDateDeliver());
+            activtysProjects1.setState(new StateDto(a.getState().getName()));
+            activtysProjects1.setPrioridad(a.getPrioridad());
+            if (a.getActivityFather() != null && a.getActivityFather().getId() != null) {
+                activtysProjects1.setActivityFatherId(a.getActivityFather().getId());
+            }
+
+            activtysProjects1.setUsers(a.getUsers().stream().map(u -> {
+                UserRolProjectRequest userDto = new UserRolProjectRequest();
+                userDto.setId(u.getId());
+                userDto.setName(u.getName());
+                userDto.setLastname(u.getLastname());
+                userDto.setDescription(u.getDescription());
+                userDto.setNumberPhone(u.getNumberPhone());
+                userDto.setEmail(u.getEmail());
+                userDto.setRolProject(rolProject);
+                return  userDto;
+            }).toList());
+            return activtysProjects1;
+        }).toList();
+
+        HashMap<String, Object> json = new HashMap<>();
+        json.put("project", projectDto);
+        json.put("activity", activtysProjects);
+         return ResponseEntity.ok().body(json);
+    }
 }

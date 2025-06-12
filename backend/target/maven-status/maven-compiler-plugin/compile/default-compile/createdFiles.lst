@@ -21,6 +21,7 @@ com\gestionproyectoscolaborativos\backend\services\auth\AuthenticationServices.c
 com\gestionproyectoscolaborativos\backend\Controller\dashboard\start\PageStart.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\KpisClave.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\UserPatchDto.class
+com\gestionproyectoscolaborativos\backend\services\dto\request\ActivityProjecRequest.class
 com\gestionproyectoscolaborativos\backend\entitys\tablesintermedate\UserProject.class
 com\gestionproyectoscolaborativos\backend\services\ProjectServices.class
 com\gestionproyectoscolaborativos\backend\repository\RolRepository.class
@@ -45,6 +46,7 @@ com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\SearcL
 com\gestionproyectoscolaborativos\backend\services\JpaUserDetailsServices.class
 com\gestionproyectoscolaborativos\backend\repository\ProjectRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\UserDto.class
+com\gestionproyectoscolaborativos\backend\services\dto\response\ActivtysProjects.class
 com\gestionproyectoscolaborativos\backend\services\UserServices.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\StateDto.class
 com\gestionproyectoscolaborativos\backend\auth\Login.class
@@ -52,6 +54,7 @@ com\gestionproyectoscolaborativos\backend\repository\ComentRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\UserAuthenticateDto.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectDto.class
 com\gestionproyectoscolaborativos\backend\entitys\Report.class
+com\gestionproyectoscolaborativos\backend\services\dashboard\PageActivitysServices.class
 com\gestionproyectoscolaborativos\backend\security\filter\JwtValidationFilter.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\projects\ComentsRecentResponseDto.class
 com\gestionproyectoscolaborativos\backend\services\mail\impl\IEmailServices.class

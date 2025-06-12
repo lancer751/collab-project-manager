@@ -64,8 +64,8 @@ public class FilterProjectServices {
         jsonPaginado.put("lider", paginatedLiders);
         response.put("liderproject", jsonPaginado);
 
-
         return ResponseEntity.ok(response);
     }
+
 
 }

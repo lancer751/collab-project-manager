@@ -66,6 +66,11 @@ public class PageProject {
         return projectServices.projectseditlist(statePatch);
     }
 
+    @GetMapping("/projectid/{id}")
+    private ResponseEntity<?> projectbyid (@PathVariable Integer id){
+        return projectServices.searchprojectbyid(id);
+    }
+
 
 
 

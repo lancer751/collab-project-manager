@@ -68,4 +68,8 @@ public class Project {
     //creado recien
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserProject> userProjects = new ArrayList<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> activities = new ArrayList<>();
+
+
 }

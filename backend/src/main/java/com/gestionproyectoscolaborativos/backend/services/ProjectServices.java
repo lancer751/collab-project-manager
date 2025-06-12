@@ -1,9 +1,6 @@
 package com.gestionproyectoscolaborativos.backend.services;
 
-import com.gestionproyectoscolaborativos.backend.entitys.Project;
-import com.gestionproyectoscolaborativos.backend.entitys.Rol;
-import com.gestionproyectoscolaborativos.backend.entitys.State;
-import com.gestionproyectoscolaborativos.backend.entitys.Users;
+import com.gestionproyectoscolaborativos.backend.entitys.*;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProject;
 import com.gestionproyectoscolaborativos.backend.entitys.tablesintermedate.UserProjectRol;
 import com.gestionproyectoscolaborativos.backend.repository.*;
@@ -38,6 +35,8 @@ public class ProjectServices {
     private ProjectRepository projectRepository;
     @Autowired
     private StateRepository stateRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     @Autowired
     private UserProjectRepository userProjectRepository;
@@ -175,25 +174,40 @@ public class ProjectServices {
             }
         }
 
+
         return ResponseEntity.ok("Proyecto editado correctamente.");
     }
 
 
     @Transactional
     public ResponseEntity<?> deleteproject (Integer id) {
-        try{
+        try {
+            Project project = projectRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("No existe este proyecto"));
 
-            Project project = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Not exits this project"));
+            // Obtener actividades asociadas al proyecto
+            List<Activity> activities = activityRepository.findByProjectId(project.getId());
 
+            // Remover asociaciones con usuarios en cada actividad
+            for (Activity activity : activities) {
+                for (Users user : activity.getUsers()) {
+                    user.getActivities().remove(activity); // Eliminar la actividad de la lista del usuario
+                }
+                activity.getUsers().clear(); // Limpiar la lista de usuarios en la actividad
+            }
+
+            // Luego sí puedes eliminar
             userProjectRepository.deleteByProjectId(project.getId());
+            activityRepository.deleteAll(activities); // o deleteByProjectId si ya lo manejas bien
 
             projectRepository.deleteById(id);
+
             Map<String, String> json = new HashMap<>();
-            json.put("message", "delete project correct");
+            json.put("message", "Proyecto eliminado correctamente");
             return ResponseEntity.ok(json);
         } catch (Exception e) {
             Map<String, String> json = new HashMap<>();
-            json.put("message", "error " + e.getMessage());
+            json.put("message", "Error: " + e.getMessage());
             return ResponseEntity.badRequest().body(json);
         }
 
