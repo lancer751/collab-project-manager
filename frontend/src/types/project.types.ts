@@ -24,8 +24,8 @@ export type Project = {
   stateDto: StateDto;
   createdBy: string;
   active: boolean;
-  userRolProjectRequestList: (Omit<User, "password" | "rolDtoList" | "active"> & {rolProject: RolProject})[];
-  userLiders: Omit<User, "password" | "rolDtoList" | "active">[];
+  userRolProjectRequestList: (Omit<User, | "rolDtoList" | "active"> & {rolProject: RolProject})[];
+  userLiders: (Omit<User, "rolDtoList" | "active"> & {rolProject: RolProject})[];
 };
 export type ProjectStatus = "Completado" | "Curso" | "Pausa" | "Riesgo" | "Cancelado"
 
@@ -52,59 +52,3 @@ export type NewProjectData = Omit<
 
 export type RecentProjects = { title: string };
 export type ProjectsNearToFinish = { title: string; timeFinish: string };
-
-// kanban type for mock data
-
-// ----------------------------------------------------
-// 1. Definición de las columnas (enumeración posible)
-// ----------------------------------------------------
-export type KanbanColumnId =
-  | "planificacion"
-  | "en_curso"
-  | "trabajo_acumulado"
-  | "en_pausa";
-
-// ----------------------------------------------------
-// 2. Interfaz para cada proyecto (Project)
-// ----------------------------------------------------
-export interface UserSummary {
-  userId: number;
-  name: string;
-  avatarUrl: string;
-}
-
-export interface KanbanProject {
-  id: number;
-  title: string;
-  status: KanbanColumnId;
-  createdAt: string; // ISO 8601, ex: "2025-01-10T09:34:00Z"
-  startDate?: string; // ISO 8601 o undefined
-  dueDate?: string | null; // ISO 8601, null si no tiene fecha límite
-  priority?: "alta" | "media" | "baja" | null;
-  progress?: number | null; // %
-  commentsCount: number;
-  assignedTo?: UserSummary | null;
-}
-
-// ----------------------------------------------------
-// 3. Interfaz para cada columna del Kanban
-// ----------------------------------------------------
-export interface KanbanColumn {
-  id: KanbanColumnId;
-  name: string;
-  order: number;
-  projects: KanbanProject[];
-}
-
-// ----------------------------------------------------
-// 4. Interfaz de la respuesta completa del endpoint
-// ----------------------------------------------------
-export interface KanbanResponse {
-  columns: KanbanColumn[];
-  // (opcional) si se añaden metadatos de paginación:
-  // meta?: {
-  //   page: number;
-  //   perPage: number;
-  //   totalProjects: number;
-  // }
-}

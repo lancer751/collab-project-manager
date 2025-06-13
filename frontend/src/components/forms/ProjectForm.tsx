@@ -97,7 +97,7 @@ export function ProjectForm({ mode, onClose, project }: ProjectFormProps) {
             : new Date(),
           priority: project.priority,
           stateDto: project.stateDto,
-          userLider: project.userLider,
+          userLider: project.userLiders,
           userRolProjectRequestList: project.userRolProjectRequestList,
         }
       : {

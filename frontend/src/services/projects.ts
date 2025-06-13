@@ -1,5 +1,6 @@
 import { NewProjectData, Project, ProjectsData, StateDto } from "@/types/project.types";
 import { mainApiInstance } from "./instaces";
+import { Task } from "@/types/task.types";
 
 export const createProject = async (projectData: NewProjectData) => {
   try {
@@ -51,6 +52,16 @@ export const getProjectsByStatus = async(status: string) => {
     return response.data
   } catch (error) {
     console.log("Error in getProjectsByStatus", error)
+    throw error
+  }
+}
+
+export const getSingleProjectById = async(id: number) => {
+  try {
+    const response = await mainApiInstance.get<{project: Project, activity: Task[]}>(`/dashboardadmin/projectid/${id}`)
+    return response.data
+  } catch (error) {
+    console.log("Error in getSingleProjectById", error)
     throw error
   }
 }

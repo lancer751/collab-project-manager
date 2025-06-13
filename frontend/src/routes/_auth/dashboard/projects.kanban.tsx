@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_auth/dashboard/projects/kanban")({
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="overflow-x-auto h-full">
       <ProjectsDraggableSection/>
     </div>
   );

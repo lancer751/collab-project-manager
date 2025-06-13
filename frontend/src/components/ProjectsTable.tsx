@@ -39,7 +39,7 @@ export function ProjectsTable() {
   };
 
   return (
-    <div className="min-w-full h-full px-10 pb-16 overflow-x-auto relative">
+    <div className="min-w-full h-full overflow-x-auto relative">
       <div className="absolute top-0 bottom-0">
         <DataTable
           columns={ProjectColumns({ onEdit: handleEditProject })}

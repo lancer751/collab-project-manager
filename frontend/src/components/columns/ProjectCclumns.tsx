@@ -3,7 +3,6 @@ import { CircleSmall, Delete, Edit, PanelBottomOpen } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 
 import { Project } from "@/types/project.types";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import {
   ContextMenu,
@@ -11,7 +10,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../ui/context-menu";
-import { Link } from "@tanstack/react-router";
+import { getRouteApi, Link, useLocation } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 import { useDeleteProject } from "@/hooks/mutations/project.mutation";
 
@@ -23,7 +22,8 @@ export const ProjectNameCell = ({
   onEdit: (projectId: number) => void;
 }) => {
   const { mutateAsync: deleteProject, isPending } = useDeleteProject();
-
+  const location = useLocation()
+  const currentPath = location.pathname
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -34,12 +34,17 @@ export const ProjectNameCell = ({
           )}
         >
           <Link
-            to={"/dashboard/projects"}
+            to={currentPath}
+            search={prev => ({
+              ...prev,
+              prjt: project.id,
+            })}
             className={cn(
               "truncate max-w-72 hover:underline",
               isPending && "text-muted-foreground"
             )}
             disabled={isPending}
+            resetScroll={false}
           >
             {project.name}
           </Link>
@@ -152,7 +157,15 @@ export const ProjectColumns = ({
     header: "Fecha de inicio",
     cell: ({ row }) => {
       const project = row.original as Project;
-      const formatdDate = format(project.dateStart, "dd/MM/yyyy");
+      const dateInstace = new Date(project.dateStart);
+      const options: Intl.DateTimeFormatOptions = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      };
+      const formatdDate = new Intl.DateTimeFormat("es-ES", options).format(
+        dateInstace
+      );
       return <div>{formatdDate}</div>;
     },
   },
@@ -161,7 +174,15 @@ export const ProjectColumns = ({
     header: "Fecha Límite",
     cell: ({ row }) => {
       const project = row.original as Project;
-      const formatdDate = format(project.dateStart, "dd/MM/yyyy");
+      const dateInstace = new Date(project.dateStart);
+      const options: Intl.DateTimeFormatOptions = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      };
+      const formatdDate = new Intl.DateTimeFormat("es-ES", options).format(
+        dateInstace
+      );
       return <div>{formatdDate}</div>;
     },
   },

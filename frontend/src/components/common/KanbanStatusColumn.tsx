@@ -1,82 +1,79 @@
-import { Dot, PlusIcon } from "lucide-react";
+import { CircleSmall, PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { ProjectDraggableCard } from "../ProjectDraggableCard";
-import { KanbanColumn } from "@/types/project.types";
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { Project, ProjectStatus } from "@/types/project.types";
+import { SortableContext } from "@dnd-kit/sortable";
 import { useMemo } from "react";
+import { useProjectsByStatus } from "@/hooks/queries/projects.query";
+import { cn } from "@/lib/utils";
 interface KanbanStatusColumnProps {
-  column: KanbanColumn;
+  status: ProjectStatus;
   mode: "dragging" | "default";
+  activeColumn?: { status: ProjectStatus; projects: Project[] };
 }
 
 export default function KanbanStatusColumn({
-  column,
+  activeColumn,
+  status,
 }: KanbanStatusColumnProps) {
-  const {
-    setNodeRef,
-    isDragging,
-    transform,
-    transition,
-    attributes,
-    listeners,
-  } = useSortable({
-    id: column.id,
-    data: { type: "Column", column },
-  });
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        transition,
-      }
-    : undefined;
+  const { data: projects } = useProjectsByStatus(status);
+  const projectsData = projects ?? [];
+
   const projectsIds = useMemo(() => {
-    return column.projects.map((pr) => pr.id);
-  }, [column]);
-  
-  return isDragging ? (
+    return (projects ?? []).map((pr) => pr.id);
+  }, [projects]);
+
+  return (
     <div
-      ref={setNodeRef}
-      style={style}
-      className="rounded-md h-max bg-primary-foreground px-1.5 py-2 opacity-40"
+      className={cn(
+        "rounded-md w-full h-max bg-primary-foreground px-1.5 py-2",
+        status === "Completado" && "bg-[var(--project-status-completed)]/10",
+        status === "Cancelado" && "bg-[var(--project-status-canceled)]/10",
+        status === "Curso" && "bg-[var(--project-status-inprogress)]/10",
+        status === "Pausa" && "bg-[var(--project-status-paused)]/10",
+        status === "Riesgo" && "bg-[var(--project-status-risk)]/10"
+      )}
     >
       <div className="flex items-center justify-between mb-2.5">
-        <span className="rounded-md inline-flex py-0.5 px-2 items-center gap-0.5 justify-center bg-secondary text-sm">
-          <Dot size={16} />
-          {column.name}
+        <span
+          className={cn(
+            "project-tag-status text-sm",
+            status === "Completado" && "project-completed",
+            status === "Cancelado" && "project-canceled",
+            status === "Curso" && "project-inprogress",
+            status === "Pausa" && "project-paused",
+            status === "Riesgo" && "project-inrisk"
+          )}
+        >
+          <CircleSmall size={16} className="fill-current" />
+          {status}
         </span>
       </div>
       <div className="flex flex-col gap-2">
         <SortableContext items={projectsIds}>
-          {column.projects.map((pr) => (
+          {projectsData.map((pr) => (
             <ProjectDraggableCard key={pr.id} project={pr} />
           ))}
         </SortableContext>
-        <Button variant={"outline"}>
-          <PlusIcon /> Nuevo proyecto
-        </Button>
-      </div>
-    </div>
-  ) : (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={style}
-      className="rounded-md h-max bg-primary-foreground px-1.5 py-2"
-    >
-      <div className="flex items-center justify-between mb-2.5">
-        <span className="rounded-md inline-flex py-0.5 px-2 items-center gap-0.5 justify-center bg-secondary text-sm">
-          <Dot size={16} />
-          {column.name}
-        </span>
-      </div>
-      <div className="flex flex-col gap-2">
-        <SortableContext items={projectsIds}>
-          {column.projects.map((pr) => (
-            <ProjectDraggableCard key={pr.id} project={pr} />
-          ))}
-        </SortableContext>
-        <Button variant={"outline"}  onClick={() => {console.log("click")}}>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "justify-start",
+            status === "Completado" &&
+              "text-[var(--project-status-completed)]/60 hover:text-[var(--project-status-completed)]/80",
+            status === "Cancelado" &&
+              "text-[var(--project-status-canceled)]/60 hover:text-[var(--project-status-canceled)]/80",
+            status === "Curso" &&
+              "text-[var(--project-status-inprogress)]/60 hover:text-[var(--project-status-inprogress)]/80",
+            status === "Pausa" &&
+              "text-[var(--project-status-paused)]/60 hover:text-[var(--project-status-paused)]/80",
+            status === "Riesgo" &&
+              "text-[var(--project-status-risk)]/60 hover:text-[var(--project-status-risk)]/80"
+          )}
+          onClick={() => {
+            console.log("click");
+          }}
+        >
           <PlusIcon /> Nuevo proyecto
         </Button>
       </div>
