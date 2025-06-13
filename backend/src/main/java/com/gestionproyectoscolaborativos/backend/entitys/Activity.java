@@ -58,8 +58,13 @@ public class Activity {
     @JoinColumn(name = "activity_father")
     private Activity activityFather;
 
-    @ManyToMany(mappedBy = "activities")
-    @JsonIgnore
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_activities",
+            joinColumns = @JoinColumn(name = "activity_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<Users> users;
 
     @Embedded

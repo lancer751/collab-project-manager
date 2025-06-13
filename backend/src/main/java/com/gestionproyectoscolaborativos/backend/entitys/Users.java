@@ -65,10 +65,7 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserProject> userProjects = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "user_activities",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "activity_id"),
-            uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "activity_id"})})
+    @ManyToMany(mappedBy = "users")
     private List<Activity> activities;
+
 }
