@@ -9,18 +9,18 @@ import com.gestionproyectoscolaborativos.backend.repository.ActivityRepository;
 import com.gestionproyectoscolaborativos.backend.repository.ProjectRepository;
 import com.gestionproyectoscolaborativos.backend.repository.StateRepository;
 import com.gestionproyectoscolaborativos.backend.repository.UserRepository;
+import com.gestionproyectoscolaborativos.backend.services.dto.ActivityPacthDTO;
 import com.gestionproyectoscolaborativos.backend.services.dto.request.*;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.ActivtysProjects;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.UserDtoResponse;
 import com.gestionproyectoscolaborativos.backend.services.dto.response.projects.UserRolProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -140,7 +140,9 @@ public class ActivityServices {
         dto.setDateDeliver(a.getDateDeliver());
         dto.setPrioridad(a.getPrioridad());
         dto.setState(new StateDto(a.getState().getName()));
-        dto.setActivityFatherId(a.getActivityFather().getId());
+        if (a.getActivityFather() != null ) {
+            dto.setActivityFatherId(a.getActivityFather().getId());
+        }
         dto.setUsers(a.getUsers().stream().map(ac -> {
             UserRolProjectRequest userDto = new UserRolProjectRequest();
             userDto.setId(ac.getId());
@@ -206,5 +208,103 @@ public class ActivityServices {
         }
     }
 
+    public ResponseEntity<?> allActivities (Pageable pageable) {
+        Page<Activity> pages = activityRepository.findByActivityFatherIsNull(pageable);
+        List<ActivtysProjects> activtysProjectsList = pages.getContent().stream().map(a -> {
+            ActivtysProjects activtysProjects = new ActivtysProjects();
+            activtysProjects.setId(a.getId());
+            activtysProjects.setName(a.getName());
+            activtysProjects.setState(new StateDto(a.getState().getName()));
+            activtysProjects.setPrioridad(a.getPrioridad());
+            activtysProjects.setDescription(a.getDescription());
+            activtysProjects.setDateStart(a.getDateStart());
+            activtysProjects.setDateDeliver(a.getDateDeliver());
+            activtysProjects.setUsers(a.getUsers().stream().map( u -> {
+                UserRolProjectRequest userRolProjectRequest = new UserRolProjectRequest();
+                userRolProjectRequest.setId(u.getId());
+                userRolProjectRequest.setName(u.getName());
+                userRolProjectRequest.setLastname(u.getLastname());
+                userRolProjectRequest.setNumberPhone(u.getNumberPhone());
+                userRolProjectRequest.setDescription(u.getDescription());
+                return userRolProjectRequest;
+            }).toList());
+            return activtysProjects;
+        }).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("activities", activtysProjectsList);
+        response.put("currentPage", pages.getNumber());
+        response.put("totalItems",pages.getTotalElements());
+        response.put("totalPages", pages.getTotalPages());
+        return ResponseEntity.ok().body(response);
+    }
+
+    public ResponseEntity<?> editactivitylist(ActivityPacthDTO activityPacthDTO) {
+        try {
+            HashMap<String, Object> json = new HashMap<>();
+            for (Integer id : activityPacthDTO.getIdActivity()){
+                Activity activity = activityRepository.findById( (long) id).orElseThrow( () -> new RuntimeException("No existe esa actividad"));
+                activity.setState(stateRepository.findByName(activityPacthDTO.getStateDto().getName()).orElseThrow(() -> new RuntimeException("No existe ese estado")));
+                activityRepository.save(activity);
+                json.put("message", "editados correctamente");
+
+            }
+            return ResponseEntity.ok().body(json);
+        } catch (Exception e) {
+            HashMap<String, Object> json = new HashMap<>();
+            json.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(json);
+        }
+    }
+
+    public ResponseEntity<?> editactivitybyid(long id, ActivityProjectsDto dto) {
+        try {
+            // Verificar si el proyecto existe
+            Project p = projectRepository.findById(dto.getIdProject())
+                    .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+
+            // Verificar si la actividad existe
+            Activity activity = activityRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("No existe esa actividad"));
+
+            // Actualizar datos básicos
+            activity.setName(dto.getName());
+            activity.setDescription(dto.getDescription());
+            activity.setDateStart(dto.getDateStart());
+            activity.setDateDeliver(dto.getDateDeliver());
+            activity.setPrioridad(dto.getPriority());
+            activity.setProject(p);
+
+            // Actualizar estado
+            State state = stateRepository.findByName(dto.getState().getName())
+                    .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+            activity.setState(state);
+
+            // Actualizar usuarios
+            if (dto.getUsersList() != null && !dto.getUsersList().isEmpty()) {
+                List<Users> users = userRepository.findAllById(dto.getUsersList());
+                activity.setUsers(users);
+            } else {
+                activity.setUsers(Collections.emptyList());
+            }
+
+            // Asignar actividad padre si existe
+            if (dto.getActivityFatherId() != null) {
+                Activity activityFather = activityRepository.findById((long) dto.getActivityFatherId())
+                        .orElseThrow(() -> new RuntimeException("Actividad padre no encontrada"));
+                activity.setActivityFather(activityFather);
+            } else {
+                activity.setActivityFather(null);
+            }
+
+            // Guardar cambios
+            activityRepository.save(activity);
+
+            return ResponseEntity.ok().body("Actividad editada correctamente");
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al editar actividad: " + e.getMessage());
+        }
+    }
 
 }

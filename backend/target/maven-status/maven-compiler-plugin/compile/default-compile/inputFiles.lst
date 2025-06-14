@@ -43,6 +43,7 @@ C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectos
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dashboard\PageActivitysServices.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dashboard\PageProjectServices.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dashboard\PageStartServices.java
+C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\ActivityPacthDTO.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\ActivityProjecRequest.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\ActivityProjectsDto.java
 C:\Users\Luis\Desktop\backend\backend\backend\src\main\java\com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectbyActivities.java

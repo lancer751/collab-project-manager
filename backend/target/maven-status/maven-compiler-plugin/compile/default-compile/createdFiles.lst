@@ -10,6 +10,7 @@ com\gestionproyectoscolaborativos\backend\services\ActivityServices.class
 com\gestionproyectoscolaborativos\backend\repository\ActivityRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\projects\ProjectDtoResponse.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectHistoryDto.class
+com\gestionproyectoscolaborativos\backend\services\dto\ActivityPacthDTO.class
 com\gestionproyectoscolaborativos\backend\repository\UserRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\RolDto.class
 com\gestionproyectoscolaborativos\backend\services\mail\model\EmailDto.class
