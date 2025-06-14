@@ -4,8 +4,6 @@ import {
   House,
   Inbox,
   UsersRound,
-  Settings,
-  LogOut,
 } from "lucide-react";
 import {
   Sidebar,
@@ -18,8 +16,6 @@ import {
 } from "../ui/sidebar";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { Button } from "../ui/button";
-import { useLogoutMutation } from "@/hooks/mutations/auth.mutation";
 import { getRouteApi } from "@tanstack/react-router";
 
 // hardcode
@@ -53,13 +49,7 @@ const navMain = [
     url: "/dashboard/tasks",
     icon: SquareCheck,
     isActive: false,
-  },
-  {
-    title: "Ajustes",
-    url: "/dashboard/settings",
-    icon: Settings,
-    isActive: false,
-  },
+  }
 ];
 
 export function DasboardSidebar() {

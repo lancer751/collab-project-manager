@@ -160,6 +160,16 @@ export function DataTable<TData extends { id: number }, TValue, T>({
                   ))}
                 </TableRow>
               ))}
+              {table.getRowModel().rows.length === 0 && (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="text-muted-foreground text-center h-10 py-5"
+                  >
+                    Vacío
+                  </TableCell>
+                </TableRow>
+              )}
               {queryUtilities && (
                 <>
                   <TableRow ref={sentinelRef}>

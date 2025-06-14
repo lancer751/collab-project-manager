@@ -1,4 +1,5 @@
 import { SingleProjectModal } from "@/components/common/SingleProjectModal";
+import { SingleTaskModal } from "@/components/common/SingleTaskModal";
 import { LoadingFallback } from "@/components/loaders/LoadingFallback";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,7 +54,7 @@ function RouteComponent() {
 
   const handleOpenModal = (open: boolean) => {
     if (!open) {
-      navigate({ to: location.pathname, search: {} });
+      navigate({ to: location.pathname, search: {}, resetScroll: false });
     }
   }
   return (
@@ -61,6 +62,9 @@ function RouteComponent() {
       <Outlet />
       {matchRoute && searchParams.prjt && (
         <SingleProjectModal projectId={searchParams.prjt} onClose={handleOpenModal}/>
+      )}
+      {matchRoute && searchParams.tsk && (
+        <SingleTaskModal taskId={searchParams.tsk} onClose={handleOpenModal}/>
       )}
     </>
   );

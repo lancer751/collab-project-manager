@@ -1,4 +1,5 @@
 import { getInfiniteProjects, getProjectsByStatus, getProjectStatus, getSingleProjectById } from "@/services/projects";
+import { getSummaryProjects } from "@/services/tasks";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export function useInfiniteProjects() {
@@ -35,9 +36,17 @@ export function useProjectsByStatus(status: string) {
   })
 }
 
-export function useSingleProjectById(id: number) {
+export function useSingleProjectById(id: number | null) {
   return useQuery({
     queryKey: ["singleProject", {id}],
-    queryFn: () => getSingleProjectById(id),
+    queryFn: () => getSingleProjectById(id!),
+    enabled: !!id
+  })
+}
+
+export function useProjectsSummary() {
+  return useQuery({
+    queryKey: ["projects-summary"],
+    queryFn: getSummaryProjects,
   })
 }

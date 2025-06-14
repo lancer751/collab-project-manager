@@ -3,13 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useProjectsNearDeadline } from "@/hooks/queries/graphs";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Target } from "lucide-react";
+import { StickyNote } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Skeleton } from "./ui/skeleton";
 
-type ProjectsNearDeadlineProps = ComponentPropsWithoutRef<"div">;
+type TasksNearDeadlineProps = ComponentPropsWithoutRef<"div">;
 
-export default function ProjectsNearDeadline(props: ProjectsNearDeadlineProps) {
+export default function TasksNearDeadline(props: TasksNearDeadlineProps) {
   const { data: projects, isPending } = useProjectsNearDeadline();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -41,7 +41,7 @@ export default function ProjectsNearDeadline(props: ProjectsNearDeadlineProps) {
                     className="text-sm hover:text-cyan-400 transition-colors inline-flex items-center gap-4"
                   >
                     <span className="inline-flex items-center gap-2">
-                      <Target size={18} />
+                      <StickyNote size={18} />
                       {pr.title}
                     </span>
                   </Link>

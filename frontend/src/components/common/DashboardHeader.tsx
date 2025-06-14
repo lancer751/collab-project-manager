@@ -39,10 +39,13 @@ import {
 import { Button } from "../ui/button";
 import SearchCommandMenu from "./SearchCommandMenu";
 import { Route as ProjectsRoute } from "@/routes/_auth/dashboard/projects";
+import { Route as TasksRoute } from "@/routes/_auth/dashboard/tasks";
 import { ProjectsNavbar } from "./ProjectsNavbar";
 import { Fragment, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { ProjectModalForm } from "./ProjectModalForm";
+import TasksNavbar from "../TasksNavbar";
+import { TaskModalForm } from "./TaskModalForm";
 
 export default function DashboardHeader() {
   const router = getRouteApi("/_auth");
@@ -63,6 +66,7 @@ export default function DashboardHeader() {
   const currentPath = location.pathname;
   const handleLogoutSession = () => LogoutSessionMutation();
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   return (
     <header className="sticky top-0 z-10">
       <nav className=" w-full bg-background border-b flex items-center shrink-0 h-16 px-4 gap-4 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -191,6 +195,11 @@ export default function DashboardHeader() {
               <PlusCircleIcon /> Agregar
             </Button>
           )}
+          {currentPath.includes(TasksRoute.fullPath) && (
+            <Button size={"sm"} onClick={() => setOpen2(true)}>
+              <PlusCircleIcon /> Nueva Tarea
+            </Button>
+          )}
         </div>
         {createPortal(
           <ProjectModalForm
@@ -201,8 +210,12 @@ export default function DashboardHeader() {
           />,
           document.body
         )}
+        {
+          <TaskModalForm isOpen={open2} onClose={() => setOpen2(!open2)} taskId={null} mode="create"/>
+        }
       </nav>
       {currentPath.includes(ProjectsRoute.fullPath) && <ProjectsNavbar />}
+      {currentPath.includes(TasksRoute.fullPath) && <TasksNavbar />}
     </header>
   );
 }

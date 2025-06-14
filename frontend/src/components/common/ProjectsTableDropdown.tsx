@@ -9,6 +9,8 @@ import { ProjectColumns } from "../columns/ProjectCclumns";
 import { useState } from "react";
 import { RowSelectionState } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
+import { createPortal } from "react-dom";
+import { ProjectModalForm } from "./ProjectModalForm";
 
 interface ProjectsByStatusTableProps {
   name: ProjectStatus;
@@ -21,19 +23,13 @@ export function ProjectsByStatusTable({ name }: ProjectsByStatusTableProps) {
   );
   const [open, setOpen] = useState(false);
 
-  const { data: projects, isPending, isLoading } = useProjectsByStatus(name);
-  console.log(projects);
+  const { data: projects, isLoading } = useProjectsByStatus(name);
   const handleEditProject = (projectId: number) => {
     setSelectedProjectId(projectId);
     setOpen(true);
   };
   return (
-    <div
-      className={cn(
-        "w-max h-full px-10 pb-5",
-        isLoading && "min-h-96"
-      )}
-    >
+    <div className={cn("w-max h-full px-10 pb-5", isLoading && "min-h-96")}>
       <DataTable
         columns={ProjectColumns({ onEdit: handleEditProject })}
         data={projects ?? []}
@@ -41,12 +37,21 @@ export function ProjectsByStatusTable({ name }: ProjectsByStatusTableProps) {
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
       />
+      {createPortal(
+        <ProjectModalForm
+          isOpen={open}
+          mode="edit"
+          projectId={selectedProjectId}
+          onClose={() => setOpen(false)}
+        />,
+        document.body
+      )}
     </div>
   );
 }
 
 export function ProjectsTableDropdown() {
-  const { data: projectStatus, isPending } = useProjectStatus();
+  const { data: projectStatus } = useProjectStatus();
 
   return (
     <div className="space-y-6 absolute h-full top-0 left-0 w-full">

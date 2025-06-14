@@ -10,7 +10,6 @@ interface AvatarGroupProps {
 }
 
 export default function AvatarGroup({ avatars, limit }: AvatarGroupProps) {
-  console.log(avatars[0]);
   return (
     <div className="flex -space-x-2">
       {avatars.length > 0 ? (

@@ -22,8 +22,8 @@ export const ProjectNameCell = ({
   onEdit: (projectId: number) => void;
 }) => {
   const { mutateAsync: deleteProject, isPending } = useDeleteProject();
-  const location = useLocation()
-  const currentPath = location.pathname
+  const location = useLocation();
+  const currentPath = location.pathname;
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -33,28 +33,26 @@ export const ProjectNameCell = ({
             isPending && "pointer-events-none"
           )}
         >
-          <Link
-            to={currentPath}
-            search={prev => ({
-              ...prev,
-              prjt: project.id,
-            })}
-            className={cn(
-              "truncate max-w-72 hover:underline",
-              isPending && "text-muted-foreground"
-            )}
-            disabled={isPending}
-            resetScroll={false}
-          >
-            {project.name}
-          </Link>
+          {project.name}
           <Button
             size={"sm"}
             className="absolute top-1/2 -translate-y-1/2 right-0 hidden group-hover:inline-flex z-20"
             disabled={isPending}
+            asChild
           >
-            <PanelBottomOpen />
-            Ver
+            <Link
+              to={currentPath}
+              search={(prev) => ({
+                ...prev,
+                prjt: project.id,
+              })}
+              className={cn(isPending && "text-muted-foreground")}
+              disabled={isPending}
+              resetScroll={false}
+            >
+              <PanelBottomOpen />
+              Ver
+            </Link>
           </Button>
         </div>
       </ContextMenuTrigger>

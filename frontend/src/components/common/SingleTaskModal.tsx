@@ -1,44 +1,40 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useSingleProjectById } from "@/hooks/queries/projects.query";
-import { cn } from "@/lib/utils";
-import { CircleSmall, Send, Target } from "lucide-react";
-import AvatarGroup from "./AvatarGroup";
-import { ScrollArea } from "../ui/scroll-area";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { generateRandomComments } from "@/helpers/utils/randomComments";
+import { useGetTaskById } from "@/hooks/queries/task.query";
 import { useMemo } from "react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { CircleSmall, Send, StickyNote } from "lucide-react";
+import { ScrollArea } from "../ui/scroll-area";
 import { TaskList } from "../TaskList";
-interface singleProjectModalProps {
-  projectId: number;
+import { cn } from "@/lib/utils";
+import AvatarGroup from "./AvatarGroup";
+interface SingleTaskModalProps {
+  taskId: number;
   onClose: (open: boolean) => void;
 }
 
-export function SingleProjectModal({
-  projectId,
-  onClose,
-}: singleProjectModalProps) {
-  const { data: fullProjectData } = useSingleProjectById(projectId);
+export function SingleTaskModal({ taskId, onClose }: SingleTaskModalProps) {
+  const { data: task } = useGetTaskById(taskId);
   const comments = useMemo(
     () =>
-      fullProjectData &&
-      fullProjectData.project.userRolProjectRequestList.length > 0
-        ? generateRandomComments(10)
+      task && task.activity.users.length > 0
+        ? generateRandomComments(Math.random() * 13)
         : [],
-    [fullProjectData]
+    [task]
   );
 
   return (
     <Dialog open onOpenChange={(open) => onClose(open)}>
-      {fullProjectData && (
+      {task && (
         <DialogContent className="sm:max-w-3xl md:max-w-6xl min-h-[356px] h-[550px] flex overflow-hidden p-0 divide-y-2 gap-0">
           <div className="flex flex-1 divide-x-2">
             {/* left side column */}
             <div className="flex-1 flex flex-col overflow-hidden w-full">
               <div className="p-6 flex-1 space-y-7 text-sm overflow-auto h-full">
                 <DialogTitle className="text-2xl inline-flex gap-2 items-center">
-                  <Target />
-                  {fullProjectData.project.name}
+                  <StickyNote />
+                  {task.activity.name}
                 </DialogTitle>
                 {/* details */}
                 <div className="overflow-y-auto overflow-x-hidden space-y-8 h-full">
@@ -50,34 +46,34 @@ export function SingleProjectModal({
                         <span
                           className={cn(
                             "project-tag-status text-sm",
-                            fullProjectData.project.stateDto.name ===
+                            task.activity.state.name ===
                               "Completado" && "project-completed",
-                            fullProjectData.project.stateDto.name ===
+                            task.activity.state.name ===
                               "Cancelado" && "project-canceled",
-                            fullProjectData.project.stateDto.name === "Curso" &&
+                            task.activity.state.name === "Curso" &&
                               "project-inprogress",
-                            fullProjectData.project.stateDto.name === "Pausa" &&
+                            task.activity.state.name === "Pausa" &&
                               "project-paused",
-                            fullProjectData.project.stateDto.name ===
+                            task.activity.state.name ===
                               "Riesgo" && "project-inrisk"
                           )}
                         >
                           <CircleSmall size={16} className="fill-current" />
-                          {fullProjectData.project.stateDto.name}
+                          {task.activity.state.name}
                         </span>
                       </div>
                       <div className="flex items-center space-x-4">
-                        <span className="font-semibold">Líder</span>
+                        <span className="font-semibold">Asignado a</span>
                         <AvatarGroup
                           limit={5}
-                          avatars={fullProjectData.project.userLiders}
+                          avatars={task.activity.users}
                         />
                       </div>
                       <div className="flex items-center space-x-4">
                         <span className="font-semibold">Fecha de Inicio</span>
                         <span className="text-muted-foreground">
                           {new Date(
-                            fullProjectData.project.dateStart
+                            task.activity.dateStart
                           ).toDateString()}
                         </span>
                       </div>
@@ -85,50 +81,49 @@ export function SingleProjectModal({
                         <span className="font-semibold">Fecha Límite</span>
                         <span className="text-muted-foreground">
                           {new Date(
-                            fullProjectData.project.dateDeliver
+                            task.activity.dateDeliver
                           ).toDateString()}
                         </span>
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center space-x-4">
-                        <span className="font-semibold">Colaboradores</span>
-                        <AvatarGroup
-                          limit={5}
-                          avatars={
-                            fullProjectData.project.userRolProjectRequestList
-                          }
-                        />
-                      </div>
-                      <div className="flex items-center space-x-4">
                         <span className="font-semibold">Prioridad</span>
                         <span
                           className={cn(
                             "capitalize priority-tag",
-                            fullProjectData.project.priority === "ALTA" &&
+                            task.activity.prioridad === "ALTA" &&
                               "priority-high",
-                            fullProjectData.project.priority === "MEDIA" &&
+                            task.activity.prioridad === "MEDIA" &&
                               "priority-medium",
-                            fullProjectData.project.priority === "BAJA" &&
+                            task.activity.prioridad === "BAJA" &&
                               "priority-low"
                           )}
                         >
-                          {fullProjectData.project.priority}
+                          {task.activity.prioridad}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <span className="font-semibold">Proyecto</span>
+                        <span
+                          className="text-muted-foreground"
+                        >
+                          {task.project.name}
                         </span>
                       </div>
                     </div>
                   </div>
-                  {/* project description */}
+                  {/* task description */}
                   <div className="flex flex-col justify-center gap-2">
                     <span className="font-semibold">Descripción</span>
                     <p className="text-muted-foreground text-[1rem]">
-                      {fullProjectData.project.description}
+                      {task.activity.description}
                     </p>
                   </div>
 
                   {/* Actividad JSON solo para ejemplo */}
-                  
-                  <TaskList tasks={fullProjectData.activity}/>
+
+                  <TaskList tasks={task.activity.subtasks} />
                 </div>
               </div>
             </div>

@@ -1,9 +1,5 @@
 import { useMemo } from "react";
-import KanbanStatusColumn from "./common/KanbanStatusColumn";
-
-import {
-  SortableContext,
-} from "@dnd-kit/sortable";
+import { SortableContext } from "@dnd-kit/sortable";
 import {
   DndContext,
   PointerSensor,
@@ -11,6 +7,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { useProjectStatus } from "@/hooks/queries/projects.query";
+import { KanbanProjectColumn } from "./common/KanbanProjectColumn";
 
 export default function ProjectsDraggableSection() {
   const { data: projectStatus } = useProjectStatus();
@@ -30,15 +27,15 @@ export default function ProjectsDraggableSection() {
       <div className="min-w-full grid grid-flow-col grid-cols-[repeat(5,minmax(300px,1fr))] gap-4 absolute top-0 left-0 p-4">
         <DndContext sensors={sensors}>
           <SortableContext items={columnsIds}>
-          {projectStatus &&
-            projectStatus.map((status) => (
-              <KanbanStatusColumn
-              key={status.name}
-              status={status.name}
-              mode="default"
-              />
-            ))}
-            </SortableContext>
+            {projectStatus &&
+              projectStatus.map((status) => (
+                <KanbanProjectColumn
+                  key={status.name}
+                  status={status.name}
+                  mode="default"
+                />
+              ))}
+          </SortableContext>
         </DndContext>
       </div>
     </div>

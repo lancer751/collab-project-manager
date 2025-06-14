@@ -50,5 +50,5 @@ export type NewProjectData = Omit<
   userLider: UserRolProjectRequestList[]
 };
 
-export type RecentProjects = { title: string };
-export type ProjectsNearToFinish = { title: string; timeFinish: string };
+export type RecentProjects = { id:number, title: string };
+export type ProjectsNearToFinish = { id: number, title: string; timeFinish: string };

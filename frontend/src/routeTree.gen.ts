@@ -19,7 +19,11 @@ import { Route as AuthDashboardTasksImport } from './routes/_auth/dashboard/task
 import { Route as AuthDashboardProjectsImport } from './routes/_auth/dashboard/projects'
 import { Route as AuthDashboardInicioImport } from './routes/_auth/dashboard/inicio'
 import { Route as AuthDashboardInboxImport } from './routes/_auth/dashboard/inbox'
+import { Route as AuthDashboardTasksIndexImport } from './routes/_auth/dashboard/tasks.index'
 import { Route as AuthDashboardProjectsIndexImport } from './routes/_auth/dashboard/projects.index'
+import { Route as AuthDashboardTasksPerProjectImport } from './routes/_auth/dashboard/tasks.per-project'
+import { Route as AuthDashboardTasksKanbanImport } from './routes/_auth/dashboard/tasks.kanban'
+import { Route as AuthDashboardTasksAllImport } from './routes/_auth/dashboard/tasks.all'
 import { Route as AuthDashboardProjectsKanbanImport } from './routes/_auth/dashboard/projects.kanban'
 import { Route as AuthDashboardProjectsAllImport } from './routes/_auth/dashboard/projects.all'
 import { Route as AuthDashboardProjectsActivesImport } from './routes/_auth/dashboard/projects.actives'
@@ -73,6 +77,12 @@ const AuthDashboardInboxRoute = AuthDashboardInboxImport.update({
   getParentRoute: () => AuthDashboardRouteRoute,
 } as any)
 
+const AuthDashboardTasksIndexRoute = AuthDashboardTasksIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthDashboardTasksRoute,
+} as any)
+
 const AuthDashboardProjectsIndexRoute = AuthDashboardProjectsIndexImport.update(
   {
     id: '/',
@@ -80,6 +90,25 @@ const AuthDashboardProjectsIndexRoute = AuthDashboardProjectsIndexImport.update(
     getParentRoute: () => AuthDashboardProjectsRoute,
   } as any,
 )
+
+const AuthDashboardTasksPerProjectRoute =
+  AuthDashboardTasksPerProjectImport.update({
+    id: '/per-project',
+    path: '/per-project',
+    getParentRoute: () => AuthDashboardTasksRoute,
+  } as any)
+
+const AuthDashboardTasksKanbanRoute = AuthDashboardTasksKanbanImport.update({
+  id: '/kanban',
+  path: '/kanban',
+  getParentRoute: () => AuthDashboardTasksRoute,
+} as any)
+
+const AuthDashboardTasksAllRoute = AuthDashboardTasksAllImport.update({
+  id: '/all',
+  path: '/all',
+  getParentRoute: () => AuthDashboardTasksRoute,
+} as any)
 
 const AuthDashboardProjectsKanbanRoute =
   AuthDashboardProjectsKanbanImport.update({
@@ -182,12 +211,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardProjectsKanbanImport
       parentRoute: typeof AuthDashboardProjectsImport
     }
+    '/_auth/dashboard/tasks/all': {
+      id: '/_auth/dashboard/tasks/all'
+      path: '/all'
+      fullPath: '/dashboard/tasks/all'
+      preLoaderRoute: typeof AuthDashboardTasksAllImport
+      parentRoute: typeof AuthDashboardTasksImport
+    }
+    '/_auth/dashboard/tasks/kanban': {
+      id: '/_auth/dashboard/tasks/kanban'
+      path: '/kanban'
+      fullPath: '/dashboard/tasks/kanban'
+      preLoaderRoute: typeof AuthDashboardTasksKanbanImport
+      parentRoute: typeof AuthDashboardTasksImport
+    }
+    '/_auth/dashboard/tasks/per-project': {
+      id: '/_auth/dashboard/tasks/per-project'
+      path: '/per-project'
+      fullPath: '/dashboard/tasks/per-project'
+      preLoaderRoute: typeof AuthDashboardTasksPerProjectImport
+      parentRoute: typeof AuthDashboardTasksImport
+    }
     '/_auth/dashboard/projects/': {
       id: '/_auth/dashboard/projects/'
       path: '/'
       fullPath: '/dashboard/projects/'
       preLoaderRoute: typeof AuthDashboardProjectsIndexImport
       parentRoute: typeof AuthDashboardProjectsImport
+    }
+    '/_auth/dashboard/tasks/': {
+      id: '/_auth/dashboard/tasks/'
+      path: '/'
+      fullPath: '/dashboard/tasks/'
+      preLoaderRoute: typeof AuthDashboardTasksIndexImport
+      parentRoute: typeof AuthDashboardTasksImport
     }
   }
 }
@@ -213,11 +270,28 @@ const AuthDashboardProjectsRouteWithChildren =
     AuthDashboardProjectsRouteChildren,
   )
 
+interface AuthDashboardTasksRouteChildren {
+  AuthDashboardTasksAllRoute: typeof AuthDashboardTasksAllRoute
+  AuthDashboardTasksKanbanRoute: typeof AuthDashboardTasksKanbanRoute
+  AuthDashboardTasksPerProjectRoute: typeof AuthDashboardTasksPerProjectRoute
+  AuthDashboardTasksIndexRoute: typeof AuthDashboardTasksIndexRoute
+}
+
+const AuthDashboardTasksRouteChildren: AuthDashboardTasksRouteChildren = {
+  AuthDashboardTasksAllRoute: AuthDashboardTasksAllRoute,
+  AuthDashboardTasksKanbanRoute: AuthDashboardTasksKanbanRoute,
+  AuthDashboardTasksPerProjectRoute: AuthDashboardTasksPerProjectRoute,
+  AuthDashboardTasksIndexRoute: AuthDashboardTasksIndexRoute,
+}
+
+const AuthDashboardTasksRouteWithChildren =
+  AuthDashboardTasksRoute._addFileChildren(AuthDashboardTasksRouteChildren)
+
 interface AuthDashboardRouteRouteChildren {
   AuthDashboardInboxRoute: typeof AuthDashboardInboxRoute
   AuthDashboardInicioRoute: typeof AuthDashboardInicioRoute
   AuthDashboardProjectsRoute: typeof AuthDashboardProjectsRouteWithChildren
-  AuthDashboardTasksRoute: typeof AuthDashboardTasksRoute
+  AuthDashboardTasksRoute: typeof AuthDashboardTasksRouteWithChildren
   AuthDashboardUsersRoute: typeof AuthDashboardUsersRoute
 }
 
@@ -225,7 +299,7 @@ const AuthDashboardRouteRouteChildren: AuthDashboardRouteRouteChildren = {
   AuthDashboardInboxRoute: AuthDashboardInboxRoute,
   AuthDashboardInicioRoute: AuthDashboardInicioRoute,
   AuthDashboardProjectsRoute: AuthDashboardProjectsRouteWithChildren,
-  AuthDashboardTasksRoute: AuthDashboardTasksRoute,
+  AuthDashboardTasksRoute: AuthDashboardTasksRouteWithChildren,
   AuthDashboardUsersRoute: AuthDashboardUsersRoute,
 }
 
@@ -251,12 +325,16 @@ export interface FileRoutesByFullPath {
   '/dashboard/inbox': typeof AuthDashboardInboxRoute
   '/dashboard/inicio': typeof AuthDashboardInicioRoute
   '/dashboard/projects': typeof AuthDashboardProjectsRouteWithChildren
-  '/dashboard/tasks': typeof AuthDashboardTasksRoute
+  '/dashboard/tasks': typeof AuthDashboardTasksRouteWithChildren
   '/dashboard/users': typeof AuthDashboardUsersRoute
   '/dashboard/projects/actives': typeof AuthDashboardProjectsActivesRoute
   '/dashboard/projects/all': typeof AuthDashboardProjectsAllRoute
   '/dashboard/projects/kanban': typeof AuthDashboardProjectsKanbanRoute
+  '/dashboard/tasks/all': typeof AuthDashboardTasksAllRoute
+  '/dashboard/tasks/kanban': typeof AuthDashboardTasksKanbanRoute
+  '/dashboard/tasks/per-project': typeof AuthDashboardTasksPerProjectRoute
   '/dashboard/projects/': typeof AuthDashboardProjectsIndexRoute
+  '/dashboard/tasks/': typeof AuthDashboardTasksIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -265,12 +343,15 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthDashboardRouteRouteWithChildren
   '/dashboard/inbox': typeof AuthDashboardInboxRoute
   '/dashboard/inicio': typeof AuthDashboardInicioRoute
-  '/dashboard/tasks': typeof AuthDashboardTasksRoute
   '/dashboard/users': typeof AuthDashboardUsersRoute
   '/dashboard/projects/actives': typeof AuthDashboardProjectsActivesRoute
   '/dashboard/projects/all': typeof AuthDashboardProjectsAllRoute
   '/dashboard/projects/kanban': typeof AuthDashboardProjectsKanbanRoute
+  '/dashboard/tasks/all': typeof AuthDashboardTasksAllRoute
+  '/dashboard/tasks/kanban': typeof AuthDashboardTasksKanbanRoute
+  '/dashboard/tasks/per-project': typeof AuthDashboardTasksPerProjectRoute
   '/dashboard/projects': typeof AuthDashboardProjectsIndexRoute
+  '/dashboard/tasks': typeof AuthDashboardTasksIndexRoute
 }
 
 export interface FileRoutesById {
@@ -281,12 +362,16 @@ export interface FileRoutesById {
   '/_auth/dashboard/inbox': typeof AuthDashboardInboxRoute
   '/_auth/dashboard/inicio': typeof AuthDashboardInicioRoute
   '/_auth/dashboard/projects': typeof AuthDashboardProjectsRouteWithChildren
-  '/_auth/dashboard/tasks': typeof AuthDashboardTasksRoute
+  '/_auth/dashboard/tasks': typeof AuthDashboardTasksRouteWithChildren
   '/_auth/dashboard/users': typeof AuthDashboardUsersRoute
   '/_auth/dashboard/projects/actives': typeof AuthDashboardProjectsActivesRoute
   '/_auth/dashboard/projects/all': typeof AuthDashboardProjectsAllRoute
   '/_auth/dashboard/projects/kanban': typeof AuthDashboardProjectsKanbanRoute
+  '/_auth/dashboard/tasks/all': typeof AuthDashboardTasksAllRoute
+  '/_auth/dashboard/tasks/kanban': typeof AuthDashboardTasksKanbanRoute
+  '/_auth/dashboard/tasks/per-project': typeof AuthDashboardTasksPerProjectRoute
   '/_auth/dashboard/projects/': typeof AuthDashboardProjectsIndexRoute
+  '/_auth/dashboard/tasks/': typeof AuthDashboardTasksIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -303,7 +388,11 @@ export interface FileRouteTypes {
     | '/dashboard/projects/actives'
     | '/dashboard/projects/all'
     | '/dashboard/projects/kanban'
+    | '/dashboard/tasks/all'
+    | '/dashboard/tasks/kanban'
+    | '/dashboard/tasks/per-project'
     | '/dashboard/projects/'
+    | '/dashboard/tasks/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -311,12 +400,15 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/inbox'
     | '/dashboard/inicio'
-    | '/dashboard/tasks'
     | '/dashboard/users'
     | '/dashboard/projects/actives'
     | '/dashboard/projects/all'
     | '/dashboard/projects/kanban'
+    | '/dashboard/tasks/all'
+    | '/dashboard/tasks/kanban'
+    | '/dashboard/tasks/per-project'
     | '/dashboard/projects'
+    | '/dashboard/tasks'
   id:
     | '__root__'
     | '/'
@@ -330,7 +422,11 @@ export interface FileRouteTypes {
     | '/_auth/dashboard/projects/actives'
     | '/_auth/dashboard/projects/all'
     | '/_auth/dashboard/projects/kanban'
+    | '/_auth/dashboard/tasks/all'
+    | '/_auth/dashboard/tasks/kanban'
+    | '/_auth/dashboard/tasks/per-project'
     | '/_auth/dashboard/projects/'
+    | '/_auth/dashboard/tasks/'
   fileRoutesById: FileRoutesById
 }
 
@@ -398,7 +494,13 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/tasks": {
       "filePath": "_auth/dashboard/tasks.tsx",
-      "parent": "/_auth/dashboard"
+      "parent": "/_auth/dashboard",
+      "children": [
+        "/_auth/dashboard/tasks/all",
+        "/_auth/dashboard/tasks/kanban",
+        "/_auth/dashboard/tasks/per-project",
+        "/_auth/dashboard/tasks/"
+      ]
     },
     "/_auth/dashboard/users": {
       "filePath": "_auth/dashboard/users.tsx",
@@ -416,9 +518,25 @@ export const routeTree = rootRoute
       "filePath": "_auth/dashboard/projects.kanban.tsx",
       "parent": "/_auth/dashboard/projects"
     },
+    "/_auth/dashboard/tasks/all": {
+      "filePath": "_auth/dashboard/tasks.all.tsx",
+      "parent": "/_auth/dashboard/tasks"
+    },
+    "/_auth/dashboard/tasks/kanban": {
+      "filePath": "_auth/dashboard/tasks.kanban.tsx",
+      "parent": "/_auth/dashboard/tasks"
+    },
+    "/_auth/dashboard/tasks/per-project": {
+      "filePath": "_auth/dashboard/tasks.per-project.tsx",
+      "parent": "/_auth/dashboard/tasks"
+    },
     "/_auth/dashboard/projects/": {
       "filePath": "_auth/dashboard/projects.index.tsx",
       "parent": "/_auth/dashboard/projects"
+    },
+    "/_auth/dashboard/tasks/": {
+      "filePath": "_auth/dashboard/tasks.index.tsx",
+      "parent": "/_auth/dashboard/tasks"
     }
   }
 }

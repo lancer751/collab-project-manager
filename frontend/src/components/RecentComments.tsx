@@ -14,7 +14,7 @@ export function RecentComments(props: RecentCommentsProps) {
   return (
     <Card {...props}>
       <CardHeader className="items-center pb-0">
-        <CardTitle>Proyectos recientes</CardTitle>
+        <CardTitle>Comentarios recientes</CardTitle>
       </CardHeader>
       <CardContent className={cn("flex-1", (comments && comments.length === 0) && "flex items-center justify-center")}>
         {

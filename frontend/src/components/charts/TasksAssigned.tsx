@@ -21,16 +21,16 @@ export const description = "Un gráfico de anillo con proyectos por estado";
 
 // Datos de ejemplo: sustituye `count` por tu fuente real
 const chartData = [
-  { status: "Completado", count: 42, fill: "var(--chart-1)" },
-  { status: "Cancelado", count: 8, fill: "var(--chart-2)" },
-  { status: "Curso", count: 25, fill: "var(--chart-3)" },
-  { status: "Pausa", count: 5, fill: "var(--chart-4)" },
-  { status: "Riesgo", count: 10, fill: "var(--chart-5)" },
+  { status: "Completado", count: 32, fill: "var(--project-status-completed)" },
+  { status: "Cancelado", count: 54, fill: "var(--project-status-canceled)" },
+  { status: "Curso", count: 43, fill: "var(--project-status-inprogress)" },
+  { status: "Pausa", count: 32, fill: "var(--project-status-paused)" },
+  { status: "Riesgo", count: 12, fill: "var(--project-status-risk)" },
 ];
 
 const chartConfig = {
   count: {
-    label: "Proyectos",
+    label: "Tareas",
   },
   Completado: {
     label: "Completado",
@@ -56,7 +56,7 @@ const chartConfig = {
 
 type CardWrapperProps = ComponentPropsWithoutRef<"div">;
 
-export function ProjectsAssigned(props: CardWrapperProps) {
+export function TasksAssigned(props: CardWrapperProps) {
   const totalProjects = useMemo(() => {
     return chartData.reduce((sum, entry) => sum + entry.count, 0);
   }, []);
@@ -64,7 +64,7 @@ export function ProjectsAssigned(props: CardWrapperProps) {
   return (
     <Card {...props}>
       <CardHeader className="items-center pb-0">
-        <CardTitle>Proyectos por estado</CardTitle>
+        <CardTitle>Tareas por estado</CardTitle>
         <CardDescription>Enero – Junio 2025</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -106,7 +106,7 @@ export function ProjectsAssigned(props: CardWrapperProps) {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Proyectos
+                          Tareas
                         </tspan>
                       </text>
                     );
@@ -118,12 +118,13 @@ export function ProjectsAssigned(props: CardWrapperProps) {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Tendencia positiva del 5.2% este semestre{" "}
+        <div className="flex items-center gap-2 leading-none font-medium text-green-600">
+          5.2% más tareas completadas en comparación con el semestre anterior
           <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">
-          Total de proyectos registrados en el primer semestre de 2025
+        <div className="text-muted-foreground leading-tight text-center">
+          Se registraron un total de {totalProjects.toLocaleString()} tareas
+          entre enero y junio de 2025, distribuidas en cinco estados.
         </div>
       </CardFooter>
     </Card>

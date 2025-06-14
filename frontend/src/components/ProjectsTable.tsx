@@ -53,7 +53,7 @@ export function ProjectsTable() {
       {createPortal(
         <ProjectModalForm
           isOpen={open}
-          mode="create"
+          mode="edit"
           projectId={selectedProjectId}
           onClose={() => setOpen(false)}
         />,

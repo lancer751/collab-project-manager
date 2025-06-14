@@ -1,21 +1,19 @@
-import { RolProject } from "./project.types";
+import { RolProject, StateDto } from "./project.types";
 import { User } from "./user.types";
 
-export type TaskStatus =
-  | "En Revisión"
-  | "En Curso"
-  | "Terminados"
-  | "Sin Empezar"
-  | "Archivadas";
-
 export type Task = {
-  id: number;
+  readonly id: number;
   name: string;
   description: string;
   dateStart: Date;
   dateDeliver: Date;
-  prioridad: string;
-  state: TaskStatus;
+  prioridad: "ALTA" | "MEDIA" | "BAJA";
+  state: StateDto;
   activityFatherId: number | null;
   users: (Omit<User, "active" | "rolDtoList"> & {rolProject: RolProject})[];
+  subtasks: Task[] | null;
 };
+
+export type TaskChanges = Omit<Task, | "id" | "subtasks" | "users"> & {idProject: number, usersList: number[]}
+
+export type TaskFormData = Omit<Task, "id" | "users"> & {idProject: number, usersList: number[]}

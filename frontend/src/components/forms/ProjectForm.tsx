@@ -38,7 +38,10 @@ import { useMemo, useState } from "react";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { useInfiniteUsers } from "@/hooks/queries/users";
-import { useCreateProject } from "@/hooks/mutations/project.mutation";
+import {
+  useCreateProject,
+  useEditProject,
+} from "@/hooks/mutations/project.mutation";
 
 const userSchema = z.object({
   id: z.number(),
@@ -75,7 +78,8 @@ interface ProjectFormProps {
 
 export function ProjectForm({ mode, onClose, project }: ProjectFormProps) {
   type FormSchema = z.infer<typeof projectSchema>;
-  const { mutateAsync: createNewProject } = useCreateProject();
+  const { mutateAsync: createNewProject, isPending: isCreating } = useCreateProject();
+  const { mutateAsync: editProject, isPending: isEditing } = useEditProject();
   const { data } = useInfiniteUsers({ filters: {}, sorters: {} });
   const users = useMemo(() => {
     return data
@@ -144,8 +148,13 @@ export function ProjectForm({ mode, onClose, project }: ProjectFormProps) {
   }
 
   async function onSubmitProjectData(projectData: FormSchema) {
+    if (project && mode === "edit") {
+      await editProject({ id: project.id, projectData });
+      onClose();
+      return;
+    }
     await createNewProject(projectData);
-    onClose()
+    onClose();
   }
 
   return (
@@ -593,7 +602,7 @@ export function ProjectForm({ mode, onClose, project }: ProjectFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">
+        <Button type="submit" disabled={isCreating || isEditing} >
           {mode === "create" ? "Crear Proyecto" : "Guardar Cambios"}
         </Button>
       </form>

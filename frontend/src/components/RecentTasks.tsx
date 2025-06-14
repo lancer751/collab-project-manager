@@ -4,20 +4,20 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useRecentProjects } from "@/hooks/queries/graphs";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Target } from "lucide-react";
+import { StickyNote, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 
-type RecentProjectsProps = ComponentPropsWithoutRef<"div">;
+type RecentTasksProps = ComponentPropsWithoutRef<"div">;
 
-export function RecentProjects(props: RecentProjectsProps) {
+export function RecentTasks(props: RecentTasksProps) {
   const { data: projects, isPending } = useRecentProjects();
   const location = useLocation();
   const currentPath = location.pathname;
   return (
     <Card {...props}>
       <CardHeader className="items-center pb-0">
-        <CardTitle>Proyectos recientes</CardTitle>
+        <CardTitle>Tareas recientes</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
         <ScrollArea className="h-80 w-full">
@@ -43,7 +43,7 @@ export function RecentProjects(props: RecentProjectsProps) {
                     isPending && "text-muted-foreground"
                   )}
                 >
-                  <Target size={18} />
+                  <StickyNote  size={18}/>
                   {pr.title}
                 </Link>
                 <Separator className="my-2" />

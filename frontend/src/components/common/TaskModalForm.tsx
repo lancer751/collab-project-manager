@@ -1,33 +1,35 @@
+import { useGetTaskById } from "@/hooks/queries/task.query";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { ProjectForm } from "../forms/ProjectForm";
-import { useSingleProjectById } from "@/hooks/queries/projects.query";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+  } from "../ui/dialog";
 import { Loader2 } from "lucide-react";
+import { TaskForm } from "../forms/TaskForm";
 
-interface ModalFormUserProps {
+interface TaskModalFormProps {
   onClose: () => void;
   mode: "create" | "edit";
   isOpen: boolean;
-  projectId: number | null;
+  taskId: number | null;
 }
 
-export function ProjectModalForm({
+export function TaskModalForm({
   onClose,
   mode,
   isOpen,
-  projectId,
-}: ModalFormUserProps) {
-  const { data, isPending, isError } = useSingleProjectById(projectId);
-  const title = mode === "create" ? "Nuevo Proyecto" : "Editar Projecto";
+  taskId,
+}: TaskModalFormProps) {
+  const { data, isPending, isError } = useGetTaskById(taskId);
+  console.log(data)
+  const title = mode === "create" ? "Nueva Tarea" : "Editar Tarea";
   const description =
-    mode === "create"
-      ? "Completa el formulario para registrar un nuevo usuario en el sistema."
-      : "Modifica los campos necesarios para actualizar la información del usuario.";
+  mode === "create"
+    ? "Completa el formulario para registrar una nueva tarea."
+    : "Modifica los campos necesarios para actualizar la tarea.";
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="overflow-y-auto max-h-[90vh]">
@@ -47,7 +49,7 @@ export function ProjectModalForm({
         )}
 
         {(mode === "create" || (mode === "edit" && data)) && (
-          <ProjectForm mode={mode} onClose={onClose} project={data?.project} />
+          <TaskForm mode={mode} onClose={onClose} task={data?.activity} />
         )}
       </DialogContent>
     </Dialog>
