@@ -54,6 +54,7 @@ com\gestionproyectoscolaborativos\backend\services\dto\request\StateDto.class
 com\gestionproyectoscolaborativos\backend\auth\Login.class
 com\gestionproyectoscolaborativos\backend\repository\ComentRepository.class
 com\gestionproyectoscolaborativos\backend\services\dto\response\dashboard\UserAuthenticateDto.class
+com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectbyActivities.class
 com\gestionproyectoscolaborativos\backend\services\dto\request\ProjectDto.class
 com\gestionproyectoscolaborativos\backend\entitys\Report.class
 com\gestionproyectoscolaborativos\backend\services\dashboard\PageActivitysServices.class

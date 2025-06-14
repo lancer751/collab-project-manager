@@ -14,4 +14,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     void deleteByProjectId(Integer id);
 
     List<Activity> findByProjectId(Integer id);
+    List<Activity> findByProjectIdAndActivityFatherIsNull(Integer projectId);
+
 }

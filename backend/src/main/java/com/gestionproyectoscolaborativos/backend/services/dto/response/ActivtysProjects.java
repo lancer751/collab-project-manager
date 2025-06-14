@@ -21,9 +21,11 @@ public class ActivtysProjects {
     private String name;
     private String description;
     private LocalDateTime dateStart;
-    private LocalDateTime dateDeliver; // fecha entrega
+    private LocalDateTime dateDeliver;
     private Priority prioridad;
     private StateDto state;
     private Integer activityFatherId;
+    private ActivtysProjects activityFather; // objeto padre
+    private List<ActivtysProjects> subtasks; // lista de subtareas
     private List<UserRolProjectRequest> users;
 }

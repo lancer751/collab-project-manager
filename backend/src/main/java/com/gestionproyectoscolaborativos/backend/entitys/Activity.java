@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -66,6 +67,8 @@ public class Activity {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<Users> users;
+    @OneToMany(mappedBy = "activityFather", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Activity> subtasks = new ArrayList<>();
 
     @Embedded
     private AuditFields auditFields;
