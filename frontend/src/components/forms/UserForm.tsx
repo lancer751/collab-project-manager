@@ -92,7 +92,6 @@ export function UserForm({ user, mode, onClose }: UserFormProps) {
   });
 
   async function onSubmitUserData(userData: FormSchema) {
-    console.log("enviando datos..");
     console.log(userData);
     const formatted = {
       ...userData,

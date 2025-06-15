@@ -15,33 +15,41 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { MonthlyData, TasksStatusCount } from "@/types/graph.types";
 import { useTasksByState } from "@/hooks/queries/graphs";
+import { ComponentPropsWithoutRef, useMemo } from "react";
 
 const chartConfig = {
   count: {
     label: "cantidad",
   },
 } satisfies ChartConfig;
+type CardWrapperProps = ComponentPropsWithoutRef<"div">;
 
-export function CurrentTasks() {
-  const { data, isLoading, error } = useTasksByState();
+export function CurrentTasks(props: CardWrapperProps) {
+  const { data } = useTasksByState();
 
-  if (isLoading) return <div>Cargando tareas actuales...</div>;
-  if (error) return <div>Error al cargar las tareas actuales</div>;
-  if (!data) return null;
+  const chartData = useMemo(() => {
+    const colorBar: Record<string, string> = {
+      "En Revisión": "var(--task-status-revision)",
+      "En Curso": "var(--task-status-inprogress)",
+      "Sin Empezar": "var(--task-status-unstarted)",
+      Archivadas: "var(--task-status-archived)",
+      Terminados: "var(--task-status-completed)",
+    };
 
-  // Adaptar los datos recibidos de la API al formato que espera el gráfico
-  const chartData = [
-    { status: "En Revisión", count: data["En Revisión"], fill: "var(--task-status-revision)" },
-    { status: "En Curso", count: data["En Curso"], fill: "var(--task-status-inprogress)" },
-    { status: "Sin Empezar", count: data["Sin Empezar"], fill: "var(--task-status-unstarted)" },
-    { status: "Archivadas", count: data["Archivadas"], fill: "var(--task-status-archived)" },
-    { status: "Terminados", count: data["Terminados"], fill: "var(--task-status-completed)" },
-  ];
+    return data
+      ? Object.entries(data).map(([key, value]) => ({
+          status: key,
+          count: value,
+          fill: colorBar[key] || "#ccc",
+        }))
+      : [];
+  }, [data]);
+
+  const emptyData = chartData.every((bar) => bar.count === 0);
 
   return (
-    <Card className="flex flex-col max-h-[500px]">
+    <Card {...props}>
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-lg">Tareas Actuales</CardTitle>
         <CardDescription>
@@ -49,18 +57,30 @@ export function CurrentTasks() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ResponsiveContainer>
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square max-h-[350px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
-          >
-            <PieChart>
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie data={chartData} dataKey="count" label nameKey="status" />
-              <Legend />
-            </PieChart>
-          </ChartContainer>
-        </ResponsiveContainer>
+        {emptyData ? (
+          <div className="h-full px-4 text-center text-sm bg-secondary rounded-md flex items-center justify-center">
+            <p className="mx-auto max-w-52">Actualmente no hay tareas para mostrar en el gráfico.</p>
+          </div>
+        ) : (
+          <ResponsiveContainer>
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square max-h-[300px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
+            >
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                <Pie
+                  data={chartData}
+                  dataKey="count"
+                  label
+                  nameKey="status"
+                  isAnimationActive={false}
+                />
+                <Legend />
+              </PieChart>
+            </ChartContainer>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

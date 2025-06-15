@@ -1,0 +1,362 @@
+[
+    {
+        "id": 1,
+        "name": "Diseñar login",
+        "description": "Crear diseño del formulario de autenticación.",
+        "dateStart": "2025-06-01T00:00:00.000Z",
+        "dateDeliver": "2025-06-10T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 1,
+                "name": "Ana",
+                "lastname": "Martínez",
+                "entryDate": "2024-01-10T00:00:00.000Z",
+                "email": "ana.martinez@example.com",
+                "numberPhone": "123456789",
+                "description": "Diseñadora UI/UX",
+                "rolProject": "Lider"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Desarrollar API de usuarios",
+        "description": "CRUD para gestión de usuarios.",
+        "dateStart": "2025-06-03T00:00:00.000Z",
+        "dateDeliver": "2025-06-15T00:00:00.000Z",
+        "prioridad": "Media",
+        "state": {
+            "name": "Completado"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 2,
+                "name": "Luis",
+                "lastname": "García",
+                "entryDate": "2023-11-05T00:00:00.000Z",
+                "email": "luis.garcia@example.com",
+                "numberPhone": null,
+                "description": "Backend Developer",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Configurar entorno CI/CD",
+        "description": "Integración con GitHub Actions.",
+        "dateStart": "2025-05-20T00:00:00.000Z",
+        "dateDeliver": "2025-06-05T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Pausa"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 3,
+                "name": "Camila",
+                "lastname": "López",
+                "entryDate": "2022-07-01T00:00:00.000Z",
+                "email": "camila.lopez@example.com",
+                "numberPhone": "987654321",
+                "description": null,
+                "rolProject": "Lider"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Auditoría de seguridad",
+        "description": "Analizar vulnerabilidades comunes.",
+        "dateStart": "2025-06-10T00:00:00.000Z",
+        "dateDeliver": "2025-06-20T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Riesgo"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 4,
+                "name": "David",
+                "lastname": "Núñez",
+                "entryDate": "2023-03-12T00:00:00.000Z",
+                "email": "david.nunez@example.com",
+                "numberPhone": "555123456",
+                "description": "Security Analyst",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Revisión de requerimientos",
+        "description": "Asegurar alineación con el cliente.",
+        "dateStart": "2025-05-28T00:00:00.000Z",
+        "dateDeliver": "2025-06-03T00:00:00.000Z",
+        "prioridad": "Baja",
+        "state": {
+            "name": "Cancelado"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 5,
+                "name": "Valeria",
+                "lastname": "Torres",
+                "entryDate": "2024-08-15T00:00:00.000Z",
+                "email": "valeria.torres@example.com",
+                "numberPhone": null,
+                "description": "Analista funcional",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Crear documentación técnica",
+        "description": "Documentar los endpoints de la API y sus casos de uso.",
+        "dateStart": "2025-06-05T00:00:00.000Z",
+        "dateDeliver": "2025-06-12T00:00:00.000Z",
+        "prioridad": "Media",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 6,
+                "name": "Carlos",
+                "lastname": "Mejía",
+                "entryDate": "2024-04-01T00:00:00.000Z",
+                "email": "carlos.mejia@example.com",
+                "numberPhone": "321654987",
+                "description": "Documentador técnico",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Diseño del dashboard",
+        "description": "Maquetar y prototipar el panel de control principal.",
+        "dateStart": "2025-06-08T00:00:00.000Z",
+        "dateDeliver": "2025-06-18T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 7,
+                "name": "Sofía",
+                "lastname": "Ramírez",
+                "entryDate": "2023-02-19T00:00:00.000Z",
+                "email": "sofia.ramirez@example.com",
+                "numberPhone": "987321654",
+                "description": "Diseñadora UI",
+                "rolProject": "Lider"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Optimizar base de datos",
+        "description": "Mejorar consultas y normalización.",
+        "dateStart": "2025-05-30T00:00:00.000Z",
+        "dateDeliver": "2025-06-09T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Pausa"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 8,
+                "name": "Andrés",
+                "lastname": "Morales",
+                "entryDate": "2023-06-20T00:00:00.000Z",
+                "email": "andres.morales@example.com",
+                "numberPhone": null,
+                "description": "DBA",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "name": "Migrar proyecto a TypeScript",
+        "description": "Conversión completa de archivos JS a TS.",
+        "dateStart": "2025-06-01T00:00:00.000Z",
+        "dateDeliver": "2025-06-20T00:00:00.000Z",
+        "prioridad": "Media",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 9,
+                "name": "Pedro",
+                "lastname": "Cano",
+                "entryDate": "2022-10-10T00:00:00.000Z",
+                "email": "pedro.cano@example.com",
+                "numberPhone": "111222333",
+                "description": "Frontend Developer",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "name": "Implementar control de acceso",
+        "description": "Roles y permisos para usuarios.",
+        "dateStart": "2025-06-04T00:00:00.000Z",
+        "dateDeliver": "2025-06-14T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Riesgo"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 10,
+                "name": "Marta",
+                "lastname": "Delgado",
+                "entryDate": "2023-05-05T00:00:00.000Z",
+                "email": "marta.delgado@example.com",
+                "numberPhone": "777888999",
+                "description": "Ingeniera de Seguridad",
+                "rolProject": "Lider"
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "name": "Pruebas automatizadas",
+        "description": "Agregar pruebas unitarias a los componentes críticos.",
+        "dateStart": "2025-06-07T00:00:00.000Z",
+        "dateDeliver": "2025-06-17T00:00:00.000Z",
+        "prioridad": "Media",
+        "state": {
+            "name": "Completado"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 11,
+                "name": "Fernando",
+                "lastname": "Luna",
+                "entryDate": "2024-01-15T00:00:00.000Z",
+                "email": "fernando.luna@example.com",
+                "numberPhone": null,
+                "description": "QA Automation",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "name": "Configurar monitorización",
+        "description": "Integrar con Grafana y Prometheus.",
+        "dateStart": "2025-06-02T00:00:00.000Z",
+        "dateDeliver": "2025-06-12T00:00:00.000Z",
+        "prioridad": "Media",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 12,
+                "name": "Elena",
+                "lastname": "Ruiz",
+                "entryDate": "2023-08-10T00:00:00.000Z",
+                "email": "elena.ruiz@example.com",
+                "numberPhone": "666555444",
+                "description": "DevOps Engineer",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "name": "Evaluar herramientas de testing",
+        "description": "Comparar Cypress vs Playwright.",
+        "dateStart": "2025-06-05T00:00:00.000Z",
+        "dateDeliver": "2025-06-11T00:00:00.000Z",
+        "prioridad": "Baja",
+        "state": {
+            "name": "Cancelado"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 13,
+                "name": "Lucas",
+                "lastname": "Ramos",
+                "entryDate": "2024-09-01T00:00:00.000Z",
+                "email": "lucas.ramos@example.com",
+                "numberPhone": null,
+                "description": "Tester",
+                "rolProject": "Colaborador"
+            }
+        ]
+    },
+    {
+        "id": 14,
+        "name": "Integrar pasarela de pagos",
+        "description": "Soporte para Stripe y PayPal.",
+        "dateStart": "2025-06-01T00:00:00.000Z",
+        "dateDeliver": "2025-06-13T00:00:00.000Z",
+        "prioridad": "Alta",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 14,
+                "name": "Gabriela",
+                "lastname": "Ortiz",
+                "entryDate": "2022-06-30T00:00:00.000Z",
+                "email": "gabriela.ortiz@example.com",
+                "numberPhone": "999888777",
+                "description": "Ingeniera Fullstack",
+                "rolProject": "Lider"
+            }
+        ]
+    },
+    {
+        "id": 15,
+        "name": "Diseñar pantalla de perfil",
+        "description": "Diseño y comportamiento responsivo.",
+        "dateStart": "2025-06-09T00:00:00.000Z",
+        "dateDeliver": "2025-06-16T00:00:00.000Z",
+        "prioridad": "Media",
+        "state": {
+            "name": "Curso"
+        },
+        "activityFatherId": null,
+        "users": [
+            {
+                "id": 15,
+                "name": "Javier",
+                "lastname": "Santos",
+                "entryDate": "2024-02-22T00:00:00.000Z",
+                "email": "javier.santos@example.com",
+                "numberPhone": "111444777",
+                "description": "Diseñador UX",
+                "rolProject": "Colaborador"
+            }
+        ]
+    }
+]

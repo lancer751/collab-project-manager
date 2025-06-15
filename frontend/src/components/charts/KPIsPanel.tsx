@@ -1,9 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { useRelevantKPIS } from "@/hooks/queries/graphs";
-import { Loader2, CheckCircle, ListChecks, Timer, CalendarCheck } from "lucide-react";
+import { CheckCircle, ListChecks, Timer, CalendarCheck } from "lucide-react";
 
 export function KPIsPanel() {
-  const { data: kpis, isPending, isError } = useRelevantKPIS();
+  const { data: kpis } = useRelevantKPIS();
 
 
   const kpiList = [
@@ -38,13 +37,11 @@ export function KPIsPanel() {
       <div className="text-lg font-semibold mb-4">KPIs Clave</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiList.map((kpi, idx) => (
-          <Card key={idx} className={`${kpi.bg} justify-center transition-colors`}>
-            <CardContent className="flex flex-col items-center text-center py-4">
+          <div key={idx} className="rounded-md bg-primary-foreground flex flex-col items-center justify-center py-5">
               <div className="mb-2">{kpi.icon}</div>
               <div className="text-normal text-muted-foreground">{kpi.label}</div>
               <div className="text-2xl text-gray-400 font-bold">{kpi.value ?? "-"}</div>
-            </CardContent>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

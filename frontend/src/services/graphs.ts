@@ -6,6 +6,7 @@ import {
   TasksStatusCount,
 } from "@/types/graph.types";
 import { mainApiInstance } from "./instaces";
+import { ProjectsNearToFinish, RecentProjects } from "@/types/project.types";
 
 export const getCountLatestProjects = async (): Promise<MonthlyData> => {
   const response = await mainApiInstance.get<MonthlyData>(
@@ -41,3 +42,23 @@ export const getCountProjectsByState = async () => {
   );
   return response.data;
 };
+
+export const getRecentProjects = async () => {
+  try{
+    const response = await mainApiInstance.get<RecentProjects[]>("/dashboardadmin/projectrecent")
+    return response.data
+  }catch(error){
+    console.log("Error in getRecentProjects", error)
+    throw error
+  }
+}
+
+export const getProjectsNearToFinish = async () => {
+  try{
+    const response = await mainApiInstance.get<ProjectsNearToFinish[]>("/dashboardadmin/projectnextdelivery")
+    return response.data
+  }catch(error){
+    console.log("Error in getRecentProjects", error)
+    throw error
+  }
+}

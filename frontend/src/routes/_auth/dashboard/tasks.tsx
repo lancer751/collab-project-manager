@@ -1,9 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_auth/dashboard/tasks')({
+export const Route = createFileRoute("/_auth/dashboard/tasks")({
   component: RouteComponent,
-})
+  loader: () => ({ crumb: "tareas" }),
+});
 
 function RouteComponent() {
-  return <div>Hello "/_auth/dashboard/tasks"!</div>
+  return (
+    <div className="h-full w-full p-4">
+      <Outlet />
+    </div>
+  );
 }

@@ -28,6 +28,7 @@ export default function UsersTable() {
     hasNextPage,
     error,
     isError,
+    isLoading,
   } = useInfiniteUsers({ filters, sorters });
   const queryUtilities = {
     fetchNextPage,
@@ -56,7 +57,7 @@ export default function UsersTable() {
   };
 
   return (
-    <section>
+    <section className="h-full">
       <div className="mb-6 flex flex-col md:flex-row items-center md:justify-between md:items-end gap-5">
         <div className="space-y-4 text-center md:text-left">
           <h1 className="text-4xl font-bold">Usuarios</h1>
@@ -68,27 +69,32 @@ export default function UsersTable() {
           <PlusCircle /> Nuevo Usuario
         </Button>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6 h-full">
         <UsersFilters
           filters={filters}
           sorters={sorters}
           setFilters={setFilters}
           setSorters={setSorters}
         />
-        <DataTable
-          columns={UsersColumns({ onEdit: handleUserEdit })}
-          data={users}
-          queryUtilities={queryUtilities}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-        />
-        {Object.keys(rowSelection).length > 0 && (
-          <EditFilters
-            selectedRows={rowSelection}
-            handleSelectedRows={cleanSelectedRows}
-          />
-        )}
+        <div className="min-w-full h-full pb-16 relative">
+          <div className="absolute bottom-0 top-0 w-full">
+            <DataTable
+              columns={UsersColumns({ onEdit: handleUserEdit })}
+              data={users}
+              queryUtilities={queryUtilities}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
       </div>
+      {Object.keys(rowSelection).length > 0 && (
+        <EditFilters
+          selectedRows={rowSelection}
+          handleSelectedRows={cleanSelectedRows}
+        />
+      )}
       <ModalFormUser
         isOpen={isModalOpen}
         mode={modalMode}

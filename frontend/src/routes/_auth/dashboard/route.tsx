@@ -1,31 +1,71 @@
-import { DasboardSidebar } from "@/components/common/dashboard-sidebar";
+import { SingleProjectModal } from "@/components/common/SingleProjectModal";
+import { SingleTaskModal } from "@/components/common/SingleTaskModal";
+import { LoadingFallback } from "@/components/loaders/LoadingFallback";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Separator } from "@radix-ui/react-separator";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+  createFileRoute,
+  Link,
+  Outlet,
+  useLocation,
+  useMatch,
+  useNavigate,
+  useSearch,
+} from "@tanstack/react-router";
+import { XCircle } from "lucide-react";
 
 export const Route = createFileRoute("/_auth/dashboard")({
-  component: HomeComponent,
+  component: RouteComponent,
+  notFoundComponent: () => (
+    <div className="flex h-full w-full items-center justify-center p-4">
+      <Card className="max-w-sm w-full text-center">
+        <CardHeader className="space-y-2">
+          <XCircle className="mx-auto h-12 w-12 text-red-500" />
+          <CardTitle className="text-lg md:text-3xl">
+            404 · Página no encontrada
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Lo sentimos, la ruta que intentas visitar no existe dentro de este
+            dashboard.
+          </p>
+          <Link to="/dashboard/inicio">
+            <Button variant="outline" className="w-full">
+              Volver al Inicio
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
+  ),
+  pendingComponent: () => <LoadingFallback />,
 });
 
-function HomeComponent() {
+function RouteComponent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams: { prjt?: number; tsk?: number } =
+    useSearch({ strict: false }) ?? {};
+  const matchRoute = useMatch({
+    from: "/_auth/dashboard",
+    shouldThrow: false,
+  });
+
+  const handleOpenModal = (open: boolean) => {
+    if (!open) {
+      navigate({ to: location.pathname, search: {}, resetScroll: false });
+    }
+  }
   return (
-    <SidebarProvider>
-      <DasboardSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,_height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-          </div>
-        </header>
-        <div className="p-4">
-          <Outlet />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <Outlet />
+      {matchRoute && searchParams.prjt && (
+        <SingleProjectModal projectId={searchParams.prjt} onClose={handleOpenModal}/>
+      )}
+      {matchRoute && searchParams.tsk && (
+        <SingleTaskModal taskId={searchParams.tsk} onClose={handleOpenModal}/>
+      )}
+    </>
   );
 }

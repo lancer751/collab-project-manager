@@ -1,4 +1,4 @@
-import { TaskStatus } from "./task.types";
+import { ProjectStatus } from "./project.types";
 
 enum Month {
   JANUARY = "January",
@@ -21,7 +21,7 @@ export type MonthStats = {
 };
 
 export type MonthlyData = Partial<Record<Month, MonthStats>>;
-export type TasksStatusCount = Record<TaskStatus, number>;
+export type TasksStatusCount = Record<ProjectStatus, number>;
 type KPIS =
   | "totalProjectActive"
   | "tasksProgress"

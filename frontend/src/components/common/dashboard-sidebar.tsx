@@ -4,92 +4,81 @@ import {
   House,
   Inbox,
   UsersRound,
-  Settings,
-  LogOut,
 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "../ui/sidebar";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { Button } from "../ui/button";
-import { useLogoutMutation } from "@/hooks/mutations/auth.mutation";
 import { getRouteApi } from "@tanstack/react-router";
 
 // hardcode
-const data = {
-  user: {
-    id: 2,
-    username: "Lau Pacheco",
-    email: "pachecolau27@gmail.com",
-    profile: "image.png",
+const navMain = [
+  {
+    title: "Inicio",
+    url: "/dashboard/inicio",
+    icon: House,
+    isActive: true,
   },
-  navMain: [
-    {
-      title: "Inicio",
-      url: "/dashboard/inicio",
-      icon: House,
-      isActive: true,
-    },
-    {
-      title: "Bandeja de Entrada",
-      url: "/dashboard/inbox",
-      icon: Inbox,
-      isActive: false,
-    },
-    {
-      title: "Usuarios",
-      url: "/dashboard/users",
-      icon: UsersRound,
-      isActive: false,
-    },
-    {
-      title: "Proyectos",
-      url: "/dashboard/projects",
-      icon: Target,
-      isActive: false,
-    },
-    {
-      title: "Tareas",
-      url: "/dashboard/tasks",
-      icon: SquareCheck,
-      isActive: false,
-    },
-    {
-      title: "Ajustes",
-      url: "/dashboard/settings",
-      icon: Settings,
-      isActive: false,
-    },
-  ],
-};
+  {
+    title: "Bandeja de Entrada",
+    url: "/dashboard/inbox",
+    icon: Inbox,
+    isActive: false,
+  },
+  {
+    title: "Usuarios",
+    url: "/dashboard/users",
+    icon: UsersRound,
+    isActive: false,
+  },
+  {
+    title: "Proyectos",
+    url: "/dashboard/projects",
+    icon: Target,
+    isActive: false,
+  },
+  {
+    title: "Tareas",
+    url: "/dashboard/tasks",
+    icon: SquareCheck,
+    isActive: false,
+  }
+];
 
-export function DasboardSidebar({ ...props }) {
-  const currRoute = getRouteApi("/_auth")
-  const {auth: {user: currentUser}} = currRoute.useRouteContext()
-  const {mutateAsync: logoutSession} = useLogoutMutation()
+export function DasboardSidebar() {
+  const currRoute = getRouteApi("/_auth");
+  const {
+    auth: { user: currentUser },
+  } = currRoute.useRouteContext();
 
   return (
-    <Sidebar
-      variant="sidebar"
-      className="top-16 h-[calc(100%-64px)]"
-      collapsible="icon"
-      {...props}
-    >
+    <Sidebar collapsible="icon">
       <SidebarHeader>
-        <NavUser user={currentUser} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="hover:bg-transparent">
+              <div className="flex items-center justify-start">
+                <img src="/logo.png" alt="logo" className="inline-flex h-7 w-7 object-cover" />
+                <span className="ml-2 font-bold text-lg hidden md:block">
+                  Mescob S.A.C
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain}></NavMain>
+        <NavMain items={navMain}></NavMain>
       </SidebarContent>
       <SidebarFooter>
-        <Button onClick={async() => logoutSession()} variant={"destructive"}>
-          <LogOut/>
-          <span>Salir</span>
-        </Button>
+        <NavUser user={currentUser} />
       </SidebarFooter>
     </Sidebar>
   );

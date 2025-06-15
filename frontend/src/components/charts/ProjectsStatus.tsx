@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart, ResponsiveContainer } from "recharts";
 
@@ -19,14 +18,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useCountProjectsByState } from "@/hooks/queries/graphs";
+import { ComponentPropsWithoutRef, useMemo } from "react";
 
-// const chartData = [
-//   { status: "chrome", count: 275, fill: "var(--project-status-inprogress)" },
-//   { status: "safari", count: 200, fill: "var(--color-safari)" },
-//   { status: "firefox", count: 287, fill: "var(--color-firefox)" },
-//   { status: "edge", count: 173, fill: "var(--color-edge)" },
-//   { status: "other", count: 190, fill: "var(--color-other)" },
-// ];
 
 const statusColors: Record<string, string> = {
   "Completados": "var(--project-status-completed)",
@@ -61,11 +54,12 @@ const chartConfig = {
     color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig;
+type CardWrapperProps = ComponentPropsWithoutRef<"div">;
 
-export function ProjectsStatus() {
-  const { data: countProjects, isPending, isError } = useCountProjectsByState();
+export function ProjectsStatus(props : CardWrapperProps) {
+  const { data: countProjects} = useCountProjectsByState();
   
-  const chartData = React.useMemo(
+  const chartData = useMemo(
     () =>
       countProjects
         ? Object.entries(countProjects).map(([status, count]) => ({
@@ -77,7 +71,7 @@ export function ProjectsStatus() {
         [countProjects]
       );
 
-  const totalProjects = React.useMemo(() => {
+  const totalProjects = useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
   }, [chartData]);
   
@@ -87,7 +81,7 @@ export function ProjectsStatus() {
     : "";
 
   return (
-    <Card className="flex flex-col">
+    <Card {...props}>
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-lg">
           Recuento de proyectos por estado
@@ -111,6 +105,7 @@ export function ProjectsStatus() {
                 nameKey="status"
                 innerRadius={60}
                 strokeWidth={5}
+                isAnimationActive={false}
               >
                 <Label
                   content={({ viewBox }) => {

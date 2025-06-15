@@ -22,12 +22,14 @@ export const Route = createFileRoute("/_auth/dashboard/users")({
       queryKey: ["rols"],
       queryFn: getAllRoles,
     })
+
+    return ({crumb: "usuarios"})
   },
 });
 
 function RouteComponent() {
   return (
-    <div className="relative">
+    <div className="p-4 h-full">
       <UsersTable/>
     </div>
   );
