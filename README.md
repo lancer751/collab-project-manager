@@ -121,7 +121,7 @@ Los archivos estáticos estarán en `frontend/build/`.
 ## 👥 Créditos
 
 * **lancer751** – Desarrollador/a frontend
-* **LuiseGVdev290403** - Desarrollador/a frontend
+* **LuiseGVdev290403** - Desarrollador/a Backend
 
 ---
 
